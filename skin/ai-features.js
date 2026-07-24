@@ -128,7 +128,12 @@
 ".aiblog-fab{left:16px;bottom:20px}" +
 ".aiblog-wrap{right:12px;left:12px;bottom:76px;width:auto}" +
 ".aiblog-in{font-size:16px}" + /* iOS 자동 줌 방지 */
-"}";
+"}" +
+/* 스킨 헤더 보정: 중간 폭에서 상단 카테고리 메뉴가 우측 아이콘(테마/검색/메뉴)과
+   겹치는 문제 — 1800px 이하는 메뉴 글자 축소, 1560px 이하는 메뉴를 숨겨
+   스킨의 햄버거(≡) 메뉴로 대체 (실측: 메뉴 폭 ~985px, 원래 1800px 밑에서 충돌) */
+"@media (max-width:1800px){nav.header_category ul.tt_category a{font-size:13px !important;letter-spacing:-.2px}}" +
+"@media (max-width:1560px){nav.header_category{display:none !important}}";
 
   function injectCss() {
     var s = document.createElement("style");
