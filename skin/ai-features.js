@@ -18,8 +18,8 @@
   var CONFIG = {
     // 필수: GitHub Pages 등에 올린 index.json 주소
     INDEX_URL: "https://jonghyun-kim64.github.io/blog-ai-index/index.json",
-    // 선택: Q&A 챗봇용 Cloudflare Worker 주소 (비우면 인덱스 기반 응답만)
-    WORKER_URL: "",
+    // Q&A 챗봇용 Cloudflare Worker 주소 (비우면 인덱스 기반 응답만)
+    WORKER_URL: "https://blog-ai-qa.jong060479.workers.dev",
     RELATED_COUNT: 5,
     // 사이트 왼쪽 아래 구석에 배치 (우하단 "맨 위로" 버튼과 반대편)
     FAB_BOTTOM: 24,
