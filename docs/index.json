@@ -1,37 +1,42 @@
 {
  "blog": "https://semicon-circuit.tistory.com",
- "generated": "2026-07-24",
- "mode": "demo",
- "count": 7,
+ "generated": "2026-07-24T18:17:05+0000",
+ "mode": "Gemini",
+ "count": 97,
  "posts": [
   {
    "id": 121,
    "url": "https://semicon-circuit.tistory.com/121",
    "title": "BISR란? Built-In Self-Repair로 결함 복구하기",
    "date": "2025-05-06",
-   "category": "반도체 시사",
+   "category": "반도체 시사(10)",
    "tags": [
-    "AI가속기",
-    "BISR",
-    "SystolicArray",
-    "결함복구",
-    "반도체설계"
+    "반도체설계",
+    "auto p&r",
+    "C언어",
+    "논리회로",
+    "프로그래밍",
+    "uart 설계",
+    "mux",
+    "Virtuoso",
+    "multiplexer",
+    "취업준비"
    ],
-   "summary": "Systolic Array 기반 AI 가속기에서 결함이 있는 PE를 효율적으로 복구하기 위한 BISR 메커니즘 네 가지를 설명합니다. PE Bypass, Weight Swapping, Weight Allocation, Row Bypass with Column Skipping 기법을 통해 하드웨어 오버헤드를 최소화하면서 성능을 유지할 수 있습니다. STRAIT 논문에 기반한 자가진단 결과를 활용하여 결함 PE를 우회하거나 가중치를 재할당하는 방식을 소개합니다.",
+   "summary": "본문은 Systolic Array 기반 AI 가속기의 결함 복구를 위한 BISR 메커니즘 4가지인 PE Bypass, Weight Swapping, Weight Allocation, Row Bypass with Column Skipping을 설명합니다. 자가진단 정보를 바탕으로 결함 PE를 우회하거나 가중치를 교환 및 할당하여 연산 정확도를 보존합니다. 또한, 행과 열 단위의 결함에 대해서는 행 우회 및 열 스킵 기법을 적용하여 오류 전파를 방지합니다.",
    "keywords": [
-    "BISR (Built-In Self-Repair)",
+    "BISR",
     "Systolic Array",
     "PE Bypass",
     "Weight Swapping",
-    "Self-Recovery"
+    "Weight Allocation"
    ],
-   "excerpt": "Systolic Array 기반 AI 가속기에서는 수천 개의 PE(Processing Element)가 고속 병렬 연산을 수행합니다. 하지만 그 중 일부가 고장나면 전체 연산에 영향을 줄 수 있기 때문에, 결함 복구(Self-Recovery) 기술이 필수적입니다. STRAIT는 Built-In Self-Test뿐만 아니라, 효율적인 Self-Recovery까지 지원하는 구조를 제안합니다.",
+   "excerpt": "STRAIT(3) _ Self-Diagnosis STRAIT(2) _ BIST(Built-In Self Test)STRAIT(1) _ AI 가속기의 자가 테스트 및 복구 기술이번 포스팅은『STRAIT: Self-Test and Self-Recovery Architecture for Systolic-Array-Based AI Accelerators』 논문을 바탕으로 제작되었습니 semicon-circuit.tistory.com Systolic Array 기반 AI 가속기에서는 수천 개의 PE(Processing Element)가 고속 병렬 연산을 수행합니다. 하지만 그 중 일부가 고장나면 전체 연산에 영향을 줄 수 있기 때문에, 결함 복구(Self-Recovery) 기술이 필수적입니다. STRAIT는 Buil",
    "related": [
     118,
-    119,
     120,
-    117,
-    115
+    119,
+    113,
+    116
    ]
   },
   {
@@ -39,29 +44,34 @@
    "url": "https://semicon-circuit.tistory.com/120",
    "title": "반도체 Self-Diagnosis(자가 진단) 회로 동작 원리",
    "date": "2025-05-06",
-   "category": "반도체 시사",
+   "category": "반도체 시사(10)",
    "tags": [
-    "DFT",
-    "DLC",
-    "PE결함진단",
-    "Self-Diagnosis",
-    "STRAIT논문",
-    "AI가속기"
+    "mux",
+    "Vivado",
+    "verilog",
+    "auto p&r",
+    "코딩",
+    "반도체설계",
+    "AI가속기",
+    "하드웨어 설계",
+    "multiplexer",
+    "uart 설계"
    ],
-   "summary": "AI 가속기의 Systolic Array에서 발생하는 결함을 진단하기 위해 Local/Row/Column 세 가지 유형으로 분류하여 위치를 식별합니다. Diagnostic Loop Chain(DLC)은 각 PE마다 배치된 오류 플래그 누적 회로로서 비교기의 오류 신호를 OR 게이트를 통해 순환시키며 감지합니다. 식별된 결함 정보는 eNVM에 저장되어 이후 복구 알고리즘과 PE 마스킹에 활용됩니다.",
+   "summary": "본 글은 AI 가속기의 신뢰성을 높이기 위한 STRAIT 자가 진단 회로의 동작 원리와 결함 유형별 분류 방법을 설명합니다. 결함의 위치에 따라 Local, Row, Column Fault로 구분되며, 각 PE에 존재하는 Diagnostic Loop Chain(DLC)과 비교기를 통해 오류를 감지합니다. 식별된 결함 정보는 연산 유닛의 복구 경로 우회 및 마스킹 등 후속 복구 알고리즘에 활용됩니다.",
    "keywords": [
     "Self-Diagnosis",
-    "DLC (Diagnostic Loop Chain)",
     "Systolic Array",
-    "결함 유형 분류",
-    "BIST"
+    "Diagnostic Loop Chain",
+    "Fault Type",
+    "AI Accelerator"
    ],
-   "excerpt": "지난 포스팅에서는 자가 테스트 진행 방법을 알아보았습니다. 이번에는 자가 진단 방법에 대해 알아보고, 결함 유형과 진단 논리 구조에 대해서 다룹니다. STRAIT에서는 PE 내부의 결함이 위치에 따라 서로 다른 방식으로 영향을 미칩니다.",
+   "excerpt": "STRAIT(2) _ BIST(Built-In Self Test) STRAIT(1) _ AI 가속기의 자가 테스트 및 복구 기술이번 포스팅은『STRAIT: Self-Test and Self-Recovery Architecture for Systolic-Array-Based AI Accelerators』 논문을 바탕으로 제작되었습니다. 최근 AI 가속기의 신뢰성 semicon-circuit.tistory.com 지난 포스팅에서는 자가 테스트 진행 방법을 알아보았습니다. 이번에는 자가 진단 방법에 대해 알아보고, 결함 유형과 진단 논리 구조에 대해서 다룹니다. 결함 위치에 따른 유형 STRAIT에서는 PE 내부의 결함이 위치에 따라 서로 다른 방식으로 영향을 미칩니다. 이 차이를 기반으로 결함을 Local / ",
    "related": [
-    119,
-    115,
     118,
-    121
+    119,
+    121,
+    29,
+    41
    ]
   },
   {
@@ -69,28 +79,34 @@
    "url": "https://semicon-circuit.tistory.com/119",
    "title": "BIST(Built-In Self Test)란? 회로 설계와 컨트롤러 동작 정리",
    "date": "2025-05-05",
-   "category": "반도체 시사",
+   "category": "반도체 시사(10)",
    "tags": [
+    "시스템반도체",
+    "C언어",
+    "반도체설계",
+    "verilog",
+    "mux",
+    "반도체 설계",
     "AI가속기",
-    "BIST",
-    "DFT",
-    "RTL설계",
-    "스캔체인",
-    "회로설계"
+    "프로그래밍",
+    "코딩",
+    "하드웨어 설계"
    ],
-   "summary": "BIST는 스캔 체인을 활용하여 회로 내부 결함을 자동으로 검출하는 기술로, SA 테스트와 TD 테스트를 통해 stuck-at 결함과 타이밍 결함을 판단합니다. MBIST와 LBIST를 결합한 하이브리드 BIST는 메모리와 연산 로직을 각각 테스트하여 대규모 AI 가속기의 신뢰성을 보장합니다. STRAIT 아키텍처에서는 BIST 로직 검증, 메모리 테스트, Systolic Array 테스트 순서로 진행합니다.",
+   "summary": "본 글은 AI 가속기의 신뢰성을 높이기 위한 STRAIT 구조의 자가 테스트 및 복구 기술 중 BIST의 동작 원리를 설명합니다. 스캔 체인을 활용한 Stuck-At 테스트와 Transition-Delay 테스트를 통해 로직 및 메모리 결함을 검출하는 방식을 다룹니다. 또한, 메모리와 로직 테스트를 통합한 Hybrid BIST 구조와 전체 테스트 시나리오를 체계적으로 정리하고 있습니다.",
    "keywords": [
+    "BIST",
     "Scan Chain",
-    "Stuck-At Test",
-    "Transition-Delay Test",
     "MBIST",
-    "LBIST"
+    "LBIST",
+    "Hybrid BIST"
    ],
-   "excerpt": "자가 테스트는 Scan Chain을 활용하여 이루어집니다. 여기서 Scan Chain이란, 내부 레지스터를 직렬로 연결하여 결함 테스트 패턴을 주입하고 결과를 수집하는 구조입니다.",
+   "excerpt": "STRAIT(1) _ AI 가속기의 자가 테스트 및 복구 기술 이번 포스팅은『STRAIT: Self-Test and Self-Recovery Architecture for Systolic-Array-Based AI Accelerators』 논문을 바탕으로 제작되었습니다. 최근 AI 가속기의 신뢰성과 안전성이 중요해지면서, Systolic Array 기반 AI semicon-circuit.tistory.com 지난 포스팅에서 STRAIT의 개념, 구조를 살펴보았습니다. 이번 포스팅에서는 세부적으로 자가 테스트 과정을 살펴봅니다. Test Process With Scan Chain 자가 테스트는 Scan Chain을 활용하여 이루어집니다. 여기서 Scan Chain이란, 내부 레지스터를 직렬로 연결하여 결함 테",
    "related": [
     118,
     120,
-    121
+    121,
+    71,
+    41
    ]
   },
   {
@@ -98,55 +114,69 @@
    "url": "https://semicon-circuit.tistory.com/118",
    "title": "BIST 기반 AI 가속기 자가 테스트·복구 구조(STRAIT) 정리",
    "date": "2025-05-05",
-   "category": "반도체 시사",
+   "category": "반도체 시사(10)",
    "tags": [
-    "STRAIT",
-    "BISR",
-    "자가진단",
-    "자가복구",
-    "테스트 설계"
+    "시스템반도체",
+    "반도체설계",
+    "프로그래밍",
+    "회로설계",
+    "Virtuoso",
+    "mux",
+    "verilog",
+    "multiplexer",
+    "C언어",
+    "Vivado"
    ],
-   "summary": "STRAIT 아키텍처를 통해 Systolic Array 기반 AI 가속기의 결함을 스스로 탐지하고 복구하는 기술을 설명합니다. Hybrid BIST, Diagnosis Module, BISR, eNVM 등 네 가지 핵심 모듈이 협력하여 결함 PE를 신속하게 식별하고 우회 처리합니다. 하드웨어 교체 없이 가중치 리맵핑 방식으로 AI 가속기의 신뢰성과 내구성을 향상시킵니다.",
+   "summary": "본 글은 Systolic Array 기반 AI 가속기의 신뢰성을 높이기 위한 자가 테스트 및 복구 구조인 STRAIT 기술을 소개합니다. STRAIT은 Hybrid BIST와 진단 모듈을 통해 결함을 실시간으로 탐지하고 위치를 파악하며, BISR을 통해 가중치 리맵 방식으로 고장 난 PE를 우회하여 복구합니다. 이를 통해 AI 하드웨어의 내구성과 연산 효율성을 크게 향상시킬 수 있습니다.",
    "keywords": [
+    "STRAIT",
     "Systolic Array",
-    "BIST",
+    "Hybrid BIST",
     "BISR",
-    "Processing Element (PE)",
-    "eNVM"
+    "Processing Element"
    ],
-   "excerpt": "최근 AI 가속기의 신뢰성과 안전성이 중요해지면서, Systolic Array 기반 AI 가속기 내부 결함을 스스로 테스트하고 복구하는 기술이 주목받고 있습니다. 특히 고장난 PE를 실시간으로 진단하고 재구성할 수 있는 STRAIT 구조는 AI 하드웨어의 내구성과 효율성을 크게 향상시킬 수 있는 핵심 기술입니다.",
+   "excerpt": "이번 포스팅은『STRAIT: Self-Test and Self-Recovery Architecture for Systolic-Array-Based AI Accelerators』 논문을 바탕으로 제작되었습니다. 최근 AI 가속기의 신뢰성과 안전성이 중요해지면서, Systolic Array 기반 AI 가속기 내부 결함을 스스로 테스트하고 복구하는 기술이 주목받고 있습니다. 특히 고장난 PE(Processing Element)를 실시간으로 진단하고, 재구성할 수 있는 STRAIT 구조는 AI 하드웨어의 내구성과 효율성을 크게 향상시킬 수 있는 핵심 기술입니다. 이번 포스팅에서는 STRAIT(Self-Test and Self-Recovery Architecture) 구조의 핵심 개념과 동작 원리, 기존 방식의 한계",
    "related": [
-    121,
     119,
-    120
+    120,
+    121,
+    113,
+    116
    ]
   },
   {
    "id": 117,
    "url": "https://semicon-circuit.tistory.com/117",
-   "title": "AI 가속기(5) : Systolic Array 설계의 도전 과제",
+   "title": "NPU란? Systolic Array 기반 딥러닝 가속기 설계 원리 정리",
    "date": "2025-05-05",
-   "category": "반도체 시사",
+   "category": "반도체 시사(10)",
    "tags": [
-    "ai 가속기",
-    "systolic array",
-    "DNN",
-    "sparsity",
-    "loop unrolling"
+    "코딩",
+    "Virtuoso",
+    "mux",
+    "uart 설계",
+    "프로그래밍",
+    "취업준비",
+    "verilog",
+    "Vivado",
+    "반도체설계",
+    "AI가속기"
    ],
-   "summary": "Systolic Array는 병렬 처리와 데이터 재사용에 최적화되었지만, 구조적 제한으로 FC/CONV 레이어 외의 복잡한 연산 처리가 어렵다는 유연성 문제가 있습니다. DNN Pruning 기반의 희소 행렬 연산에서 불필요한 0 값 요소까지 연산 대상으로 처리하게 되어 전력 낭비와 PE 유휴 시간이 증가합니다. 설계 최적화를 위한 복잡한 설계 공간 문제는 자동화 도구와 성능 분석 지원의 필요성을 보여줍니다.",
+   "summary": "본문은 Systolic Array 기반 딥러닝 가속기 설계 시 직면하는 구조적 유연성 부족, 희소성(Sparsity) 최적화의 어려움, 그리고 설계 공간의 복잡성이라는 세 가지 주요 도전 과제를 다룹니다. 이를 극복하기 위해 하이브리드 분산 방식, Zero-Skipping PE, 그리고 자동화 설계 및 성능 분석 도구의 도입 필요성을 설명합니다. 최종적으로 다양한 AI 워크로드와 환경에 맞춘 효율적인 하드웨어 가속기 설계 방향을 제시합니다.",
    "keywords": [
     "Systolic Array",
     "DNN 가속기",
-    "im2col 알고리즘",
-    "희소성 최적화",
-    "설계 공간 탐색"
+    "im2col",
+    "Sparsity",
+    "Zero-Skipping"
    ],
-   "excerpt": "Systolic Array는 병렬성과 데이터 재사용에 최적화된 구조로, DNN 연산을 빠르게 처리할 수 있는 하드웨어 가속기입니다. 하지만 단순한 구조만큼이나 설계의 유연성이 제한되고, 다양한 AI 워크로드를 처리하기 위한 확장성이나 최적화가 쉽지 않다는 단점도 존재합니다.",
+   "excerpt": "AI 가속기(4) _ Systolic Array의 성능 개선: Tiling, On-Chip Buffer, Bandwidth AI 가속기(3) _ Systolic Array의 성능 개선: Loop Unrolling, Data FlowAI 가속기(1) _ Systolic Array대규모 딥러닝 모델의 연산 성능을 끌어올리기 위한 하드웨어 설계가 치열하게 전개되고 있습니다. 특히, Google semicon-circuit.tistory.com Systolic Array는 병렬성과 데이터 재사용에 최적화된 구조로, DNN 연산을 빠르게 처리할 수 있는 하드웨어 가속기입니다. 하지만 단순한 구조만큼이나 설계의 유연성이 제한되고, 다양한 AI 워크로드를 처리하기 위한 확장성이나 최적화가 쉽지 않다는 단점도 존재합니다.",
    "related": [
+    113,
     116,
+    114,
     115,
-    121
+    118
    ]
   },
   {
@@ -154,26 +184,34 @@
    "url": "https://semicon-circuit.tistory.com/116",
    "title": "Systolic Array 성능 최적화: PE와 파이프라이닝",
    "date": "2025-05-05",
-   "category": "반도체 시사",
+   "category": "반도체 시사(10)",
    "tags": [
-    "systolic array",
-    "ai 가속기",
-    "tiling",
-    "on chip buffer",
-    "bandwidth"
+    "코딩",
+    "반도체설계",
+    "취업준비",
+    "multiplexer",
+    "verilog",
+    "Vivado",
+    "논리회로",
+    "반도체 설계",
+    "auto p&r",
+    "회로설계"
    ],
-   "summary": "시스톨릭 어레이의 성능을 높이기 위해 어레이 크기와 타일링, 온칩 버퍼, 대역폭 등 세 가지 핵심 요소를 최적화하는 방법을 설명합니다. 워크로드를 작은 타일로 분할하여 처리하고, 적절한 버퍼 크기와 메모리 대역폭을 설정하면 연산 지연과 전력 소모를 줄일 수 있습니다. 하드웨어 자원 제약과 데이터 흐름 효율을 균형있게 고려한 설계가 중요합니다.",
+   "summary": "본 글은 AI 가속기의 핵심인 Systolic Array의 성능을 최적화하기 위한 타일링, 온칩 버퍼, 그리고 대역폭의 역할과 설계 고려사항을 설명합니다. 대규모 연산을 처리하기 위해 작업 부하를 작은 타일로 나누어 순차 처리하는 타일링 기법과 그에 따른 장단점을 다룹니다. 또한, 온칩 버퍼의 크기와 메모리 대역폭이 연산 지연 및 전력 소모에 미치는 영향을 분석하여 효율적인 하드웨어 설계 방향을 제시합니다.",
    "keywords": [
     "Systolic Array",
     "Tiling",
     "On-Chip Buffer",
     "Bandwidth",
-    "AI가속기"
+    "PE"
    ],
-   "excerpt": "Systolic Array의 성능을 개선하는 방법으로 loop unrolling과 dataflow를 조정하는 것 외에도 Tiling, On-Chip Buffer와 Bandwidth 최적화를 통한 방법이 있습니다. Array Size는 Systolic Array 내부의 PE의 행 × 열 크기를 의미합니다.",
+   "excerpt": "AI 가속기(3) _ Systolic Array의 성능 개선: Loop Unrolling, Data Flow AI 가속기(2) _ WorkloadsAI 가속기(1) _ Systolic Array대규모 딥러닝 모델의 연산 성능을 끌어올리기 위한 하드웨어 설계가 치열하게 전개되고 있습니다. 특히, Google TPU를 시작으로 각광받기 시작한 Systol semicon-circuit.tistory.com Systolic Array의 성능을 개선하는 방법으로 loop unrolling과 dataflow를 조정하는 것 외에도 Tiling, On-Chip Buffer과 Bandwidth 최적화를 통한 방법이 있습니다. Array Size와 Tiling Array Size는 Systolic Array 내부의 PE의 행",
    "related": [
+    113,
     115,
-    117
+    117,
+    114,
+    121
    ]
   },
   {
@@ -181,27 +219,3184 @@
    "url": "https://semicon-circuit.tistory.com/115",
    "title": "Systolic Array 데이터 흐름(Dataflow) 정리 — WS·OS·IS 방식 비교",
    "date": "2025-05-05",
-   "category": "반도체 시사",
+   "category": "반도체 시사(10)",
    "tags": [
-    "systolic array",
-    "ai 가속기",
-    "dataflow",
-    "loop unrolling"
+    "C언어",
+    "반도체 설계",
+    "취업준비",
+    "auto p&r",
+    "verilog",
+    "multiplexer",
+    "uart",
+    "시스템반도체",
+    "레이아웃 설계",
+    "논리회로"
    ],
-   "summary": "AI 가속기의 성능 향상을 위한 루프 언롤링과 데이터 흐름 전략을 상세히 설명합니다. 출력 고정(OS), 가중치 고정(WS), 입력 고정(IS) 세 가지 데이터 흐름 방식의 동작 원리와 PE 할당 방식을 비교 분석합니다. 각 데이터 흐름에 따라 필요한 PE 개수와 루프 언롤링 방식이 달라지며, 설계자는 하드웨어 자원과 성능을 고려하여 최적의 전략을 선택해야 합니다.",
+   "summary": "이 글은 AI 가속기의 핵심 구조인 Systolic Array에서 연산 성능을 높이기 위한 Loop Unrolling과 Data Flow 전략을 다루고 있습니다. 반복문을 분해하여 병렬 처리를 극대화하는 Loop Unrolling의 개념과 필요성을 설명합니다. 데이터의 이동 및 재사용 방식에 따라 OS, WS, IS의 세 가지 Data Flow 구조별 동작 방식을 상세히 비교합니다.",
    "keywords": [
+    "Systolic Array",
     "Loop Unrolling",
     "Data Flow",
-    "Systolic Array",
-    "PE (Processing Element)",
-    "딥러닝 가속기"
+    "Output Stationary",
+    "Weight Stationary"
    ],
-   "excerpt": "이번 포스팅에서는 AI 가속기 구조인 Systolic Array의 성능을 개선하기 위한 방안을 다룹니다. Systolic Array 기반 DNN 가속기에서 성능을 높이기 위한 가장 중요한 설계 포인트 중 하나는 loop unrolling과 data flow 전략입니다.",
+   "excerpt": "AI 가속기(2) _ Workloads AI 가속기(1) _ Systolic Array대규모 딥러닝 모델의 연산 성능을 끌어올리기 위한 하드웨어 설계가 진행되고 있습니다. 특히, Google TPU를 시작으로 각광받기 시작한 Systolic Array 기반 구조는 높은 병렬 semicon-circuit.tistory.com AI 가속기 포스팅을 이어서 진행합니다. 이번 포스팅에서는 AI 가속기 구조인 Systolic Array의 성능을 개선하기 위한 방안을 다룹니다. Systolic Array 기반 DNN 가속기에서 성능을 높이기 위한 가장 중요한 설계 포인트 중 하나는 loop unrolling 과 data flow 전략입니다. 이 글에서는 이 두 개념을 실제 알고리즘 구조와 연산 타이밍에 맞춰 상세히 살",
    "related": [
     116,
-    120,
+    113,
+    114,
     117,
     121
+   ]
+  },
+  {
+   "id": 114,
+   "url": "https://semicon-circuit.tistory.com/114",
+   "title": "Systolic Array란? 동작 원리와 행렬 곱셈 하드웨어",
+   "date": "2025-05-04",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Virtuoso",
+    "multiplexer",
+    "취업준비",
+    "mux",
+    "반도체설계",
+    "uart",
+    "verilog",
+    "AI가속기",
+    "논리회로",
+    "반도체 설계"
+   ],
+   "summary": "이 글은 AI 가속기의 핵심 연산 단위인 Systolic Array와 딥러닝 모델의 워크로드(Workload)에 대해 설명합니다. 특히 DNN의 기본 구성 요소인 Fully Connected Layer와 Convolution Layer의 구조 및 행렬 연산 방식을 다룹니다. 이를 통해 AI 하드웨어가 대규모 연산을 병렬로 처리하는 방식을 이해할 수 있습니다.",
+   "keywords": [
+    "Systolic Array",
+    "DNN",
+    "Workload",
+    "Fully Connected Layer",
+    "Convolution Layer"
+   ],
+   "excerpt": "AI 가속기(1) _ Systolic Array 대규모 딥러닝 모델의 연산 성능을 끌어올리기 위한 하드웨어 설계가 진행되고 있습니다. 특히, Google TPU를 시작으로 각광받기 시작한 Systolic Array 기반 구조는 높은 병렬성과 데이터 재사용 효율 semicon-circuit.tistory.com 지난 포스팅에 이어 이번 글에서는 Systolic Array에서 처리하는 Workload에 대해 소개합니다. 먼저, Workload란 시스템이 수행해야 하는 작업의 양 또는 작업의 유형을 의미합니다. 즉, 컴퓨터 시스템, 서버, 하드웨어 또는 AI 가속기 등이 처리하는 연산 작업의 묶음을 뜻합니다. AI 가속기의 관점에서 Workload는 딥러닝 모델이 실제로 수행하는 연산 단위를 의미합니다. 예를 들",
+   "related": [
+    113,
+    117,
+    115,
+    116,
+    112
+   ]
+  },
+  {
+   "id": 113,
+   "url": "https://semicon-circuit.tistory.com/113",
+   "title": "Systolic Array가 AI 가속기(NPU)에 쓰이는 이유 — 구조와 병렬 연산 원리",
+   "date": "2025-05-04",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "레이아웃 설계",
+    "Virtuoso",
+    "코딩",
+    "uart 설계",
+    "회로설계",
+    "multiplexer",
+    "uart",
+    "AI가속기",
+    "auto p&r"
+   ],
+   "summary": "AI 가속기에서 널리 쓰이는 Systolic Array 구조의 기본 개념과 병렬 연산 원리를 설명합니다. PE, Controller, Buffer 등의 구성 요소로 이루어져 있으며 데이터 재사용성과 메모리 대역폭 효율이 높습니다. 규칙적인 데이터 흐름을 통해 행렬 곱셈 연산을 효율적으로 처리하고 하드웨어 설계 비용을 절감합니다.",
+   "keywords": [
+    "Systolic Array",
+    "NPU",
+    "MAC 연산",
+    "PE",
+    "AI 가속기"
+   ],
+   "excerpt": "대규모 딥러닝 모델의 연산 성능을 끌어올리기 위한 하드웨어 설계가 진행되고 있습니다. 특히, Google TPU를 시작으로 각광받기 시작한 Systolic Array 기반 구조는 높은 병렬성과 데이터 재사용 효율 덕분에 주목받고 있습니다. 이번 포스팅에서는 『A Survey of Design and Optimization for Systolic Array-based DNN Accelerators』 논문을 바탕으로, 이러한 구조의 핵심 설계 포인트와 최적화 전략을 정리해보려 합니다. 또한, 해당 논문을 기반으로 진행하고 있는 Systolic Array 및 내부 오류 검출 구조의 설계 상황을 공유할 예정입니다. AI 연산의 기초: 행렬 곱셈 딥러닝 모델은 수많은 행렬 연산을 통해 구성됩니다. 특히 합성곱 신경망",
+   "related": [
+    116,
+    115,
+    114,
+    117,
+    121
+   ]
+  },
+  {
+   "id": 112,
+   "url": "https://semicon-circuit.tistory.com/112",
+   "title": "4th SSA: AI, AI Semiconductor (1) _ AI 기술의 현재, 미래",
+   "date": "2025-02-26",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "verilog",
+    "하드웨어 설계",
+    "multiplexer",
+    "레이아웃 설계",
+    "mux",
+    "auto p&r",
+    "AI가속기",
+    "코딩",
+    "시스템반도체",
+    "반도체설계"
+   ],
+   "summary": "본 글은 인공지능 기술의 역사적 흐름과 스케일링 법칙, 그리고 트랜스포머 모델의 구조적 특징을 다루고 있습니다. 또한 AI 연산의 한계인 메모리 장벽을 극복하기 위한 TPU와 HBM 등 하드웨어적 접근을 설명합니다. 마지막으로, 효율적인 AI 모델 운영을 위해 프루닝과 양자화 같은 모델 압축 기법의 중요성을 강조합니다.",
+   "keywords": [
+    "Scaling Law",
+    "Transformer",
+    "Memory Wall",
+    "TPU",
+    "Quantization"
+   ],
+   "excerpt": "2025.02.24~2025.02.25 2일간 한양대학교에서 진행된 Smart Semiconductor Academy에 참석하여 인공지능과 인공지능 반도체에 대한 강의를 들었습니다. 이번 포스팅에서는 이 강연에 대해 정리하며, 추가적으로 학습한 내용을 정리합니다. 포스팅 내용 중 오류가 있다면 댓글로 남겨주시길 바랍니다! AI 기술의 현재, 미래 이동수 네이버 이사님 이동수 네이버 이사님께서 진행해주신 강연의 주요 내용은 AI 기술의 역사적 흐름과 LLM의 확장, AI 아키텍쳐의 변화 등을 담고 있었습니다. 딥러닝 혁명 https://medium.com/@shokim01/alexnet-%EC%9A%94%EC%95%BD%EB%85%B8%ED%8A%B8-b5e56556211d 2012년, AlexNet이 이미지",
+   "related": [
+    117,
+    114,
+    113,
+    115,
+    118
+   ]
+  },
+  {
+   "id": 111,
+   "url": "https://semicon-circuit.tistory.com/111",
+   "title": "FPGA 게임 만들기(3): Vitis로 SW/HW 통합",
+   "date": "2025-02-20",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "mux",
+    "uart",
+    "Virtuoso",
+    "시스템반도체",
+    "하드웨어 설계",
+    "반도체설계",
+    "회로설계",
+    "uart 설계",
+    "C언어",
+    "프로그래밍"
+   ],
+   "summary": "이 글에서는 Vivado와 Vitis를 활용해 Pmod KYPD와 Pmod OLED 기반의 FPGA 공룡 게임을 완성하는 과정을 설명합니다. 키패드 입력을 통한 공룡의 점프 동작 구현과 난수 기반의 장애물 및 익룡 생성 로직을 다룹니다. C언어로 작성된 게임 메인 루프와 캐시 설정, 충돌 감지 처리를 통해 하드웨어와 소프트웨어의 통합을 보여줍니다.",
+   "keywords": [
+    "FPGA",
+    "Vitis",
+    "Vivado",
+    "Pmod OLED",
+    "Pmod KYPD"
+   ],
+   "excerpt": "저번 게시글에 이어 마지막으로 Pmod KYPD와 Pmod OLED를 이용해 하드웨어 파일을 생성한 후, Vitis를 이용해 키패드로 동작하는 공룡 게임을 최종 완료했습니다. Vivado Process Vivado와 Vitis를 이용한 Pmod OLED 제어 [Pmod IP 이용] 이번 게시글에서는 Digilent의 게시물과 IP 라이브러리를 통해 Pmod OLED의 데모 파일 구현을 진행합니다. 추후 이를 응용하여 Pmod OLED를 통해 다양한 기능을 구현할 예정입니다. Vivado, Vitis 이용방법 semicon-circuit.tistory.com 이 게시글에서와 동일한 방법으로 Vivado Library에서 IP를 추가한 뒤, Pmod KYPD와 Pmod OLED를 추가하여 HDL Wrapper를",
+   "related": [
+    110,
+    109,
+    108,
+    11,
+    107
+   ]
+  },
+  {
+   "id": 110,
+   "url": "https://semicon-circuit.tistory.com/110",
+   "title": "FPGA 게임 만들기(2): VGA 출력과 입력 처리",
+   "date": "2025-02-17",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "코딩",
+    "시스템반도체",
+    "C언어",
+    "레이아웃 설계",
+    "회로설계",
+    "논리회로",
+    "Vivado",
+    "mux",
+    "취업준비",
+    "auto p&r"
+   ],
+   "summary": "FPGA를 활용한 게임 제작 과정에서 공룡의 애니메이션 모션과 움직이는 선인장 장애물을 구현하였습니다. XORSHIFT 알고리즘을 이용해 무작위 장애물과 간격을 생성하고 충돌 감지 및 점수판 로직을 추가하였습니다. 향후 키패드나 버튼을 연동하여 공룡을 직접 조작할 수 있도록 기능을 확장할 예정입니다.",
+   "keywords": [
+    "FPGA",
+    "OLED",
+    "애니메이션",
+    "XORSHIFT",
+    "충돌감지"
+   ],
+   "excerpt": "이번에는 저번에 구현했던 비트맵에서 더 나아가 여러가지 이미지를 번갈아가며 화면에 나타내어 움직이는 듯한 모습을 구현하고자 합니다. 저번에 사용했던 툴을 이용해서 공룡이 달리는 듯한 두 이미지를 생성하고, 이를 배열로 변환한 뒤 다음과 같이 코드를 작성해서 공룡이 뛰는 모션을 구현했습니다. 더보기 void Dino_Run() { OLED_ClearBuffer(&myDevice); OLED_MoveTo(&myDevice, 0, 0); // (0,0)에서 출력 시작 OLED_Update(&myDevice); // OLED 화면 업데이트 u8 *pat; char c; xil_printf(\"print dinosaur and cactus\"); c = 1; while(1){ xil_printf(\"Dinosaur run",
+   "related": [
+    111,
+    109,
+    15,
+    10,
+    108
+   ]
+  },
+  {
+   "id": 109,
+   "url": "https://semicon-circuit.tistory.com/109",
+   "title": "FPGA 게임 만들기(1): 하드웨어 아키텍처 설계",
+   "date": "2025-02-17",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "취업준비",
+    "코딩",
+    "반도체 설계",
+    "시스템반도체",
+    "mux",
+    "uart 설계",
+    "회로설계",
+    "uart",
+    "프로그래밍",
+    "하드웨어 설계"
+   ],
+   "summary": "이 글은 FPGA와 Pmod OLED를 활용하여 구글 공룡 게임을 구현하기 위한 하드웨어 아키텍처 설계 과정을 다루고 있습니다. 픽셀 아트 툴로 제작한 공룡과 선인장 이미지를 비트맵 배열로 변환하는 방법을 설명합니다. 또한 변환된 비트맵 데이터를 헤더 파일로 생성하고 Vitis 환경에서 디스플레이에 출력하는 코드를 구현합니다.",
+   "keywords": [
+    "FPGA",
+    "Vivado",
+    "Vitis",
+    "Pmod OLED",
+    "비트맵"
+   ],
+   "excerpt": "Vivado와 Vitis를 이용한 Pmod OLED 제어 [Pmod IP 이용] 이번 게시글에서는 Digilent의 게시물과 IP 라이브러리를 통해 Pmod OLED의 데모 파일 구현을 진행합니다. 추후 이를 응용하여 Pmod OLED를 통해 다양한 기능을 구현할 예정입니다. Vivado, Vitis 이용방법 semicon-circuit.tistory.com 지난 게시글에서 Vivado에서 Pmod IP를 이용해 하드웨어 파일을 만들고, Vitis로 Pmod OLED 데모 파일을 실행하는 과정까지 포스팅했습니다, 이번 게시글에서는 이어서 직접 비트맵 파일을 Pmod OLED에 표시해보는 작업을 진행합니다. 앞으로 이 디스플레이를 이용해 구글의 공룡게임을 구현할 예정입니다. 구글 공룡 게임 먼저 공룡의 모습과",
+   "related": [
+    111,
+    110,
+    108,
+    104,
+    11
+   ]
+  },
+  {
+   "id": 108,
+   "url": "https://semicon-circuit.tistory.com/108",
+   "title": "[FPGA 공룡게임 #0] Vivado Pmod IP 및 Vitis Baremetal 제어 환경 구축",
+   "date": "2025-02-14",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "취업준비",
+    "Vivado",
+    "uart",
+    "auto p&r",
+    "C언어",
+    "Virtuoso",
+    "multiplexer",
+    "논리회로",
+    "코딩",
+    "verilog"
+   ],
+   "summary": "이 글은 Vivado와 Vitis를 활용하여 FPGA 보드에서 Pmod OLED를 제어하기 위한 베어메탈(Baremetal) 개발 환경 구축 방법을 설명합니다. Digilent의 보드 파일과 라이브러리를 설정하고 Vivado에서 블록 디자인과 비트스트림을 생성하는 과정을 다룹니다. 마지막으로 Vitis에서 프로젝트를 생성하고 코드를 빌드하여 하드웨어 동작을 검증하는 절차를 안내합니다.",
+   "keywords": [
+    "Vivado",
+    "Vitis",
+    "FPGA",
+    "Pmod OLED",
+    "Baremetal"
+   ],
+   "excerpt": "이번 게시글에서는 Digilent의 게시물과 IP 라이브러리를 통해 Pmod OLED의 데모 파일 구현을 진행합니다. 추후 이를 응용하여 Pmod OLED를 통해 다양한 기능을 구현할 예정입니다. Vivado, Vitis 이용방법 Getting Started with Vivado and Vitis for Baremetal Software Projects - Digilent Reference digilent.com 준비사항 Vivado, Vitis 2023.2버전: 기존에 사용하던 2024.2버전으로는 호환이 되지 않아 해당 버전으로 수행했습니다. Digilent 보드 파일 다운로드 아래의 파일을 다운로드 받아 압축을 해제한 뒤, \\vivado-boards-master\\vivado-boards-master\\n",
+   "related": [
+    91,
+    90,
+    109,
+    111,
+    12
+   ]
+  },
+  {
+   "id": 107,
+   "url": "https://semicon-circuit.tistory.com/107",
+   "title": "[Verilog 미니 프로젝트 #3] Pmod KYPD 매트릭스 제어 및 키패드 디코더 설계",
+   "date": "2025-02-12",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "AI가속기",
+    "논리회로",
+    "레이아웃 설계",
+    "multiplexer",
+    "반도체 설계",
+    "uart 설계",
+    "mux",
+    "회로설계",
+    "반도체설계",
+    "시스템반도체"
+   ],
+   "summary": "이 글은 Verilog를 이용하여 계산기 구현을 위한 Pmod KYPD 매트릭스 키패드 디코더를 설계하는 과정을 설명합니다. 1ms마다 열(COL)을 순차적으로 LOW로 설정하고 행(ROW)의 입력을 확인하여 어떤 키가 눌렸는지 감지하는 원리를 다룹니다. 또한, 디바운싱(Debouncing) 모듈을 적용하여 안정적인 키 입력 신호를 생성하는 Verilog 코드를 제공합니다.",
+   "keywords": [
+    "Verilog",
+    "Pmod KYPD",
+    "Decoder",
+    "Debounce",
+    "FPGA"
+   ],
+   "excerpt": "계산기를 설계할 때에는 Digilent의 Pmod KYPD를 통해 값을 입력받아 숫자나 문자로 변환하는 Decoder와 Decoder로부터 받은 값을 연산하여 세그먼트 디스플레이로 보내기 위한 calculator 모듈이 필요합니다. 프로젝트 소개 게시글에서 간략하게 설명했듯이, KYPD의 Schematic은 아래와 같습니다. Pmod KYPD Schematic 이 키패드를 통해 어떤 버튼이 눌리는지 감지하는 방법은 먼저 각 열(COL)을 순차적으로 LOW로 설정합니다. [ 1110->1101->1011->0111 ] 이후 LOW로 설정된 열에서 키가 눌린 경우, 이에 해당하는 행(ROW) 핀에 LOW 신호가 전달됩니다. 이 과정을 반복하여 각 열을 1ms마다 LOW로 설정한 뒤 ROW 값을 입력으로 확인하면",
+   "related": [
+    38,
+    105,
+    106,
+    61,
+    100
+   ]
+  },
+  {
+   "id": 106,
+   "url": "https://semicon-circuit.tistory.com/106",
+   "title": "[Verilog 미니 프로젝트 #2] 카운터 및 타이밍 레지스터를 활용한 스탑워치 설계",
+   "date": "2025-02-12",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "레이아웃 설계",
+    "하드웨어 설계",
+    "Vivado",
+    "multiplexer",
+    "uart",
+    "취업준비",
+    "C언어",
+    "코딩",
+    "AI가속기",
+    "반도체 설계"
+   ],
+   "summary": "Verilog를 활용하여 분, 초, 밀리초를 측정하고 7세그먼트로 출력하는 스탑워치 모듈을 설계했습니다. 클럭 카운터와 타이밍 레지스터를 이용하여 정확한 0.01초 단위를 계산하도록 구현했습니다. IDLE, START, PAUSE 상태를 가지는 FSM을 적용하여 버튼 입력에 따른 동작 제어와 초기화 기능을 완성했습니다.",
+   "keywords": [
+    "Verilog",
+    "스탑워치",
+    "FSM",
+    "타이밍 레지스터",
+    "7세그먼트"
+   ],
+   "excerpt": "스탑워치를 표시할 7세그먼트 디스플레이 제어 모듈을 완성한 뒤 분, 초, 밀리초를 계산하여 세그먼트로 전송하는 스탑워치 모듈 설계를 진행했습니다. Stopwatch 모듈 정의 Module Name: stopwatch Inputs rst clk [1:0] mode:스탑워치가 Mode 1에서만 값을 세그먼트로 보낼 때 사용 btn1: Start/Stop 버튼 btn0: Reset 버튼 Outputs reg [13:0] value: 스탑워치를 통해 계산한 네자리 값을 출력 Registers reg [3:0] sec0_1, sec0_01: 0.1초, 0.01초의 값을 저장하는 레지스터. 0~9까지의 숫자를 저장하므로 4비트 사용 reg [5:0] sec, min: 초, 분의 값을 저장하는 레지스터. 0~59까지의 ",
+   "related": [
+    38,
+    105,
+    15,
+    100,
+    25
+   ]
+  },
+  {
+   "id": 105,
+   "url": "https://semicon-circuit.tistory.com/105",
+   "title": "[Verilog 미니 프로젝트 #1] 7-Segment 디스플레이 제어를 위한 인터페이스 설계",
+   "date": "2025-02-11",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "프로그래밍",
+    "반도체설계",
+    "Virtuoso",
+    "Vivado",
+    "반도체 설계",
+    "취업준비",
+    "verilog",
+    "논리회로",
+    "레이아웃 설계",
+    "multiplexer"
+   ],
+   "summary": "본 글은 스톱워치 설계를 위해 4자리 7세그먼트 디스플레이를 제어하는 Verilog 인터페이스 설계 과정을 다루고 있습니다. 입력받은 14비트의 숫자를 자리별 BCD 코드로 분리하고 세그먼트 출력 값으로 변환하는 FSM 기반의 로직을 구현했습니다. 또한 1ms 주기의 동적 점멸 제어와 자리 전환 전 OFF 시간을 두어 안정적인 디스플레이 출력이 가능하도록 설계했습니다.",
+   "keywords": [
+    "Verilog",
+    "7-Segment",
+    "FSM",
+    "BCD",
+    "Interface"
+   ],
+   "excerpt": "스탑워치를 설계하기에 앞서, 숫자를 표시하기 위한 네자리 7세그먼트 디스플레이를 제어하기 위한 코드를 작성했습니다. 이번에 사용한 디스플레이는 이전에 반도체 설계교육 중 임베디드 시스템 설계 과정에서 사용한 디스플레이를 사용했습니다. 하만(Harman) 세미콘 아카데미 11일차 - SW 구조설계( 데이터 입출력, 버튼 LED 점멸, 7세그먼트 출력 ) [2024.03.21.목] 인천인력개발원 하만 세미콘 아카데미임베디드 시스템을 위한 SW 구조설계디지털 데이터 입출력1. 디지털 데이터 출력 PORT 레지스터 (출력 레지스터) 포트: 8개의 핀을 하나로 묶어 semicon-circuit.tistory.com 하만(Harman) 세미콘 아카데미 12일차 - SW 구조설계( 7세그먼트 - 16진수 출력, 스톱워치",
+   "related": [
+    106,
+    15,
+    38,
+    44,
+    20
+   ]
+  },
+  {
+   "id": 104,
+   "url": "https://semicon-circuit.tistory.com/104",
+   "title": "[Verilog 미니 프로젝트 #0] FPGA 하드웨어 설계 아키텍처 및 환경 구축",
+   "date": "2025-02-11",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "mux",
+    "회로설계",
+    "Vivado",
+    "코딩",
+    "verilog",
+    "논리회로",
+    "AI가속기",
+    "C언어",
+    "시스템반도체",
+    "취업준비"
+   ],
+   "summary": "방학 동안 Verilog를 복습하고 SoC 및 IP에 대한 이해를 높이기 위한 하드웨어 설계 미니 프로젝트를 진행합니다. Digilent Cora Z7 FPGA 보드와 다양한 주변 장치를 활용하여 스탑워치와 계산기 등의 하드웨어를 구현할 계획입니다. 프로젝트 진행을 위해 마스터 XDC 파일을 참고하여 핀 설정 및 포트 매핑 환경을 구축했습니다.",
+   "keywords": [
+    "Verilog",
+    "FPGA",
+    "Cora Z7",
+    "SoC",
+    "XDC"
+   ],
+   "excerpt": "방학동안 verilog 복습을 진행하며 기본적인 하드웨어부터 구현해보고, 이후 pmod OLED를 활용한 장치까지 구현할 예정입니다. 프로젝트 개요 기간: 2025.01.20~2025.02.28 (약 1개월) 목적: verilog를 이용한 하드웨어 설계 복습 및 SoC, IP에 대한 이해 목표: 7세그먼트, 키패드, 버튼, OLED 디스플레이 등을 활용한 스탑워치, 계산기 등 하드웨어 설계 하드웨어 구성 1. 모드 표시 LED: 모드에 따라 LED의 색, 위치가 변함 2. 스탑워치 Start/Stop 버튼 3. 스탑워치 Reset 버튼 4. 모드 변경 버튼 5. 7세그먼트 디스플레이 6. 계산기 키패드 7. Pmod OLED 디스플레이 FPGA 보드: Digilent Cora Z7 기존에 반도체 설계교육에서",
+   "related": [
+    12,
+    11,
+    106,
+    105,
+    38
+   ]
+  },
+  {
+   "id": 103,
+   "url": "https://semicon-circuit.tistory.com/103",
+   "title": "KLA 인턴 후기 — 2025 CSE 동계 인턴 전형·인적성 준비",
+   "date": "2025-01-16",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "multiplexer",
+    "Virtuoso",
+    "uart 설계",
+    "Vivado",
+    "반도체 설계",
+    "auto p&r",
+    "레이아웃 설계",
+    "mux",
+    "verilog"
+   ],
+   "summary": "본 글은 2025년 KLA 동계 인턴 CS 엔지니어 전형의 서류 작성법, 인적성, 전화영어, 그리고 면접 후기까지의 채용 과정을 상세히 공유하고 있습니다. 각 전형별 준비 요령과 함께 지원자들과 소통하며 얻은 실질적인 팁을 제공합니다. 비록 최종 탈락했지만 첫 면접을 통해 얻은 경험과 반성점을 솔직하게 담아내어 향후 지원자들에게 유용한 정보를 전달합니다.",
+   "keywords": [
+    "KLA 인턴",
+    "CS 엔지니어",
+    "자기소개서",
+    "인적성 검사",
+    "면접 전형"
+   ],
+   "excerpt": "오늘은 KLA 인턴전형 후기를 남겨보겠습니다! 면접전형에서 최종 탈락했지만 각 전형 진행 방식이나 결과 발표 등 정보 공유하고자 합니다. 채용 프로세스 [결과 발표일 포함] 1. 지원서 접수 [ 2024.11.11(월)~2024.11.24(일) ] 2. 서류전형 결과 발표 [ 2024.11.28 (목) ] 3. 온라인 인적성 검사 실시 [ ~2024.12.01(일) ] 4. 전화영어 테스트 [ 2024.12.02(월) ] 5. 인적성/전화영어 결과 발표 [ 2024.12.09(월) ] 6. 면접 진행 [ 2024.12.12(목) ] 7. 최종 발표 [ 2024.12.20(금) ] 작년 11월 24일까지 모집한 2025 KLA 동계인턴 CS Engineer 인턴십에 지원했습니다. 이전까지는 10명 이상 선발했",
+   "related": [
+    46,
+    26,
+    27,
+    50,
+    63
+   ]
+  },
+  {
+   "id": 102,
+   "url": "https://semicon-circuit.tistory.com/102",
+   "title": "공핍층(Depletion Region)이란? pn 접합과 공간전하영역(SCR) 정리",
+   "date": "2024-10-21",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체설계",
+    "AI가속기",
+    "verilog",
+    "회로설계",
+    "취업준비",
+    "C언어",
+    "논리회로",
+    "Vivado",
+    "레이아웃 설계",
+    "시스템반도체"
+   ],
+   "summary": "pn 접합은 p형과 n형 반도체가 접촉하여 열평형 상태를 이루며, 이 과정에서 캐리어의 확산과 재결합으로 인해 내부 전기장이 형성됩니다. 접합면 부근에는 캐리어가 고갈된 공간전하영역(SCR) 또는 공핍층이 발생하여 전하의 평형을 유지합니다. 공핍 근사(Depletion Approximation)를 적용하면 SCR 내부의 캐리어 농도를 무시하고 이온화된 도펀트 농도만을 고려하여 해석할 수 있습니다.",
+   "keywords": [
+    "PN Junction",
+    "Depletion Region",
+    "Space Charge Region",
+    "Carrier Diffusion",
+    "Depletion Approximation"
+   ],
+   "excerpt": "열평형 상태의 pn junction PN Junction(PN 접합)은 p형 반도체와 n형 반도체를 접합하여 만든 형태로, 열적 평형 상태에서 다음과 같은 특징을 갖는다. 1. 항상 안정된 상태(시간에 따른 변화 x) 2. 가장 낮은 에너지 상태 3. 전압, 빛, 전기장, 자기장, 온도변화 등 외부 에너지원이 없는 상태 4. 소자의 경우 전류 흐름이 없는 상태 p형과 n형의 접합부를 금속접합(Metallurgical Juction)이라 하며, 이 부분을 기준으로 p영역과 n영역이 구분된다. p형 반도체와 n형 반도체가 접촉하게 되면 먼저 Step Juction 이 형성되는데, 이 때 p형 반도체의 캐리어 농도는 Na, n형 반도체 캐리어 농도는 Nd로 계단식으로 나타나게 된다. 접촉 직후 Carrier가 확",
+   "related": [
+    35,
+    40,
+    41,
+    26,
+    36
+   ]
+  },
+  {
+   "id": 101,
+   "url": "https://semicon-circuit.tistory.com/101",
+   "title": "Buck Power Stage",
+   "date": "2024-10-16",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "uart 설계",
+    "Virtuoso",
+    "프로그래밍",
+    "multiplexer",
+    "반도체설계",
+    "회로설계",
+    "mux",
+    "auto p&r",
+    "코딩"
+   ],
+   "summary": "이 글은 텍사스 인스트루먼트의 애플리케이션 리포트를 바탕으로 입력 전압을 낮추는 강압형 컨버터인 벅 파워 스테이지의 동작 원리를 설명합니다. 벅 컨버터의 핵심 구성 요소와 회로 동작 상태를 살펴보고, 인덕터 전류의 연속 여부에 따라 연속 전도 모드와 불연속 전도 모드로 나누어 각각의 출력 전압 유도 과정을 다룹니다. 이를 통해 두 구동 모드에서의 출력 전압 특성과 부하 저항 및 인덕터 값에 따른 차이점을 명확히 이해할 수 있습니다.",
+   "keywords": [
+    "Buck Converter",
+    "CCM",
+    "DCM",
+    "Duty Cycle",
+    "Inductor Ripple Current"
+   ],
+   "excerpt": "이번 포스팅에서는 Texas Instruments에서 발행한 Buck Power Stage에 대한 Application Report의 내용을 정리한다. understanding buck power stages_TI_241010_142651.pdf 1.66MB Buck Converter은 입력전압 V_i보다 출력전압 V_o를 낮추는 강압형 컨버터로, Step-Down Converter라고도 칭한다. Buck Converter의 회로는 다음과 같이 나타난다. 여기서 Q1은 NMOS, CR1은 다이오드(catch diode or freewheeling diode), L과 C는 각각 인덕터와 캐패시터를 나타낸다. Freewheeling 다이오드 혹은 Catch 다이오드란 전압 스파크나 유도성 Flyback 전압으로",
+   "related": [
+    32,
+    39,
+    28,
+    35,
+    26
+   ]
+  },
+  {
+   "id": 100,
+   "url": "https://semicon-circuit.tistory.com/100",
+   "title": "ModelSim 기반 반도체 설계 시뮬레이션 및 검증 가이드",
+   "date": "2024-08-27",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "multiplexer",
+    "mux",
+    "프로그래밍",
+    "Virtuoso",
+    "회로설계",
+    "코딩",
+    "반도체설계",
+    "C언어",
+    "레이아웃 설계",
+    "반도체 설계"
+   ],
+   "summary": "이 글은 Intel FPGA Standard Edition의 ModelSim을 활용한 반도체 설계 시뮬레이션 및 검증 방법을 설명합니다. 디렉토리 설정, 컴파일, 파형 추가, 신호 인가 및 실행 등 핵심 시뮬레이션 명령어들을 다룹니다. 이를 바탕으로 버튼 카운터와 스탑워치라는 두 가지 실제 회로 설계 사례를 통해 검증 과정을 보여줍니다.",
+   "keywords": [
+    "ModelSim",
+    "회로설계",
+    "시뮬레이션",
+    "버튼카운터",
+    "스탑워치"
+   ],
+   "excerpt": "ModelSim - Intel FPGA Standard Edition ModelSim-Intel® FPGAs Standard Edition Software Version 18.1 ModelSim-Intel® FPGAs Standard Edition Software Version 18.1 B625 www.intel.com ModelSim 명령어 cd <dir>: change directory dir: directory 내용표시 vlib work: modelsim에서 compile 결과를 저장해둘 directory \"work\"를 생성 vlog _____.v: .v 파일의 문법 check&compile vsim _____: simulation 시작 add wave *: 모든 신호를 파형창에 표시 do ____.d",
+   "related": [
+    38,
+    20,
+    25,
+    12,
+    106
+   ]
+  },
+  {
+   "id": 99,
+   "url": "https://semicon-circuit.tistory.com/99",
+   "title": "ADC 분해능이란? 아날로그-디지털 변환 원리와 해상도 정리",
+   "date": "2024-08-23",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Virtuoso",
+    "하드웨어 설계",
+    "시스템반도체",
+    "uart 설계",
+    "회로설계",
+    "반도체설계",
+    "레이아웃 설계",
+    "auto p&r",
+    "multiplexer",
+    "verilog"
+   ],
+   "summary": "본문은 ADC 분해능의 개념과 비트 수에 따른 정밀도 변화를 설명하고 있습니다. 또한 디지털 회로 설계 시 주의해야 할 글리치 방지 및 동기화 설계 방법을 다룹니다. 나아가 Verilog를 활용한 카운터 설계와 FPGA 디자인 및 LUT의 동작 원리를 정리하고 있습니다.",
+   "keywords": [
+    "ADC 분해능",
+    "Glitch",
+    "동기화 설계",
+    "Verilog",
+    "LUT"
+   ],
+   "excerpt": "[2024.08.23.금] 인천인력개발원 하만 세미콘 아카데미 Introduction 1. Analog 신호와 Digital 신호 Analog 신호: 자연계에 존재하는 시간에 따라 변화하는 연속적인 신호 ex) 오디오 신호, 밝기, 온도, ... Digital 신호 Digit: 한 자리 숫자를 의미 Digital: 숫자로 표시된 2. Resolution(분해능) ADC에서, 8Bit는 분해능이 256, 12Bit는 분해능이 4096, 16Bit는 분해능이 65536이다. -> Bit 수가 클 수록 분해능이 증가하여 데이터의 정밀도가 증가하지만, 데이터의 크기가 커진다. 수직 분해능 증가: 데이터의 비트 수를 증가시켜 값을 더 많이 할당 수평 분해능 증가: Sampling Clock의 주파수를 증가시켜 값을 ",
+   "related": [
+    25,
+    20,
+    11,
+    19,
+    16
+   ]
+  },
+  {
+   "id": 98,
+   "url": "https://semicon-circuit.tistory.com/98",
+   "title": "UART 통신이란? 비동기 직렬 통신 개념 정리",
+   "date": "2024-07-30",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Virtuoso",
+    "uart 설계",
+    "verilog",
+    "Vivado",
+    "시스템반도체",
+    "mux",
+    "반도체설계",
+    "프로그래밍",
+    "하드웨어 설계",
+    "코딩"
+   ],
+   "summary": "UART는 병렬 데이터와 직렬 데이터를 상호 변환하여 두 장치 간의 통신을 수행하는 대표적인 비동기식 직렬 통신 방식입니다. Start Bit, Data Bits, Parity Bit, Stop Bit로 구성된 프레임을 사용하며, 두 개의 선만 필요하여 구조가 단순하지만 고속 통신에는 적합하지 않습니다. 하드웨어 설계 시에는 Baud Rate Generator, TX, RX 모듈을 순차적으로 구현하여 안정적인 데이터 송수신을 달성합니다.",
+   "keywords": [
+    "UART",
+    "비동기 통신",
+    "Baud Rate",
+    "오버샘플링",
+    "패리티 비트"
+   ],
+   "excerpt": "UART란? UART(Universal Asynchronous Receiver/Transmitter, 범용 비동기화 송수신기)는 데이터 버스로부터 병렬로 받은 데이터를 직렬 방식으로 전환하여 다른 UART로 전송하는 컴퓨터 하드웨어의 한 종류이다. UART로부터 직렬 데이터를 수신한 다른 UART는 이를 병렬 방식으로 전환하여 데이터 버스에 전송한다. 통신에 사용되는 데이터는 메모리나 레지스터에 저장되어 있으며, 이를 차례데로 읽어 직렬로 통신한다. 기본 단위는 최대 8비트이다. UART 통신의 특징 UART 통신은 Start Bit와 Stop Bit를 통해 통신의 시작점과 끝지점을 정의한다. UART는 비동기식(Asynchronous) 통신 방식으로 RX와 TX 각각의 clock 신호를 사용한다. Bit ",
+   "related": [
+    96,
+    69,
+    97,
+    95,
+    52
+   ]
+  },
+  {
+   "id": 97,
+   "url": "https://semicon-circuit.tistory.com/97",
+   "title": "UART 설계(3): RX 모듈 FSM 설계와 검증",
+   "date": "2024-07-29",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "코딩",
+    "회로설계",
+    "uart",
+    "Vivado",
+    "하드웨어 설계",
+    "verilog",
+    "시스템반도체",
+    "취업준비",
+    "AI가속기",
+    "auto p&r"
+   ],
+   "summary": "본 글은 UART 수신(RX) 모듈의 FSM 설계 과정에서 발생한 상태 초기화 및 패리티 체크 오류를 수정하는 과정을 다루고 있습니다. 테스트벤치를 통해 비트 카운트 초기화 오류와 패리티 비트 읽기 시점의 문제를 파악하고 코드를 수정했습니다. 또한, XOR 연산을 활용해 패리티 에러 검출 로직을 바로잡고 최종 통합 설계 코드를 완성했습니다.",
+   "keywords": [
+    "UART RX",
+    "FSM",
+    "Parity Check",
+    "Verilog",
+    "Testbench"
+   ],
+   "excerpt": "FSM 순서 idle: din이 1로 유지될 때 대기상태. din이 0이 되면 enable 신호에 맞춰 load로 상태 변경 load: 8비트의 데이터를 받은 뒤 parity를 읽고, parity check로 상태 변경 parity check: 저장한 parity bit와 data bit를 이용하여 패리티 검사 transmit: 패리티 검사 이후 병렬 데이터를 dout으로 전송 다음과 같이 코드를 작성했다. `timescale 1ns / 1ps ////////////////////////////////////////////////////////////////////////////////// // Company: // Engineer: // // Create Date: 2024/07/28 13:46:57 //",
+   "related": [
+    96,
+    55,
+    52,
+    95,
+    98
+   ]
+  },
+  {
+   "id": 96,
+   "url": "https://semicon-circuit.tistory.com/96",
+   "title": "UART 설계(2): TX 모듈 Verilog 구현",
+   "date": "2024-07-26",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "회로설계",
+    "Virtuoso",
+    "multiplexer",
+    "AI가속기",
+    "하드웨어 설계",
+    "반도체 설계",
+    "uart",
+    "mux",
+    "레이아웃 설계",
+    "프로그래밍"
+   ],
+   "summary": "이 글은 Verilog를 이용하여 UART 송신기(TX) 모듈을 설계하고 발생하는 오류들을 FSM 수정과 코딩 개선을 통해 해결하는 과정을 설명합니다. 병렬 데이터를 받아 스타트, 패리티, 데이터, 스탑 비트를 포함한 11비트 직렬 데이터로 변환하는 과정을 다룹니다. 마지막으로 Baud Rate Generator를 연동하여 보 레이트에 맞춰 정상적으로 데이터가 전송되도록 시스템을 완성합니다.",
+   "keywords": [
+    "UART TX",
+    "Verilog",
+    "FSM",
+    "Baud Rate Generator",
+    "Serial Communication"
+   ],
+   "excerpt": "UART TX 모듈 설계 신호 개요 DIN [7:0]: 데이터 버스로부터 받는 8비트의 parallel 데이터묶음 Send: 데이터 전송의 시작을 명령하는 신호 Dout: RX로 전달되는 serial 데이터 Busy: UART TX가 동작중임을 나타내는 신호 ParitySelect: Odd Parity를 사용할지 Even Parity를 사용할지 선택하는 신호 작동 방식 8비트의 parallel 데이터를 버스로부터 수신한다. send 신호가 들어오면 stop bit - parity bit - data - start bit 순으로 구성된 데이터 11비트를 dout으로 전송한다. [ uart_tx.v ] 더보기 `timescale 1ns / 1ps ////////////////////////////////////",
+   "related": [
+    97,
+    55,
+    98,
+    52,
+    95
+   ]
+  },
+  {
+   "id": 95,
+   "url": "https://semicon-circuit.tistory.com/95",
+   "title": "UART 설계(1): Baud Rate Generator와 오버샘플링",
+   "date": "2024-07-22",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "mux",
+    "취업준비",
+    "반도체설계",
+    "AI가속기",
+    "Virtuoso",
+    "반도체 설계",
+    "uart",
+    "verilog",
+    "프로그래밍",
+    "multiplexer"
+   ],
+   "summary": "본 글은 UART 설계에서 Baud Rate Generator와 오버샘플링을 구현하는 방법을 설명합니다. 16배 오버샘플링을 통해 데이터 비트의 중앙에서 샘플링할 수 있도록 enable 신호를 생성하는 Verilog 코드를 다룹니다. 또한, 작성한 모듈을 검증하기 위한 테스트벤치 코드와 그 실행 결과를 함께 제시합니다.",
+   "keywords": [
+    "UART",
+    "Baud Rate Generator",
+    "Oversampling",
+    "Verilog",
+    "Testbench"
+   ],
+   "excerpt": "Baud Rate을 생성하고, Over Sampling을 하기 위한 코드 작성 (baud_rate_gen.v) oversampling을 위해 bit count를 진행해야 한다. 첫 신호에서 start bit가 들어오면 bit_cnt_std 8번째에 샘플링을 시작하고, 그 이후부터는 16번째에 샘플링을 하면 data bit의 중앙에서 데이터를 샘플링할 수 있다, 1개의 baud rate 주기 안에 들어가는 clock의 개수를 구하기 위해서 baud rate 주기 / clk 주기 = clk freq / baud rate freq을 계산한다. 위에서 계산한 값을 16으로 나누어 그 값을 bit count standard로 잡으면 이 기준의 16배가 baud rate의 주기가 된다. bit count standar",
+   "related": [
+    55,
+    52,
+    96,
+    97,
+    25
+   ]
+  },
+  {
+   "id": 94,
+   "url": "https://semicon-circuit.tistory.com/94",
+   "title": "STM32 DMA와 UART 통신",
+   "date": "2024-07-18",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "multiplexer",
+    "mux",
+    "Vivado",
+    "시스템반도체",
+    "하드웨어 설계",
+    "auto p&r",
+    "코딩",
+    "uart 설계",
+    "반도체 설계",
+    "레이아웃 설계"
+   ],
+   "summary": "이 글은 STM32 마이크로컨트롤러에서 Union 메모리 구조를 활용한 DMA 데이터 처리와 UART 통신 구현 방법을 다룹니다. 외부 인터럽트(B1 버튼)를 통해 동작 모드를 변경하고, 메모리 덤프 기능을 통해 리틀 엔디언(Little Endian) 방식으로 저장된 데이터를 확인하는 실습을 설명합니다. 또한, UART 수신 인터럽트와 에코(Echo) 기능을 활용하여 터미널 입출력 및 문자열 처리 로직을 구현하는 과정을 담고 있습니다.",
+   "keywords": [
+    "STM32",
+    "DMA",
+    "UART",
+    "Union",
+    "Interrupt"
+   ],
+   "excerpt": "Union: 공유 메모리 Union의 크기는 가장 큰 요소의 크기에 의해 결정된다. Union 내의 모든 요소는 동일한 메모리 주소를 공유한다. 이 때문에 가장 최근에 저장된 값만 유효하게 된다. 1. union buffer 선언 union에 char, 2. DMA 코드 변경 3. printf에서 출력할 변수의 자료형을 다음과 같이 변경할 수 있다. 과제 1: 위의 작동 중 B1을 누르면 화면 출력 정지, Union 메모리 내용을 Hex로 출력 1. Mode가 전환되며 그에 따른 동작을 하기 위해 외부 변수로 Mode 선언 2. 인터럽트를 설정하여 버튼이 눌릴 때 모드가 변경되도록 코드 작성 2-1. Test005-ADC-DMA.ioc 파일 열기 2-2. System Core - NVIC 탭에서 B1에 대해",
+   "related": [
+    92,
+    87,
+    86,
+    69,
+    10
+   ]
+  },
+  {
+   "id": 92,
+   "url": "https://semicon-circuit.tistory.com/92",
+   "title": "STM32 조이스틱 응용, 인터럽트 활용",
+   "date": "2024-07-17",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "mux",
+    "C언어",
+    "하드웨어 설계",
+    "Virtuoso",
+    "Vivado",
+    "uart",
+    "레이아웃 설계",
+    "반도체설계",
+    "verilog",
+    "코딩"
+   ],
+   "summary": "이 글은 STM32 마이크로컨트롤러를 활용하여 조이스틱과 조도센서의 입력을 처리하는 방법을 설명합니다. ADC, DMA, 그리고 타이머 인터럽트를 설정하여 센서 데이터를 효율적으로 읽어오는 과정을 다룹니다. 최종적으로 코드를 수정하여 조이스틱과 조도센서의 측정값이 정상적으로 출력되는 것을 확인합니다.",
+   "keywords": [
+    "STM32",
+    "ADC",
+    "DMA",
+    "인터럽트",
+    "조이스틱"
+   ],
+   "excerpt": "HDL_ADC_PollForConversion: Polling 방식으로 Conversion 1.PB0를 GPIO_INPUT으로 설정 후 System Core - GPIO에서 다음과 같이 설정 . . .. 5. TIM3 설정 . TIM3 인터럽트 설정 . Code Generation 작동 확인 1. Test005-ADC-DMA 프로젝트 생성 2. ioc 파일에서 핀 설정 후 순서대로 X_Axis, Y_Axis, Z_Axis 라벨링 3. 좌측 Analog - ADC1 탭에서 Parameter Settings 변경 4. DMA Settings에서 Add - ADC1 선택 - 아래와 같이 세팅값 변경 Circular 방식: 메모리에 데이터를 채울 때 메모리 공간을 모두 채우면 다시 처음 주소에 데이터를 저장하는 방",
+   "related": [
+    94,
+    87,
+    86,
+    14,
+    10
+   ]
+  },
+  {
+   "id": 91,
+   "url": "https://semicon-circuit.tistory.com/91",
+   "title": "AXI 통신을 이용한 Segment 출력",
+   "date": "2024-07-16",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "하드웨어 설계",
+    "취업준비",
+    "반도체설계",
+    "auto p&r",
+    "Virtuoso",
+    "시스템반도체",
+    "논리회로",
+    "코딩",
+    "레이아웃 설계",
+    "uart"
+   ],
+   "summary": "이 글은 Vivado와 Vitis를 활용하여 AXI 통신 기반의 Segment 출력을 구현하는 전체 과정을 설명합니다. IP 생성 및 수정, 블록 디자인 구성, 핀 할당 및 비트스트림 생성 단계를 다룹니다. 마지막으로 하드웨어 엑스포트 이후 Vitis에서 소프트웨어 코드를 작성하고 실행하는 방법을 안내합니다.",
+   "keywords": [
+    "AXI 통신",
+    "Segment 출력",
+    "Vivado",
+    "Vitis",
+    "Block Design"
+   ],
+   "excerpt": "1. New Project 생성 - Source 추가: 전 과정에서 생성된 myip2_slave_lite_v1_0_S00_AXI.v 파일, segment 출력 파일 2. 보드 선택 후 finish 3. myip2_slave~~.v에서 segment와 연결하기 위한 hi_bit과 low_bit을 output으로 선언 4. myip2_slave~~.v에서 output으로 나갈 high bit와 low bit에 slave의 register 값을 나누어 할당 5. Create Block Desgin - Zynq 추가 - Run Block Automation 6. Zynq7의 Ethernet, USB 포트 비활성화 7. PS/PL Interface 확인 8. Add module - 모듈 추가 9. Run Connec",
+   "related": [
+    90,
+    108,
+    12,
+    11,
+    78
+   ]
+  },
+  {
+   "id": 90,
+   "url": "https://semicon-circuit.tistory.com/90",
+   "title": "Zynq AXI4 Peripheral 설계: Data Width/레지스터 제어",
+   "date": "2024-07-15",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "auto p&r",
+    "C언어",
+    "uart 설계",
+    "반도체 설계",
+    "취업준비",
+    "mux",
+    "하드웨어 설계",
+    "Virtuoso",
+    "uart",
+    "Vivado"
+   ],
+   "summary": "본 글은 Zynq 7 보드를 기반으로 Vivado에서 AXI4 페리퍼럴 IP를 생성하고 블록 디자인을 구성하는 방법을 설명합니다. 비트스트림 생성 후 Vitis 환경에서 플랫폼 및 애플리케이션 컴포넌트를 생성하여 하드웨어와 연동합니다. 마지막으로 작성한 C언어 테스트 코드를 통해 AXI4 인터페이스를 통한 데이터 쓰기 및 읽기 동작을 검증합니다.",
+   "keywords": [
+    "Zynq AXI4 Peripheral",
+    "Vivado",
+    "Block Design",
+    "Vitis",
+    "IP Packaging"
+   ],
+   "excerpt": "Data Width: 데이터의 비트 크기를 나타낸다. 1. my_axi_test 프로젝트 생성 (board는 cora z7 선택) 2. Create Block Design - Add IP Source - Zynq 7 추가 3. Run Block Automation 4. Tool에서 Create and package New IP 에서 Next - Create ZXI4 Peripheral - Create a new AXI4 peripheral 선택 후 next - 아래와 같이 설정 후 next - finish 5. Add IP - 위에서 생성한 myip 추가 추가한 뒤 Run Connection Automation 실행 6. Address 확인 Address Map 7. Validate Design 8. Cre",
+   "related": [
+    91,
+    108,
+    78,
+    12,
+    11
+   ]
+  },
+  {
+   "id": 88,
+   "url": "https://semicon-circuit.tistory.com/88",
+   "title": "Verilog 자료형",
+   "date": "2024-07-13",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "시스템반도체",
+    "프로그래밍",
+    "논리회로",
+    "uart",
+    "Vivado",
+    "코딩",
+    "레이아웃 설계",
+    "하드웨어 설계",
+    "uart 설계"
+   ],
+   "summary": "Verilog의 기본 논리값(0, 1, x, z)과 하드웨어 연결을 나타내는 net 자료형 및 값을 저장하는 variable 자료형의 특징을 설명합니다. 또한, 여러 비트를 다루기 위한 벡터와 배열의 개념 및 선언 방법을 다룹니다. 마지막으로 상수를 정의하는 parameter와 localparam의 사용법을 소개합니다.",
+   "keywords": [
+    "Verilog",
+    "net 자료형",
+    "variable 자료형",
+    "벡터와 배열",
+    "parameter"
+   ],
+   "excerpt": "논리값 0: 논리 '0', 거짓(false) 1: 논리 '1', 참(true) x: unknown 상태(논리 '0'과 논리 '1'의 충돌이 발생하여 값을 확정할 수 없는 경우) z: 구동자가 없는 High-Impedence 상태 net 자료형 net 자료형: 논리 게이트나 모듈 등 하드웨어 요소 사이의 물리적 연결을 나타내는 자료형 net는 값을 저장하지 않으며, 연속 할당문 등의 구동자에 의해 net의 값을 연속적으로 유지한다. net에 구동자가 없으면 상태는 z가 된다. 주로 사용되는 net 자료형으로는 wire 자료형이 있다. wire 자료형은 단순 연결을 위해 사용되고, 논리적 동작 및 기능을 갖지 않는다. 자료형이 선언되지 않은 경우, net 자료형의 기본값으로 1비트의 wire가 사용된다. 자료형",
+   "related": [
+    82,
+    19,
+    34,
+    83,
+    11
+   ]
+  },
+  {
+   "id": 87,
+   "url": "https://semicon-circuit.tistory.com/87",
+   "title": "STM32-초음파센서 인터럽트",
+   "date": "2024-07-11",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "mux",
+    "multiplexer",
+    "uart 설계",
+    "Virtuoso",
+    "레이아웃 설계",
+    "회로설계",
+    "verilog",
+    "코딩",
+    "논리회로",
+    "시스템반도체"
+   ],
+   "summary": "이 글은 STM32 마이크로컨트롤러와 초음파 센서를 연동하여 거리를 측정하는 과정에서 무한 루프 오류를 방지하기 위해 인터럽트와 타이머를 설정하는 방법을 설명합니다. 초음파 센서의 Trigger 신호와 Echo 반향 신호를 효율적으로 처리하기 위해 GPIO 외부 인터럽트 및 타이머 인터럽트 구현 절차를 다룹니다. 최종적으로 PWM을 활용하여 초음파 센서를 제어하고 정확한 거리를 측정하는 방법을 코드를 통해 보여줍니다.",
+   "keywords": [
+    "STM32",
+    "초음파센서",
+    "인터럽트",
+    "타이머",
+    "PWM"
+   ],
+   "excerpt": "[2024.07.11.목] 인천인력개발원 초음파센서 제어 절차 10us TTL 신호로 Trigger 송신기는 8개 40kHz 버스트 신호 송신 수신기는 반향신호 수신(High 레벨 신호의 지속시간을 측정) 지속시간과 음속을 활용하여 거리 계산 Trigger 신호로부터 Echo 신호가 감지되기까지의 충분한 대기시간이 필요(60ms~) -> 16.6Hz 거리가 1m 이상 -> 노래 정상속도 거리가 0.5m~1m -> 노래 1.5배속 거리가 0.5m 이하 -> 노래 2배속 While 문 실행 내용을 인터럽트로 변경하기 아래와 같이 While문으로 동작 실행 시 오류가 나면 무한 루프에 빠질 수 있다. 이를 방지하기 위해 Echo의 동작을 Interrupt로 설정하여 해결한다. 1. Test004-US의 ioc파일",
+   "related": [
+    86,
+    92,
+    94,
+    22,
+    21
+   ]
+  },
+  {
+   "id": 86,
+   "url": "https://semicon-circuit.tistory.com/86",
+   "title": "STM32 - 초음파 센서를 이용한 거리측정",
+   "date": "2024-07-10",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "논리회로",
+    "uart 설계",
+    "반도체 설계",
+    "코딩",
+    "multiplexer",
+    "취업준비",
+    "C언어",
+    "레이아웃 설계",
+    "하드웨어 설계",
+    "mux"
+   ],
+   "summary": "본 글은 STM32 마이크로컨트롤러와 초음파 센서를 활용하여 거리를 측정하는 제어 절차와 코딩 방법을 설명합니다. 10us의 Trigger 신호 송신과 Echo 신호의 High 레벨 지속 시간을 측정하기 위해 마이크로초 단위의 정밀한 Delay 함수 구현 과정을 다룹니다. 최종적으로 측정된 시간을 음속과 왕복 거리를 고려하여 계산하고, TeraTerm을 통해 센서 값을 출력하는 실습 내용을 담고 있습니다.",
+   "keywords": [
+    "STM32",
+    "초음파 센서",
+    "Trigger와 Echo",
+    "MicroDelay",
+    "거리 측정"
+   ],
+   "excerpt": "[2024.07.11.목] 인천인력개발원 초음파센서 제어 절차 10us TTL 신호로 Trigger 송신기는 8개 40kHz 버스트 신호 송신 수신기는 반향신호 수신(High 레벨 신호의 지속시간을 측정) 지속시간과 음속을 활용하여 거리 계산 Trigger 신호로부터 Echo 신호가 감지되기까지의 충분한 대기시간이 필요(60ms~) -> 16.6Hz 1. New-STM32 Project로 새 프로젝트 생성 2.보드를 아래와 같이 선택 3. 프로젝트 명은 Test004-US로 설정 후 Finish 4. Schematic 확인 후 D4를 Trigger, D5를 Echo 단자로 연결 5. Test004-US.ioc에서 PB4와 PB5 핀 찾아서 각각 GPIO_Input, GPIO_Output으로 설정(핀 동작을 ",
+   "related": [
+    87,
+    92,
+    94,
+    77,
+    95
+   ]
+  },
+  {
+   "id": 83,
+   "url": "https://semicon-circuit.tistory.com/83",
+   "title": "Verilog HDL 모델링 방법 개요",
+   "date": "2024-06-30",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "하드웨어 설계",
+    "취업준비",
+    "회로설계",
+    "verilog",
+    "AI가속기",
+    "반도체 설계",
+    "auto p&r",
+    "레이아웃 설계",
+    "mux",
+    "프로그래밍"
+   ],
+   "summary": "Verilog HDL 구문은 회로 합성용, 시뮬레이션용, 라이브러리 설계용으로 나뉘며 기본 단위인 모듈은 머리부, 선언부, 몸체부로 구성됩니다. 모듈의 문장은 기본적으로 병행문으로 처리되어 작성 순서와 관계없이 동일한 결과를 나타냅니다. 회로 모델링 완료 후에는 테스트벤치 모듈을 작성하여 시뮬레이션을 통해 기능과 동작 타이밍을 검증합니다.",
+   "keywords": [
+    "Verilog HDL",
+    "회로 합성",
+    "모듈",
+    "테스트벤치",
+    "시뮬레이션"
+   ],
+   "excerpt": "Verilog HDL 구문의 구성 Verilog HDL 구문의 구성 회로 합성용 구문: 회로 합성 툴에서 게이트 수준 합성을 지원하는 구문 시뮬레이션용 구문: 시뮬레이션을 위한 테스트벤치의 작성에 사용되며, 회로 합성이 지원되지 않는다. 라이브러리 설계용 구문: 회로 합성에 적용되는 셀 라이브러리 설계에 사용되며, 셀의 기능, 지연, 핀 정보 등을 정의하는 데 사용된다. Verilog HDL 모듈 모듈: Verilog HDL의 기본 단위 Verilog HDL의 모듈 구성 module module_name (port_list); //머리부 //선언부 port 선언 reg 선언 wire 선언 parameter 선언 //몸체부 하위모듈 인스턴스 게이트 프리미티브 always 문 initial 문 assign 문 ",
+   "related": [
+    19,
+    81,
+    20,
+    34,
+    61
+   ]
+  },
+  {
+   "id": 82,
+   "url": "https://semicon-circuit.tistory.com/82",
+   "title": "Verilog HDL의 어휘 토큰과 규칙",
+   "date": "2024-06-30",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "verilog",
+    "Vivado",
+    "반도체설계",
+    "프로그래밍",
+    "레이아웃 설계",
+    "회로설계",
+    "mux",
+    "multiplexer",
+    "논리회로",
+    "C언어"
+   ],
+   "summary": "Verilog HDL의 어휘 토큰은 여백과 주석 처리 규칙을 따르며 의미 없는 공백은 무시됩니다. 수 표현 방식은 크기, 밑수, 숫자를 조합하여 정의되며 sized 및 unsized 상수를 지원합니다. 식별자, 키워드, 시스템 태스크 및 컴파일러 지시어는 코드 작성 시 고유한 문법 규칙을 따릅니다.",
+   "keywords": [
+    "Verilog HDL",
+    "어휘 토큰",
+    "수 표현 방식",
+    "식별자와 키워드",
+    "컴파일러 지시어"
+   ],
+   "excerpt": "1. 여백 빈칸, 탭 등을 포함하는 어휘 토큰 어휘 토큰의 분리를 위해서 사용되는 경우 이외에는 무시된다. 2. 주석 단일 라인 주석문은 //로 시작되어 줄바꿈으로 끝난다. 블록 주석문은 /*로 시작되어 */로 끝나며, 그 사이의 모든 내용이 주석문으로 처리된다. 3. Verilog HDL의 수 표현 방식 [size_constant]'base_format <number_value> [size_constant] 상수 값의 비트 수를 나타낸다. 0이 아닌 unsigned 10진수로 사용한다. 생략 시 unsized 수가 되며 32비트로 표현된다. 'base_format 밑수(base) 지정 문자로 2진수는 b/B, 8진수는 o/O, 10진수는 d/D, 16진수는 h/H를 지정하며, 대소문자 구분은 없다, sig",
+   "related": [
+    34,
+    88,
+    19,
+    83,
+    11
+   ]
+  },
+  {
+   "id": 81,
+   "url": "https://semicon-circuit.tistory.com/81",
+   "title": "Verilog HDL 개요 - HDL 기반 시스템 반도체 설계 과정",
+   "date": "2024-06-30",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "C언어",
+    "mux",
+    "하드웨어 설계",
+    "레이아웃 설계",
+    "auto p&r",
+    "multiplexer",
+    "반도체설계",
+    "Vivado",
+    "시스템반도체",
+    "반도체 설계"
+   ],
+   "summary": "시스템 반도체 설계 과정은 설계사양 결정부터 상위수준 모델링, RTL 설계 및 검증, 회로 합성, 레이아웃 설계까지 체계적인 단계로 이루어집니다. Verilog HDL을 이용한 RTL 모델링과 논리 합성 과정을 통해 하드웨어 기술을 게이트 수준의 넷리스트로 변환합니다. 최종적으로 레이아웃 설계와 기생효과를 고려한 검증을 거쳐 마스크 제작을 위한 최종 도면을 완성합니다.",
+   "keywords": [
+    "Verilog HDL",
+    "RTL 설계",
+    "회로 합성",
+    "네트리스트",
+    "레이아웃 설계"
+   ],
+   "excerpt": "HDL 기반 시스템 반도체 설계 과정 HDL 기반 시스템 반도체 설계과정 1. 설계사양 결정 회로의 기능, 성능 목표치, 동작 주파수, 칩 면적 및 전력소모 목표치, 테스트 커버리지, 설계기간, NRE(Non-Recurring Enginerring) 비용, 칩 단가 등의 설계 목표를 결정한다. 설계될 시스템의 분할, 적용될 알고리즘 및 아키텍쳐, 입출력 신호의 이름 및 비트 폭, 데이터 입출력 및 제어신호의 타이밍 관계, 리셋 및 클록신호 정의 등이 포함된다. 2. 상위수준 모델링 및 검증 상세설계 이전에 설계사양을 확인하도록 시스템의 전체 기능을 모델링, 검증하는 과정 3. RTL 설계와 테스트벤치 작성 전체 시스템 구조와 분할 -> 상위수준 모델링 및 검증 -> 상세설계 진행 - 상세설계는 합성 가능한 ",
+   "related": [
+    83,
+    12,
+    11,
+    45,
+    20
+   ]
+  },
+  {
+   "id": 80,
+   "url": "https://semicon-circuit.tistory.com/80",
+   "title": "Cadence Virtuoso Full Custom IC 설계 포트폴리오",
+   "date": "2024-06-27",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "multiplexer",
+    "하드웨어 설계",
+    "반도체 설계",
+    "시스템반도체",
+    "AI가속기",
+    "C언어",
+    "Vivado",
+    "회로설계",
+    "verilog",
+    "논리회로"
+   ],
+   "summary": "이 글은 Cadence Virtuoso를 활용한 Full Custom IC 설계 포트폴리오를 다루고 있습니다. 반도체 설계에 필요한 리눅스 기본 명령어부터 DFT 설계, 4비트 가산기 레이아웃 및 LVS 검증 등의 내용을 포함하고 있습니다. 관련 기술 블로그 글들을 통해 회로 설계 및 레이아웃 검증 과정을 확인할 수 있습니다.",
+   "keywords": [
+    "Cadence Virtuoso",
+    "Full Custom IC",
+    "DFT",
+    "레이아웃 설계",
+    "LVS 검증"
+   ],
+   "excerpt": "이 글이 도움됐다면 공유해주세요 😊 카카오톡 카카오스토리 트위터 페이스북 🔗 URL 복사 관련글 인기글 Category : Full Custom IC 설계 반도체 설계용 리눅스(Linux) 기본 명령어 총정리 2024.06.13 Scan Chain이란? DFT 설계와 Scan FF 구조 이해하기 2024.06.11 4비트 가산기(Adder) 레이아웃 설계와 LVS 검증 2024.05.29 Cadence Virtuoso Full Adder 레이아웃 설계 2024.05.28 같은 카테고리에 등록된 다른 글이 없습니다. 인기글 정보를 불러오는 중입니다.",
+   "related": [
+    62,
+    63,
+    46,
+    42,
+    47
+   ]
+  },
+  {
+   "id": 79,
+   "url": "https://semicon-circuit.tistory.com/79",
+   "title": "AXI 프로토콜 완전 정리: Valid·Ready Handshake 동작 원리",
+   "date": "2024-06-26",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체설계",
+    "코딩",
+    "multiplexer",
+    "mux",
+    "verilog",
+    "하드웨어 설계",
+    "시스템반도체",
+    "레이아웃 설계",
+    "Virtuoso",
+    "논리회로"
+   ],
+   "summary": "AXI 프로토콜은 송신부와 수신부의 조건이 맞을 때 정보가 교환되는 핸드셰이크 방식을 사용합니다. Valid와 Ready 신호가 모두 HIGH 상태가 되는 비트 시점에 주소, 데이터, 응답 등의 정보가 전송됩니다. AXI는 총 5개의 독립적인 쓰기 및 읽기 채널을 통해 안정적인 데이터 통신을 수행합니다.",
+   "keywords": [
+    "AXI 프로토콜",
+    "Handshake",
+    "Valid",
+    "Ready",
+    "Channel"
+   ],
+   "excerpt": "HandShake 방식 HandShake란? - 통신 과정에서, 수신부와 송신부의 특정 조건이 맞을 때 정보가 교환되는 방식 AXI에서의 HandShake Master와 Slave에서 Valid, Ready 신호를 이용하여 Handshake 진행 - Valid 신호: 데이터의 전송이 가능함을 알리는 Source의 신호 - Ready 신호: 데이터의 수신이 가능함을 알리는 Destination의 신호 Valid와 Ready가 모두 HIGH일 때(Beat 상태) 데이터, 주소 등의 정보가 전송됨 Source는 Ready 신호와 상관 없이 Valid를 1로 설정할 수 있으며, 이 값은 HandShake 발생 시까지 유지돼야 함 AXI Read에서 HandShake Read Channel Block Diagram ",
+   "related": [
+    78,
+    98,
+    90,
+    17,
+    69
+   ]
+  },
+  {
+   "id": 78,
+   "url": "https://semicon-circuit.tistory.com/78",
+   "title": "AMBA 버스란? APB·AHB·AXI 프로토콜 비교",
+   "date": "2024-06-25",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Vivado",
+    "verilog",
+    "하드웨어 설계",
+    "mux",
+    "회로설계",
+    "C언어",
+    "Virtuoso",
+    "auto p&r",
+    "시스템반도체",
+    "AI가속기"
+   ],
+   "summary": "AMBA는 ARM이 개발한 SoC 내부 IP 통신을 위한 표준 버스 프로토콜로 APB, AHB, AXI 등의 종류가 있습니다. 본문에서는 AXI 프로토콜의 HandShake 방식과 Read 및 Write 채널의 구조를 다루고 있습니다. 또한, Vivado와 Vitis를 활용하여 Block Memory Generator 및 AXI GPIO를 연동하는 실습 과정을 설명합니다.",
+   "keywords": [
+    "AMBA",
+    "AXI",
+    "APB",
+    "Vivado",
+    "Vitis"
+   ],
+   "excerpt": "[2024.06.24~] 인천인력개발원 1-1. H/W vs. S/W 1-2. CPU(Central Processing Unit, 중앙처리장치) 1-3. SoC(System on Chip) AMBA(Advanced Microcontroller Bus Architecture) ARM이 개발한 SoC 내부 IP(Intellectual Property)간 통신을 위한 표준 버스 프로토콜 AMBA 프로토콜 종류 - APB(Advanced Peripheral Bus): 저전력&낮은 인터페이스 복잡도를 갖는 저대역폭 주변장치 연결을 위한 버스 프로토콜 - AHB(Adv. High performance Bus): CPU, DMA 컨트롤러, 메모리 등 고성능 IP간 통신을 위한 버스 프로토콜 - AXI(Adv. eXten",
+   "related": [
+    90,
+    79,
+    91,
+    11,
+    108
+   ]
+  },
+  {
+   "id": 77,
+   "url": "https://semicon-circuit.tistory.com/77",
+   "title": "프로젝트: 초음파 거리센서 회로",
+   "date": "2024-06-14",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "취업준비",
+    "AI가속기",
+    "레이아웃 설계",
+    "논리회로",
+    "multiplexer",
+    "mux",
+    "uart 설계",
+    "C언어",
+    "하드웨어 설계",
+    "Virtuoso"
+   ],
+   "summary": "이 글은 초음파 거리센서 회로 제작을 위한 다양한 칩과 수동소자 목록을 정리한 프로젝트 준비 문서입니다. 주파수를 40kHz로 발진시키기 위한 회로 구성과 저항, 커패시터 등의 소자 값 설계를 다루고 있습니다. 듀티비 50%의 펄스 폭을 구현하기 위한 세부 저항 및 커패시터 파라미터를 제시합니다.",
+   "keywords": [
+    "초음파 거리센서",
+    "주파수 발진 회로",
+    "Ceramic Capacitor",
+    "BCD Counter",
+    "NE555"
+   ],
+   "excerpt": "프로젝트 준비: Chip Data 1. 101 Ceramic Capacitor 1ea (100 pF) 2. 102 Ceramic Capacitor 4ea (0.001 μF) 3. 103 Ceramic Capacitor 3ea (0.01 μF) 4. 472 Ceramic Capacitor 1ea (0.0047 μF) 5. 2A473J Miller Capacitor 1ea (0.047 μF) 6. 681 Ceramic Capacitor 1ea (680 p F) 7. 104 Capacitor 9ea (0.1 μF) 8. IC 소켓 8 Pin 3ea 9. IC 소켓 16 Pin 2ea 10. IC 소켓 14 Pin 1ea 11. 초음파 SE-400ST160 Transmitter 1ea 12. 초음파 SE-400SR",
+   "related": [
+    39,
+    86,
+    32,
+    28,
+    27
+   ]
+  },
+  {
+   "id": 72,
+   "url": "https://semicon-circuit.tistory.com/72",
+   "title": "반도체 설계용 리눅스(Linux) 기본 명령어 총정리",
+   "date": "2024-06-13",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "auto p&r",
+    "C언어",
+    "verilog",
+    "시스템반도체",
+    "Virtuoso",
+    "논리회로",
+    "mux",
+    "취업준비",
+    "Vivado"
+   ],
+   "summary": "반도체 설계용 리눅스의 기본 명령어 구조는 명령어, 옵션, 인자로 구성됩니다. 날짜, 디렉토리 조작, 파일 확인 및 편집을 위한 다양한 명령어 활용법을 제공합니다. 특히 화면 편집기인 vi의 모드 전환과 주요 단축키 사용법을 상세히 다룹니다.",
+   "keywords": [
+    "Linux 명령어",
+    "디렉토리 명령어",
+    "파일 명령어",
+    "vi 편집기",
+    "회로설계 리눅스"
+   ],
+   "excerpt": "[2024.05.18.토] Linux 명령어 1. 명령어 구조 형식: 명령어 [옵션] [인자] - 명령:사용자가 입력하는 명령어(date, man, ls, cp, mv, ...) - 옵션: 옵션을 사용하여 명령 세부 기능 선택 - 인자: 명령어로 전달되는 값. 주로 파일명, 디렉토리명이 사용 2. 기본 명령어 date: 날짜, 시간 출력 clear: 현재 보이는 화면을 지우고 커서를 화면 좌측 상단으로 이동 man: 각종 명령어의 사용법을 알려줌 passwd: 사용자 계정 비밀번호 변경 exit: 터미널 종료 3. 디렉토리 관련 명령어 ls: 현재 디렉토리 내의 디렉토리, 파일 목록 확인 옵션 -a: 숨김 파일 포함 모든 파일 목록 출력 -d: 디렉토리 자체의 정보 출력 -l: 파일의 상세 정보 출력 -A:",
+   "related": [
+    80,
+    46,
+    100,
+    29,
+    45
+   ]
+  },
+  {
+   "id": 71,
+   "url": "https://semicon-circuit.tistory.com/71",
+   "title": "Scan Chain이란? DFT 설계와 Scan FF 구조 이해하기",
+   "date": "2024-06-11",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "Virtuoso",
+    "코딩",
+    "verilog",
+    "반도체 설계",
+    "auto p&r",
+    "Vivado",
+    "AI가속기",
+    "회로설계",
+    "취업준비"
+   ],
+   "summary": "스캔 체인은 디지털 회로의 테스트 용이성(DFT)을 위해 플립플롭을 직렬로 연결하여 내부 상태를 쉽게 제어하고 접근할 수 있도록 만든 회로입니다. 스캔 인에이블(SE) 신호에 따라 데이터가 스캔 경로를 통해 이동하거나 일반 회로처럼 동작하게 됩니다. 본문에서는 이를 바탕으로 D 플립플롭, 증폭기 등을 포함한 원칩(One-Chip) 설계와 레이아웃 진행 과정을 다루고 있습니다.",
+   "keywords": [
+    "Scan Chain",
+    "DFT",
+    "Flip Flop",
+    "Scan Enable",
+    "One Chip"
+   ],
+   "excerpt": "Team Project - Scan Chain Scan Chain이란? 디지털 회로 내부에서 테스트를 용이하게 하기 위해 Flip Flop을 직렬 연결하여 내부 상태를 쉽게 접근, 제어할 수 있도록 하는 회로 Flip Flop에 21MUX를 연결하여 테스트를 진행할 수 있음 SE(Scan Enable)이 1이 되면 Scan이 시작되며 파란 선을 따라 데이터가 이동 -> 스캔 비트(RT2, RT1) 출력 SE이 0이 되면 Scan이 진행되지 않고 일반 회로처럼 동작하며 빨간 선을 따라 데이터가 이동 -> 회로 결과값(T2, T1) 출력 1CLK마다 데이터가 이동하며 각 Flip Flop으로 전달, 결과가 출력 D Flip Flop Schematic D Flip Flop Layout Scan Chain Flip",
+   "related": [
+    80,
+    48,
+    46,
+    63,
+    62
+   ]
+  },
+  {
+   "id": 69,
+   "url": "https://semicon-circuit.tistory.com/69",
+   "title": "ATmega128 UART 시리얼 통신 프로그래밍",
+   "date": "2024-06-07",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Vivado",
+    "auto p&r",
+    "시스템반도체",
+    "Virtuoso",
+    "AI가속기",
+    "mux",
+    "논리회로",
+    "반도체설계",
+    "하드웨어 설계",
+    "취업준비"
+   ],
+   "summary": "이 글은 ATmega128 마이크로컨트롤러를 활용한 UART 시리얼 통신 프로그래밍의 기초 개념과 실습 방법을 설명합니다. UCSRnA, UCSRnB, UCSRnC 레지스터의 비트 설정 방법을 다루며, TeraTerm을 통한 문자열 및 가변저항 센서 값 출력 실습 코드를 제공합니다. 이를 통해 비동기 통신의 보율 설정과 데이터 송수신 과정을 실무적으로 이해할 수 있습니다.",
+   "keywords": [
+    "UART",
+    "ATmega128",
+    "시리얼통신",
+    "UCSRn레지스터",
+    "TeraTerm"
+   ],
+   "excerpt": "[2024.06.07.금] 인천인력개발원 하만 세미콘 아카데미 UART(Universal Asynchronous Reciever/Transmittter) 1. 시리얼 통신 마이크로컨트롤러에서의 데이터 전송: 비트 단위의 데이터를 핀 단위로 전송 데이터 전송 방법 병렬 전송: 8개의 핀으로 한 번에 1바이트 데이터 전송 - 연결이 복잡해짐 - 핀 수가 제한적인 마이크로컨트롤러에서는 연결이 불가능할 수 있음 직렬 전송: 1개의 핀으로 8번에 나누어 1바이트 데이터 전송 - UART 통신은 시리얼/직렬 통신의 종류 2. 프로토콜 컴퓨터(장치) 간의 데이터 통신에서 원활한 송수신을 위해 약속된 신호 송신의 순서, 속도, 데이터 표현법 등의 규약 UART 통신은 비동기(Asynchronous) 통신 별도의 클록을 사",
+   "related": [
+    98,
+    13,
+    10,
+    14,
+    96
+   ]
+  },
+  {
+   "id": 68,
+   "url": "https://semicon-circuit.tistory.com/68",
+   "title": "FIFO 설계: Full·Empty 조건과 Testbench 작성법",
+   "date": "2024-06-03",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "AI가속기",
+    "회로설계",
+    "프로그래밍",
+    "auto p&r",
+    "반도체설계",
+    "코딩",
+    "레이아웃 설계",
+    "uart",
+    "Virtuoso",
+    "verilog"
+   ],
+   "summary": "본 글은 Verilog를 이용한 FIFO 메모리의 설계 방법과 Full 및 Empty 조건 구현 과정을 다루고 있습니다. Write 및 Read 주소의 MSB를 활용하여 FIFO의 상태를 정확히 판단하는 회로를 구현했습니다. 또한, 작성한 FIFO 모듈을 테스트벤치와 UART 시스템에 연동하여 정상 동작을 시뮬레이션 및 실습으로 검증했습니다.",
+   "keywords": [
+    "FIFO",
+    "Verilog",
+    "RAM",
+    "Testbench",
+    "UART"
+   ],
+   "excerpt": "[2024.06.03.월] 인천인력개발원 하만 세미콘 아카데미 실습 1: FIFO 설계 FIFO: First In First Out 데이터가 잠시 머무르는 버퍼 역할 EMPTY: 데이터가 없어 출력할 수 없는 경우 1 FULL: 메모리 공간이 7개가 있을 때, 모든 공간에 데이터가 채워져 있을 때 1 WR_EN(WRite_ENable): WR_EN이 1이면 CLK에 맞춰 Write 동작 실행, Write_Address를 1씩 증가 RD_EN(ReaD_ENable): RD_EN이 1이면 CLK에 맞춰 Read 동작 실행, Read_Address를 1씩 증가 설계 순서 RAM 설계 wr_addr(write_address)와 rd_addr(read_address) 처리 full, empty 처리 - full은 w",
+   "related": [
+    61,
+    19,
+    25,
+    43,
+    20
+   ]
+  },
+  {
+   "id": 63,
+   "url": "https://semicon-circuit.tistory.com/63",
+   "title": "4비트 가산기(Adder) 레이아웃 설계와 LVS 검증",
+   "date": "2024-05-29",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "논리회로",
+    "취업준비",
+    "코딩",
+    "Virtuoso",
+    "회로설계",
+    "프로그래밍",
+    "multiplexer",
+    "하드웨어 설계",
+    "AI가속기",
+    "C언어"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미에서 진행된 반도체 회로설계 실습 내용을 다루고 있습니다. 전가산기(Full Adder)를 시작으로 4비트 가산기 및 가산-감산기(Adder-Subtractor)의 회로도 설계, 시뮬레이션, 그리고 레이아웃 설계 과정을 포함합니다. 최종적으로 원칩(OneChip) 레이아웃 설계까지의 실습 수행 과정을 소개합니다.",
+   "keywords": [
+    "FullAdder",
+    "4Bit Adder",
+    "Adder_Subtractor",
+    "Layout",
+    "Schematic"
+   ],
+   "excerpt": "[2024.05.29.수] 인천인력개발원 하만 세미콘 아카데미 실습 1: FullAdder Schematic Layout 설계 FullAdder Layout 설계 [소요시간: 35분] FullAdder Layout 실습 2. 4-Bit Adder 설계 4Bit Adder Schematic 4Bit Adder Symbol 4Bit Adder Simulation Schematic 4Bit Adder Simulation Result 빨간색 사각형 부분만 시뮬레이션으로 확인 4-Bit Adder Layout [소요시간: 1시간] 실습 3. 4-Bit Adder_Subtractor 설계 4Bit Adder_Subtractor Schematic 4Bit Adder_Subtractor Symbol 4Bit Adder_S",
+   "related": [
+    62,
+    46,
+    47,
+    56,
+    50
+   ]
+  },
+  {
+   "id": 62,
+   "url": "https://semicon-circuit.tistory.com/62",
+   "title": "Cadence Virtuoso Full Adder 레이아웃 설계",
+   "date": "2024-05-28",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "하드웨어 설계",
+    "회로설계",
+    "C언어",
+    "논리회로",
+    "반도체 설계",
+    "mux",
+    "multiplexer",
+    "레이아웃 설계",
+    "Vivado",
+    "verilog"
+   ],
+   "summary": "본 블로그 글은 Cadence Virtuoso를 활용한 Full Adder 레이아웃 설계 교육 과정을 다루고 있습니다. XOR, Half Adder, 다양한 Digital Logic Gate의 회로 설계 및 시뮬레이션을 진행했습니다. 최종적으로 Full Adder의 회로도 설계부터 시뮬레이션 및 레이아웃 실습 과정을 상세히 소개합니다.",
+   "keywords": [
+    "Cadence Virtuoso",
+    "Full Adder",
+    "Layout",
+    "Schematic",
+    "Simulation"
+   ],
+   "excerpt": "[2024.05.28.월] 인천인력개발원 하만 세미콘 아카데미 1. Adder, XOR Gate 1. Half Adder 진리표 2. Full Adder 진리표 3. XOR 진리표 실습 1: XOR Schematic 설계 및 시뮬레이션 / Layout 설계 XOR Schematic 설계 및 시뮬레이션 [소요시간: 30분] XOR Gate Schematic XOR Symbol XOR Simulation Schematic XOR Simulation Result XOR Layout [소요시간: 50분] 실습 2: HalfAdder Schematic 설계 및 시뮬레이션 / Layout 설계 HalfAdder Schematic 설계 및 시뮬레이션 [소요시간: 10분] HalfAdder Schematic HalfAdd",
+   "related": [
+    63,
+    47,
+    46,
+    80,
+    42
+   ]
+  },
+  {
+   "id": 61,
+   "url": "https://semicon-circuit.tistory.com/61",
+   "title": "Verilog HDL RAM 설계 및 인스턴스화",
+   "date": "2024-05-27",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "논리회로",
+    "C언어",
+    "프로그래밍",
+    "uart 설계",
+    "auto p&r",
+    "코딩",
+    "multiplexer",
+    "verilog",
+    "반도체 설계",
+    "mux"
+   ],
+   "summary": "본 글에서는 Verilog HDL을 이용한 RAM 설계 방법과 테스트벤치 작성 및 시뮬레이션 과정을 다루고 있습니다. 16개의 주소 공간을 가지는 8비트 메모리를 정의하고, Read와 Write 동작을 구현하는 실습 내용을 포함하고 있습니다. 또한 모듈 인스턴스화와 동기식 및 비동기식 설계 방식의 차이점을 설명합니다.",
+   "keywords": [
+    "Verilog HDL",
+    "RAM 설계",
+    "인스턴스화",
+    "테스트벤치",
+    "메모리"
+   ],
+   "excerpt": "[2024.05.27.월] 인천인력개발원 하만 세미콘 아카데미 실습 1: 메모리(RAM) 설계 ROM(Read Only Memory): 한 번 기록된 정보가 전원과 무관하게 반영구적으로 기억되는 삭제나 수정이 불가능한 기억장치 RAM(Random Access Memory): 사용자가 자유롭게 데이터를 읽고, 쓰고, 지울 수 있는 기억장치 아래 코드에서는 두 개의 ROM이 존재(NUM_10S에서와 NUM_1S에서) always @(CA, NUM_1S, NUM_10S) begin if (CA) begin case (NUM_10S) 4'd0 : AN = 7'h7e; 4'd1 : AN = 7'h30; 4'd2 : AN = 7'h6d; 4'd3 : AN = 7'h79; 4'd4 : AN = 7'h33; 4'd5 : ",
+   "related": [
+    68,
+    19,
+    20,
+    12,
+    44
+   ]
+  },
+  {
+   "id": 58,
+   "url": "https://semicon-circuit.tistory.com/58",
+   "title": "16:1 MUX Switch 레이아웃과 PAD·OneChip 배치",
+   "date": "2024-05-23",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "uart 설계",
+    "Virtuoso",
+    "Vivado",
+    "C언어",
+    "uart",
+    "프로그래밍",
+    "취업준비",
+    "반도체설계",
+    "반도체 설계",
+    "auto p&r"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미 실습에서 16:1 MUX Switch 레이아웃 설계를 마무리하고 PAD 및 OneChip 배치를 진행하였습니다. PAD 프레임 생성 과정에서 Via 속성 변경, Metal 라우팅, 그리고 모서리 처리를 상세히 수행했습니다. 마지막으로 OneChip 레이아웃을 생성하여 16:1 MUX 로직과 PAD를 통합하고 핀을 연결하는 전체 과정을 완료했습니다.",
+   "keywords": [
+    "16:1 MUX Switch",
+    "PAD Layout",
+    "OneChip",
+    "Metal Routing",
+    "Layout Design"
+   ],
+   "excerpt": "[2024.05.23.목] 인천인력개발원 하만 세미콘 아카데미 실습 1: 16-1MUX SWITCH Layout 마무리 16-1MUX Switch 레이아웃 설계 마무리 [소요시간: 3시간] 실습 2: PAD Layout 1. Create - Cell View로 PAD 이름의 Layout 생성 2. O 눌러서 Create Via 열고 foundry Group의 M2_M1 불러오기 3. 생성한 Via 선택 후 Q 눌러 속성 변경 4. PAD_FRAME으로 새 Layout Cellview 생성 5. I 눌러서 개인 라이브러리에 생성한 PAD 불러오기 6. Q 눌러 Conver to Mosaic 누르고 값 변경 7. 변경된 레이아웃 확인 8. 세개로 복사 후 한개 회전하여 배치 9. 다음 사진과 같이 배치 (가로 ",
+   "related": [
+    57,
+    50,
+    56,
+    48,
+    47
+   ]
+  },
+  {
+   "id": 57,
+   "url": "https://semicon-circuit.tistory.com/57",
+   "title": "8:1·16:1 멀티플렉서(MUX) 레이아웃 설계와 시뮬레이션",
+   "date": "2024-05-22",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "취업준비",
+    "AI가속기",
+    "C언어",
+    "프로그래밍",
+    "uart",
+    "논리회로",
+    "Virtuoso",
+    "반도체 설계",
+    "verilog",
+    "회로설계"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미 실습을 통해 8:1 및 16:1 멀티플렉서(MUX)의 레이아웃 설계와 회로도(Schematic) 시뮬레이션을 진행했습니다. MUX 스위치 및 로직 회로의 레이아웃 설계 과정에서 NMOS와 PMOS의 핑거 배치 및 Metal 1, Metal 2 배선 노하우를 적용했습니다. 이를 통해 주어진 면적 제약 내에서 성공적으로 레이아웃을 완료하고 시뮬레이션 검증을 수행했습니다.",
+   "keywords": [
+    "멀티플렉서",
+    "레이아웃 설계",
+    "시뮬레이션",
+    "Schematic",
+    "금속 배선"
+   ],
+   "excerpt": "[2024.05.22.수] 인천인력개발원 하만 세미콘 아카데미 실습 1: 81MUX SWITCH 레이아웃 설계 [가로 12.785um, 세로 9.59um] 81MUX Switch의 레이아웃 설계 [소요시간: 2시간 10분] 가로 11.17um, 세로 9.375um로 완료 레이아웃 설계 참고사항 추가 VDD와 VSS는 nmos와 pmos에 연결된 metal이 없는 부분에 연결하면 됨. SWITCH에서는 pmos의 3finger 중 왼쪽에 앞쪽의 신호, 오른쪽에 뒤쪽 신호를 배치하고, 가운데는 output으로. nmos의 3finger 중 왼쪽에 뒤쪽 신호, 오른족에 앞쪽 신호를 연결 세로 배선은 Metal 2로, 가로 배선은 Metal1으로 연결하면 수월함 실습 2: 16 - 1MUX LOGIC Schemat",
+   "related": [
+    50,
+    56,
+    47,
+    48,
+    58
+   ]
+  },
+  {
+   "id": 56,
+   "url": "https://semicon-circuit.tistory.com/56",
+   "title": "8:1 MUX 레이아웃 설계: Logic vs Switch 방식",
+   "date": "2024-05-21",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Vivado",
+    "논리회로",
+    "반도체설계",
+    "하드웨어 설계",
+    "회로설계",
+    "C언어",
+    "프로그래밍",
+    "시스템반도체",
+    "Virtuoso",
+    "취업준비"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미에서 8:1 멀티플렉서(MUX)를 주제로 한 회로 설계 및 레이아웃 실습을 진행했습니다. Logic 방식과 Switch 방식을 각각 적용하여 스키매틱 작성부터 시뮬레이션, 레이아웃 및 DRC/LVS 검증까지 수행했습니다. 하위 블록인 4:1 및 2:1 MUX 구조를 재활용하면 레이아웃 설계 시간을 단축할 수 있음을 확인했습니다.",
+   "keywords": [
+    "8:1 MUX",
+    "Logic MUX",
+    "Switch MUX",
+    "DRC/LVS",
+    "Schematic"
+   ],
+   "excerpt": "[2024.05.21.화] 인천인력개발원 하만 세미콘 아카데미 실습 1: 81MUX LOGIC 설계 및 시뮬레이션 81MUX의 Schematic, symbol을 제작하고 시뮬레이션을 통해 결과 확인 [소요시간: 40분] 81MUX schematic 81MUX_LOGIC_TEST schematic 81MUX_LOGIC 시뮬레이션 결과 확인 실습 2: 81MUX LOGIC 레이아웃 설계 81MUX의 Layout 설계 후 DRC, LVS 수행 [소요시간: 4시간] 41MUX와 21MUX의 구조를 그대로 가져와야 시간 단축이 가능할 것으로 보임 실습 3: 81MUX SWITCH 설계 및 시뮬레이션 81MUX_SWITCH Schematic 81MUX_SWITCH_TEST schematic 81MUX_SWITCH 시뮬",
+   "related": [
+    57,
+    48,
+    50,
+    51,
+    47
+   ]
+  },
+  {
+   "id": 55,
+   "url": "https://semicon-circuit.tistory.com/55",
+   "title": "UART RX 설계: uart_rx FSM으로 수신기 구현",
+   "date": "2024-05-20",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체설계",
+    "하드웨어 설계",
+    "회로설계",
+    "Virtuoso",
+    "Vivado",
+    "시스템반도체",
+    "auto p&r",
+    "uart 설계",
+    "논리회로",
+    "코딩"
+   ],
+   "summary": "본 글은 Verilog를 활용하여 UART 수신기(UART RX)의 FSM(유한 상태 기계) 제어기를 설계하고 구현하는 과정을 다룹니다. idle, start, data, stop 상태를 정의하여 데이터 수신 타이밍을 제어하고 오버샘플링을 적용했습니다. 또한, 테스트벤치를 작성하여 시뮬레이션을 수행하고 코드를 수정·검증하는 실습 내용을 포함하고 있습니다.",
+   "keywords": [
+    "UART",
+    "FSM",
+    "Verilog",
+    "Testbench",
+    "Oversampling"
+   ],
+   "excerpt": "[2024.05.20.월] 인천인력개발원 하만 세미콘 아카데미 실습 1: uart_rx 1. uart_rx_cntl.v Design Sources 생성 2. 코드 작성 `timescale 1ns / 1ps ////////////////////////////////////////////////////////////////////////////////// // Company: // Engineer: // // Create Date: 2024/05/20 12:06:26 // Design Name: // Module Name: uart_rx_cntl // Project Name: // Target Devices: // Tool Versions: // Description: // // Dependencies: // ",
+   "related": [
+    52,
+    95,
+    97,
+    43,
+    96
+   ]
+  },
+  {
+   "id": 52,
+   "url": "https://semicon-circuit.tistory.com/52",
+   "title": "직렬-병렬 변환기(P2S·S2P) Verilog 설계",
+   "date": "2024-05-17",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "uart",
+    "시스템반도체",
+    "반도체설계",
+    "multiplexer",
+    "레이아웃 설계",
+    "AI가속기",
+    "uart 설계",
+    "auto p&r",
+    "하드웨어 설계",
+    "C언어"
+   ],
+   "summary": "본 글은 직렬-병렬 변환기(P2S 및 S2P)와 UART 보드레이트 제너레이터의 Verilog 설계 및 시뮬레이션 실습 과정을 다룹니다. 카운터와 상태 제어를 활용하여 병렬 데이터를 직렬로, 직렬 데이터를 병렬로 상호 변환하는 회로를 구현했습니다. 또한 테스트벤치를 작성하여 Behavioral Simulation을 통해 설계된 회로의 파형 동작을 검증하였습니다.",
+   "keywords": [
+    "Verilog",
+    "P2S",
+    "S2P",
+    "UART",
+    "Behavioral Simulation"
+   ],
+   "excerpt": "[2024.05.17.금] 인천인력개발원 하만 세미콘 아카데미 실습 1: Parallel to Serial / Serial to Parallel 변환기 1. my_sp 프로젝트 생성 2. my_sp.v 파일을 Create Design Sources로 생성한 뒤 코드 작성(my_p2s와 my_s2p 모듈 두 개 사용) `timescale 1ns / 1ps /******************************************** parallel to serial ********************************************/ module my_p2s (input RST, CLK, START, input [7:0] DIN, output SOF, output DOUT ); reg [2:0",
+   "related": [
+    55,
+    95,
+    96,
+    97,
+    25
+   ]
+  },
+  {
+   "id": 51,
+   "url": "https://semicon-circuit.tistory.com/51",
+   "title": "레이아웃 면적 최적화: 4:1 MUX 설계 사례",
+   "date": "2024-05-16",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "uart",
+    "회로설계",
+    "시스템반도체",
+    "반도체설계",
+    "논리회로",
+    "Virtuoso",
+    "Vivado",
+    "C언어",
+    "취업준비"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미에서 4:1 MUX(41MUX_SWITCH) 회로의 레이아웃 설계 실습을 진행하였습니다. VOUT을 Metal1로 변경하는 등의 설계를 통해 세로 8.05um, 가로 5.445um 크기로 면적을 최적화하였습니다. 이는 교수님 예시와 비교하여 더 축소된 면적을 달성한 설계 사례입니다.",
+   "keywords": [
+    "4:1 MUX",
+    "레이아웃 설계",
+    "DRC/LVS",
+    "Metal1",
+    "면적 최적화"
+   ],
+   "excerpt": "[2024.05.16.목] 인천인력개발원 하만 세미콘 아카데미 실습 1: 41MUX_SWITCH의 레이아웃 설계 41MUX_SWITCH 레이아웃 설계( DRS&LVS ) [소요 시간: 125분] VOUT을 Metal1로 변경한 회로 세로 8.05um, 가로 5.445um로 축소 [소요시간: 15분] 교수님 예시: 세로 8.04um, 가로 6.135 um",
+   "related": [
+    48,
+    56,
+    50,
+    57,
+    47
+   ]
+  },
+  {
+   "id": 50,
+   "url": "https://semicon-circuit.tistory.com/50",
+   "title": "CMOS MUX 설계: 2:1·4:1 멀티플렉서 레이아웃",
+   "date": "2024-05-14",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체설계",
+    "C언어",
+    "시스템반도체",
+    "auto p&r",
+    "uart",
+    "verilog",
+    "Virtuoso",
+    "취업준비",
+    "Vivado",
+    "코딩"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미에서 진행된 CMOS 2:1 및 4:1 멀티플렉서(MUX)의 회로 및 레이아웃 설계 실습 내용을 다루고 있습니다. DRC(설계규칙검증) 참고사항을 반영하여 21MUX_SWITCH 레이아웃을 완성하고, 41MUX의 회로도 작성부터 심볼 생성 및 시뮬레이션까지의 과정을 수행했습니다. 주기가 다른 입력 신호 설정과 ADEL을 활용한 시뮬레이션 결과를 통해 최종적으로 4:1 MUX 레이아웃 설계를 완료했습니다.",
+   "keywords": [
+    "CMOS MUX",
+    "Layout",
+    "Schematic",
+    "DRC",
+    "Simulation"
+   ],
+   "excerpt": "[2024.05.14.화] 인천인력개발원 하만 세미콘 아카데미 실습 1: 21MUX_SWITCH의 레이아웃 가로 2.445um, 세로 7.29um 설계 21MUX_SWITCH 레이아웃 설계 [소요 시간: 80분] DRC 참고사항 추가 Via to Via >= 0.15um Metal2에서 Via로 Metal1을 연결하는 작업 수행 시 Metal1의 두께가 0.12um가 아닌 0.14um가 되며 높이가 증가하는 현상이 발생할 수 있으므로 Metal1의 두께도 확인하여 수정 필요 실습 2: 41MUX Schematic & Layout 설계 1. 21MUX_LOGIC을 이용하여 Schematic 설계 및 포트 설정 2. Symbol을 만들기 위해 Create 탭에서 선택 후 핀 설정 후 symbol 제작 3. Si",
+   "related": [
+    57,
+    47,
+    56,
+    48,
+    51
+   ]
+  },
+  {
+   "id": 48,
+   "url": "https://semicon-circuit.tistory.com/48",
+   "title": "2:1 멀티플렉서(MUX) 레이아웃 설계: Transmission Gate 활용",
+   "date": "2024-05-09",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Vivado",
+    "Virtuoso",
+    "multiplexer",
+    "C언어",
+    "하드웨어 설계",
+    "논리회로",
+    "AI가속기",
+    "회로설계",
+    "반도체설계",
+    "시스템반도체"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미에서 2:1 멀티플렉서(MUX)의 레이아웃 및 회로도 설계 실습을 진행했습니다. 트랜스미션 게이트(Transmission Gate)를 활용하여 트랜지스터 사용량을 대폭 줄인 회로 설계를 수행했습니다. 이후 심볼 제작과 ADEL 시뮬레이션을 통해 파형을 검증하고 레이아웃 틀을 제작했습니다.",
+   "keywords": [
+    "2:1 MUX",
+    "Transmission Gate",
+    "Layout",
+    "Schematic",
+    "DRC/LVS"
+   ],
+   "excerpt": "[2024.05.09.목] 인천인력개발원 하만 세미콘 아카데미 실습 1: 21MUX Layout 설계 1. 40일차에 이어서 21MUX Layout을 4.63um x 5.87um 사이즈로 설계 및 DRC, LVS [ 총 소요 시간: 50분 ] 실습 2: 21MUX Schematic & Layout 설계 위 Schematic에서는 14개의 TR 사용 Transmission Gate를 사용하여 NAND 하나당 2개의 TR만 사용 가능 -> 21MUX에 6개의 TR만 사용 실습 3: 21MUX SWITCH Schematic & Layout 설계 1. 21MUX_SWITCH 이름의 Cell View를 만든 뒤 Schematic 제작 2. Create - From Cell View를 통해 Symbol 제작 3. 21",
+   "related": [
+    56,
+    50,
+    57,
+    51,
+    47
+   ]
+  },
+  {
+   "id": 47,
+   "url": "https://semicon-circuit.tistory.com/47",
+   "title": "4NAND·4NOR 레이아웃 설계와 멀티플렉서(MUX) 기초",
+   "date": "2024-05-08",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "uart 설계",
+    "레이아웃 설계",
+    "AI가속기",
+    "C언어",
+    "verilog",
+    "Virtuoso",
+    "반도체설계",
+    "하드웨어 설계",
+    "uart",
+    "논리회로"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미에서 진행된 4NAND 및 4NOR 회로의 PMOS 폭 시뮬레이션과 최소 높이 레이아웃 설계 실습 내용을 다루고 있습니다. 멀티플렉서(MUX)의 스키매틱 작성, ADEL 시뮬레이션 파형 분석 및 편집 방법을 학습했습니다. 최종적으로 멀티플렉서 레이아웃 설계 실습을 통해 게이트 분리 및 물리적 배치 과정을 익혔습니다.",
+   "keywords": [
+    "4NAND",
+    "4NOR",
+    "PMOS Width",
+    "Layout",
+    "MultiPlexer"
+   ],
+   "excerpt": "[2024.05.08.수] 인천인력개발원 하만 세미콘 아카데미 실습 1: 4NAND의 PMOS Width 찾고 최소 높이 5.69um로 Layout 설계 1. 4NAND PMOS의 Width를 시뮬레이션을 통해 2.14um로 찾기 [소요 시간: 30분] 2. Layout의 높이를 5.69um로 설계 [소요 시간: 32분] 실습 2: 4NOR의 PMOS Width 찾고 최소 높이 9.51um로 Layout 설계 1. 4NOR PMOS의 Width를 시뮬레이션을 통해 5.96um로 찾기 [소요 시간: 23분] 2. Layout의 높이를 9.51um로 설계 [소요 시간: 20분] 실습 3: MultiPlexer(MUX) Schematic&Simulation MultiPlexer: 여러 개의 입력 중 제어 신호를 ",
+   "related": [
+    50,
+    57,
+    48,
+    56,
+    46
+   ]
+  },
+  {
+   "id": 46,
+   "url": "https://semicon-circuit.tistory.com/46",
+   "title": "2NAND 2-Finger 레이아웃 설계: Stick Diagram부터 DRC까지",
+   "date": "2024-05-07",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "논리회로",
+    "반도체 설계",
+    "하드웨어 설계",
+    "AI가속기",
+    "mux",
+    "uart 설계",
+    "코딩",
+    "회로설계",
+    "uart",
+    "반도체설계"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미에서 진행된 반도체 회로설계 실습 내용을 다루고 있습니다. 2NAND, 2NOR, 3NAND, 3NOR 게이트의 2-finger 및 3-finger 레이아웃 설계 과정을 설명합니다. Stick Diagram 작성부터 DRC, LVS 검증 및 정해진 높이 규격에 맞추는 실습을 진행했습니다.",
+   "keywords": [
+    "2NAND",
+    "Layout",
+    "Stick Diagram",
+    "DRC",
+    "LVS"
+   ],
+   "excerpt": "[2024.05.07.화] 인천인력개발원 하만 세미콘 아카데미 실습 1: 2NAND 2finger 1. Library 열고 2NAND 선택 후 File-New-CellView-type: layout 2. Options-Display에서 x와 y snap spacing을 각각 0.005로 설정 3. I(Instance)를 눌러 gpdk 라이브러리에서 pmos, nmos를 설치하고 nmos와 pmos 속성 변경(2finger) 4. Stick Diagram을 그려본 뒤 layout 연결(metal 선택 후 p를 눌러 원하는 경로로 그리기 가능 -> 우클릭, via up, down to~~: open된 경로로 설정) 5. Layout 설계 후 포트 설정 -> Run DRC, Run LVS 후 높이를 5.6u까지 ",
+   "related": [
+    47,
+    50,
+    63,
+    48,
+    45
+   ]
+  },
+  {
+   "id": 45,
+   "url": "https://semicon-circuit.tistory.com/45",
+   "title": "CMOS 기본 게이트 레이아웃 설계: NOR·NAND·NOT 총정리",
+   "date": "2024-04-30",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "verilog",
+    "uart 설계",
+    "회로설계",
+    "프로그래밍",
+    "논리회로",
+    "AI가속기",
+    "auto p&r",
+    "Vivado",
+    "Virtuoso",
+    "취업준비"
+   ],
+   "summary": "본 글은 Virtuoso를 활용하여 CMOS 기본 게이트(2NOR, 3NAND, 3NOR)의 회로도를 그리고 시뮬레이션을 통해 최적의 트랜지스터 WIDTH를 결정하는 실습 과정을 설명합니다. 또한, NOT 게이트의 레이아웃을 직접 그리고 단축키를 활용하여 배선 및 Via를 생성하는 방법을 다룹니다. 마지막으로, 설계 규칙 검증(DRC)과 회로도-레이아웃 일치성 검증(LVS)을 수행하여 오류를 수정하고 완성된 레이아웃을 검증하는 과정을 다룹니다.",
+   "keywords": [
+    "CMOS",
+    "Virtuoso",
+    "Layout",
+    "DRC",
+    "LVS"
+   ],
+   "excerpt": "[2024.04.30. 화] 인천인력개발원 하만 세미콘 아카데미 실습 1: 2NOR 생성 후 시뮬레이션을 통해 WIDTH 결정 1. mobaxterm 실행 2. id, pw 입력 후 입장 3. 35일차 참고하여 virtuoso 실행 4. File - New - Cell View를 열어 2NOR 파일 생성 5. I(Instance)를 눌러 NMOS 1v와 PMOS 1v를 추가하여 2NOR 구성 6. W를 눌러 와이어 연결 7. P눌러 인풋 핀, 아웃풋 핀 설정 8.L 눌러 라벨 설정 9.Check and Save 눌러 에러 확인 10. nmos 두개를 선택하여 Q - all selected - total width를 1u로, pmos는 WIDTH로 변경 11. symbol을 만들기 위해 create - cel",
+   "related": [
+    42,
+    46,
+    47,
+    50,
+    62
+   ]
+  },
+  {
+   "id": 44,
+   "url": "https://semicon-circuit.tistory.com/44",
+   "title": "FSM 설계 실습: 신호등·보안 시스템 상태 머신 구현",
+   "date": "2024-04-29",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "하드웨어 설계",
+    "Vivado",
+    "auto p&r",
+    "uart",
+    "반도체설계",
+    "코딩",
+    "시스템반도체",
+    "논리회로",
+    "mux",
+    "레이아웃 설계"
+   ],
+   "summary": "Verilog를 활용하여 보안 시스템과 교통 신호기를 구현하는 FSM 설계 실습 과정을 다루고 있습니다. Top 모듈과 세그먼트 디코더, 시간 카운터 모듈을 작성하고 포트를 할당하여 하드웨어 동작을 확인합니다. 최종적으로 테스트벤치를 이용한 시뮬레이션으로 FSM의 상태 전이와 기능을 검증합니다.",
+   "keywords": [
+    "FSM",
+    "Verilog",
+    "RTL",
+    "Traffic Signal",
+    "Simulation"
+   ],
+   "excerpt": "[2024.04.29.월] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 FSM_SECURITY 1.36일차의 my_fsm_secure 프로젝트를 열고 Design Sources로 my_fsm_secure_top 추가 2. my_seg.v파일을 Design Sources로 추가 후 포트 정의 3. my_secure_top.v 코드 작성 `timescale 1ns / 1ps module my_fsm_secure_top( input RST, input CLK, input [1:0] KEY, input SENSOR, output ALARM_SIREN, output CA, output [6:0] AN ); wire [1:0] fsm_state; my_fsm_secure u0 ",
+   "related": [
+    43,
+    55,
+    20,
+    105,
+    25
+   ]
+  },
+  {
+   "id": 43,
+   "url": "https://semicon-circuit.tistory.com/43",
+   "title": "FSM이란? 상태 머신 State Diagram과 Encoding 완전 정리",
+   "date": "2024-04-26",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "auto p&r",
+    "논리회로",
+    "프로그래밍",
+    "AI가속기",
+    "C언어",
+    "uart",
+    "verilog",
+    "반도체 설계",
+    "반도체설계",
+    "하드웨어 설계"
+   ],
+   "summary": "이 글은 Verilog를 이용하여 유한 상태 머신(FSM)을 설계하고 Vivado 환경에서 시뮬레이션 및 하드웨어 구현을 진행하는 과정을 설명합니다. 기본 FSM 모듈 작성 방법부터 테스트벤치 구성, I/O 핀 설정까지의 실습 내용을 담고 있습니다. 추가로 보안 시스템을 가정한 FSM 보안 모듈의 구현과 시뮬레이션 결과 확인 과정을 다룹니다.",
+   "keywords": [
+    "FSM",
+    "Verilog",
+    "Vivado",
+    "State Diagram",
+    "Testbench"
+   ],
+   "excerpt": "[2024.04.26.금] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 FSM State Diagram 1. 버튼이 눌리면 STR_STP변수를 1과 0으로 변경하여 모드를 Start, Stop으로 변경하는 모듈 작성 Switch를 누르면 CLK의 rising edge에 맞춰 ss_1d를 1로 다음 CLK의 rising edge에서도 switch가 1이면 ss_2d를 1로 Encoding Methods p.317 p.326 mealy finite state machine p.330 FSM Coding Guidlines p.341 Avoiding Race Conditions in Veriog p. 356 실습: FSM Demo 1. Vivado 실행 후 my_fsm 프로",
+   "related": [
+    44,
+    55,
+    20,
+    38,
+    12
+   ]
+  },
+  {
+   "id": 42,
+   "url": "https://semicon-circuit.tistory.com/42",
+   "title": "Cadence Virtuoso로 NOT·NAND 게이트 레이아웃 설계하기",
+   "date": "2024-04-25",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Virtuoso",
+    "AI가속기",
+    "C언어",
+    "반도체 설계",
+    "Vivado",
+    "코딩",
+    "회로설계",
+    "auto p&r",
+    "multiplexer",
+    "uart"
+   ],
+   "summary": "인천인력개발원 하만 세미콘 아카데미 실습을 바탕으로 Cadence Virtuoso를 활용하여 NOT 게이트와 NAND 게이트의 레이아웃 및 회로 설계 과정을 다룹니다. 라이브러리 생성, 소자 배치, 단축키를 이용한 회로 연결 및 파라미터 설정 방법을 상세히 설명합니다. 최종적으로 시뮬레이션을 수행하고 파라미터 분석을 통해 올바른 게이트 동작을 검증합니다.",
+   "keywords": [
+    "Cadence Virtuoso",
+    "NOT Gate",
+    "NAND Gate",
+    "Layout",
+    "Simulation"
+   ],
+   "excerpt": "[2024.04.25.목] 인천인력개발원 하만 세미콘 아카데미 실습 1: NOT GATE 생성 후 시뮬레이션 1. mobaxterm 실행 2. id, pw 입력 후 입장 3. 코드 입력 후 창 확인 4.Tool-Library Manager에 gpdk090 확인 5. 라이브러리 추가하기 6. NOT GATE를 만들기 위해 방금 만든 KJH라이브러리 선택 후 File-New-Cell View 7. NOT 입력 후 OK 8. 창 확인 9. Options - Display 들어가서 Spacing 과 Snap Spacing 값 변경 10. 창 변경 확인 11.단축키 I - Library에 gpdk090입력 후 Cell로 소자 선택 가능 소자 선택 후 창으로 마우스 가져와서 설치 가능 12. PMOS도 마찬가지로 설치",
+   "related": [
+    45,
+    46,
+    62,
+    47,
+    48
+   ]
+  },
+  {
+   "id": 41,
+   "url": "https://semicon-circuit.tistory.com/41",
+   "title": "CMOS 공정 기초: N-well·P-well과 Stick Diagram 이해",
+   "date": "2024-04-25",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "코딩",
+    "multiplexer",
+    "하드웨어 설계",
+    "uart 설계",
+    "verilog",
+    "Vivado",
+    "취업준비",
+    "반도체 설계",
+    "uart",
+    "auto p&r"
+   ],
+   "summary": "본 글은 CMOS 공정의 기초가 되는 single well 및 twin well 공정과 Substrate/Well tap의 역할을 설명합니다. 전자와 정공의 이동도 차이로 인해 PMOS의 폭을 NMOS의 2배로 설계해야 하는 이유를 다룹니다. 마지막으로, 특정 논리 회로의 CMOS Schematic을 바탕으로 스틱 다이어그램을 그리는 구체적인 과정을 소개합니다.",
+   "keywords": [
+    "CMOS공정",
+    "Twin-well",
+    "SubstrateTap",
+    "InverterMaskSet",
+    "StickDiagram"
+   ],
+   "excerpt": "[2024.04.24.수] 인천인력개발원 하만 세미콘 아카데미 CMOS 공정 1. CMOS 공정 종류 single well 공정: n-si 또는 p-si body에 한 쪽에만 well을 만드는 공정 좌: n-well 공정 / 우: p-well 공정 twin well 공정: 도핑되어 있지 않은 body의 양 쪽에 well을 만드는 공정 2. Well과 Substrate Tap Well&Substrate Taps Substarte tap: p substrate과 왼쪽의 p+ 연결 -> GND로 연결 Well tap: n well과 n+ 연결 -> Vdd로 연결 3. Inverter Mask Set NMOS의 Width와 PMOS의 Width가 2배 차이나야 하는 이유: 이동도가 전자가 정공의 2배이므로, PMO",
+   "related": [
+    40,
+    46,
+    29,
+    47,
+    62
+   ]
+  },
+  {
+   "id": 40,
+   "url": "https://semicon-circuit.tistory.com/40",
+   "title": "모스펫(MOSFET) 기초: NMOS·PMOS와 CMOS Schematic 설계",
+   "date": "2024-04-23",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "회로설계",
+    "하드웨어 설계",
+    "레이아웃 설계",
+    "취업준비",
+    "AI가속기",
+    "프로그래밍",
+    "논리회로",
+    "코딩",
+    "Vivado",
+    "uart 설계"
+   ],
+   "summary": "이 글은 반도체 집적회로의 기초가 되는 도핑과 p-n junction의 개념을 설명하고 있습니다. 이어 NMOS와 PMOS의 구조 및 동작 원리를 다루며, 이를 활용한 CMOS 인버터와 NAND, NOR 게이트의 Schematic 설계 방법을 소개합니다. 최종적으로 논리식을 바탕으로 NMOS와 PMOS의 직·병렬 연결을 통해 다양한 CMOS 회로를 구성하는 예시를 보여줍니다.",
+   "keywords": [
+    "MOSFET",
+    "NMOS",
+    "PMOS",
+    "CMOS Schematic",
+    "p-n junction"
+   ],
+   "excerpt": "[2024.04.23.화] 인천인력개발원 하만 세미콘 아카데미 mobaxterm 설치 1. https://mobaxterm.mobatek.net/download.html 접속 2. Installer Edition 설치 3. 설치 완료 4. session - SSH 선택 후 내용 입력 5. 코드 입력 6. Tool - Library Manager, Library Path Manager 열기 5번에 내용 입력 후 File - Save 후 변화 확인 gpdk090이 생성됨 7. gpdk090 Library 선택 시 다양한 소자 확인 가능 PN junction & MOSFET 1. Introduction IC(Integrated Circuits) : 집적 회로. 많은 트랜스터가 있는 칩 VLSI : Very Lar",
+   "related": [
+    41,
+    29,
+    45,
+    42,
+    47
+   ]
+  },
+  {
+   "id": 39,
+   "url": "https://semicon-circuit.tistory.com/39",
+   "title": "BJT Open-Collector 회로와 인버터(Inverter) 동작 원리",
+   "date": "2024-04-22",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "논리회로",
+    "반도체 설계",
+    "하드웨어 설계",
+    "verilog",
+    "프로그래밍",
+    "AI가속기",
+    "반도체설계",
+    "multiplexer",
+    "uart"
+   ],
+   "summary": "본 글은 BJT Open-Collector 회로의 구성과 인버터 동작 원리를 시뮬레이션을 통해 분석한 내용을 담고 있습니다. 입력 신호에 따른 출력 상태 변화와 풀업 저항의 역할, 그리고 BJT의 포화 전압 특성을 확인하였습니다. 또한, ATMega 128 I/O 핀의 등가 회로 분석과 풀업 저항을 이용한 Level Shifter 실습 과정을 다루었습니다.",
+   "keywords": [
+    "Open-Collector",
+    "Inverter",
+    "BJT",
+    "Pull-up Resistor",
+    "Level Shifter"
+   ],
+   "excerpt": "[2024.04.22.월] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 3. Transistor 응용회로 1. Open_Collector 프로젝트 생성 2. 회로 구성 3. 시뮬레이션 실행 4. Propogation Delay발생: 내부 신호처리 과정에서 발생 5. 7405/EVAL로 변경 6. 시뮬레이션 파란 부분:High Z, Floating 상태 www.ti.com에서 7405 검색, datasheet 다운로드 HEX: 부품 6개 사용(DUAL, QUAD, HEX, OCTA) OPEN-COLLECTOR: 아래 등가회로에서 입력이 HIGH면 OUTPUT에 LOW, 입력이 LOW면 Collector 핀의 OUTPUT이 Floating(Open) 상태 7. 위 등가회로를 참고하여 회로 구성 R",
+   "related": [
+    36,
+    37,
+    26,
+    48,
+    27
+   ]
+  },
+  {
+   "id": 38,
+   "url": "https://semicon-circuit.tistory.com/38",
+   "title": "Verilog 스톱워치(Stopwatch) 설계와 테스트벤치 작성법",
+   "date": "2024-04-19",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "논리회로",
+    "Virtuoso",
+    "레이아웃 설계",
+    "Vivado",
+    "하드웨어 설계",
+    "mux",
+    "시스템반도체",
+    "C언어",
+    "반도체 설계",
+    "취업준비"
+   ],
+   "summary": "이 글은 Verilog를 이용하여 스톱워치의 핵심 기능인 Start/Stop 버튼 제어 모듈과 시간 카운트 모듈을 설계하는 과정을 설명합니다. 키 입력의 상승엣지를 감지하여 모드를 전환하는 key_proc 모듈과 125MHz 클럭을 기반으로 초를 카운트하는 stopwatch 모듈의 코드를 제시합니다. 또한, 각 모듈의 동작을 검증하기 위한 테스트벤치 작성 방법과 시뮬레이션 결과에 대해 다룹니다.",
+   "keywords": [
+    "Verilog",
+    "Stopwatch",
+    "Testbench",
+    "RTL",
+    "Clock"
+   ],
+   "excerpt": "[2024.04.18.목~] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 Stopwatch 모듈 설계 1. 버튼이 눌리면 STR_STP변수를 1과 0으로 변경하여 모드를 Start, Stop으로 변경하는 모듈 작성 Switch를 누르면 CLK의 rising edge에 맞춰 ss_1d를 1로 다음 CLK의 rising edge에서도 switch가 1이면 ss_2d를 1로 enable = ss_1d & ~ss_2d를 이용하면 CLK 주기동안 버튼이 눌려있으면 start/stop 작동하도록 신호 생성 RST == 0이고, enable = 1이면 STR_STP신호를 반전(STR_STP = ~STR_STP)하여 start/stop 모드 전환 2. key_proc.v 코드 작성",
+   "related": [
+    106,
+    25,
+    100,
+    20,
+    105
+   ]
+  },
+  {
+   "id": 37,
+   "url": "https://semicon-circuit.tistory.com/37",
+   "title": "OrCAD PSpice 다이오드 모델과 라이브러리 변경 방법",
+   "date": "2024-04-17",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "verilog",
+    "반도체설계",
+    "하드웨어 설계",
+    "프로그래밍",
+    "회로설계",
+    "레이아웃 설계",
+    "취업준비",
+    "Virtuoso",
+    "mux",
+    "논리회로"
+   ],
+   "summary": "OrCAD PSpice를 활용하여 커스텀 다이오드 및 BJT 소자의 모델과 라이브러리를 변경하고 시뮬레이션하는 방법을 설명합니다. 데이터시트를 분석하여 순방향 전류 및 전압 조건을 확인하고 라이브러리 파일을 생성 및 추가하는 절차를 다룹니다. 나아가 MCU의 구동 능력을 고려한 LED 직접 구동과 BJT를 이용한 간접 구동 회로 설계 방식을 소개합니다.",
+   "keywords": [
+    "OrCAD PSpice",
+    "Diode Model",
+    "Library Change",
+    "BJT",
+    "LED 회로 설계"
+   ],
+   "excerpt": "[2024.04.17.수] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 OrCAD PSpice Diode model 변경(Library change) 1. UPWLEDxx 파일 다운로드 2. Work_OrCAD에 폴더 두 개 생성 후 1_datasheet, 1_Library로 폴더 이름 설정 3. 1_datasheet폴더에 위에서 다운로드한 파일 이동 4. 데이터시트 분석 IF, VF, VR, LED 색상 등의 정보 확인 가능 위 LED는 최소 20mA~50mA의 전류로 사용 가능(Forward Voltage) 항목에서 확인 --> IF=20mA~50mA p.1에서 VR = 8V임을 확인 가능 5. Spice 모델 확인 가능 6. 메모장 실행하고 내용 입력 후 dsn_HW .lib 로 저장(1",
+   "related": [
+    36,
+    39,
+    27,
+    26,
+    28
+   ]
+  },
+  {
+   "id": 36,
+   "url": "https://semicon-circuit.tistory.com/36",
+   "title": "BJT 트랜지스터 동작 원리: NPN·PNP와 ON/OFF 특성",
+   "date": "2024-04-16",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "C언어",
+    "AI가속기",
+    "시스템반도체",
+    "프로그래밍",
+    "레이아웃 설계",
+    "verilog",
+    "하드웨어 설계",
+    "auto p&r",
+    "회로설계",
+    "반도체설계"
+   ],
+   "summary": "본문은 BJT 트랜지스터의 NPN 및 PNP 종류와 베이스 전압에 따른 ON/OFF 동작 원리를 설명합니다. 또한 OrCAD를 활용한 Transient, AC, DC sweep 등 다양한 시뮬레이션 프로파일 설정 방법을 다룹니다. 마지막으로 BJT 기반 인버터 회로의 전류 계산 및 시뮬레이션 결과 분석 과정을 실습 중심으로 다루고 있습니다.",
+   "keywords": [
+    "BJT",
+    "NPN",
+    "베이스 전류",
+    "시뮬레이션",
+    "인버터"
+   ],
+   "excerpt": "[2024.04.16.화] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 5. Transistor 응용회로 1. Transistor 종류 BJT(현업에서는 \"TR\") npn TR pnp TR FET N-Channel FET P-Channel FET 2. BJT의 TR ON / OFF 특성 0.7V 이상의 전압이 걸리면 베이스 전류가 흐름(양공이 p로 이동) / 우측 전압원으로 인해 Collector에는 고전압 형성 p형 반도체로 이동한 양공으로 인해 Emitter에서 위쪽으로 전자 다량 이동(I_E 전류 흐름) Collector의 고전압으로 인해 2에서 이동한 전자가 대부분 p형 반도체를 통과하여 collector로 이동(I_C 전류 흐름) 이 때, I_B에 의해 TR이 ON 되므로 \" 전류(I",
+   "related": [
+    39,
+    37,
+    28,
+    26,
+    31
+   ]
+  },
+  {
+   "id": 35,
+   "url": "https://semicon-circuit.tistory.com/35",
+   "title": "다이오드 종류 정리: 쇼트키·제너·TVS·바리스터",
+   "date": "2024-04-15",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "반도체설계",
+    "코딩",
+    "Vivado",
+    "레이아웃 설계",
+    "AI가속기",
+    "verilog",
+    "논리회로",
+    "mux",
+    "회로설계"
+   ],
+   "summary": "이 글은 PN 접합 다이오드의 기본 동작 원리와 쇼트키, 제너 등 다양한 다이오드의 특성을 설명합니다. 다이오드 선정 시 고려해야 할 주요 규격과 함께 노이즈 및 정전기방전(ESD) 대책을 다룹니다. 특히 TVS 다이오드와 바리스터를 활용한 회로 보호 설계 기법을 중점적으로 다루고 있습니다.",
+   "keywords": [
+    "쇼트키 다이오드",
+    "제너 다이오드",
+    "역방향 내전압",
+    "TVS 다이오드",
+    "바리스터"
+   ],
+   "excerpt": "[2024.04.15.월] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 RLC 응용 사례 1. Noise Coupling(노이즈 결합) 두 개의 IC가 회로로 연결되면 노이즈 결합(Noise Coupling 발생) IC쪽 회로에 각각 캐패시터 설치 -> Noise Decoupling -> 이러한 캐패시터를 Decoupling Capacitor( De-Cap )이라 함 De-Cap = Bypass Capacitor 2. 제조물 책임법(Product Liability, PL법) 기업에서 제조한 제품이 소비자에게 피해를 야기했을 때 소비자를 보호하기 위한 법 Diode 응용회로 1. PN 접합 다이오드(PN junction) Anode(A), Cathode(K) p형 반도체: 주요 전하운반자로 양공",
+   "related": [
+    26,
+    37,
+    33,
+    40,
+    32
+   ]
+  },
+  {
+   "id": 34,
+   "url": "https://semicon-circuit.tistory.com/34",
+   "title": "Verilog 시스템 태스크(System Tasks)와 패리티·2의 보수 설계",
+   "date": "2024-04-12",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Virtuoso",
+    "반도체설계",
+    "반도체 설계",
+    "논리회로",
+    "Vivado",
+    "auto p&r",
+    "multiplexer",
+    "시스템반도체",
+    "AI가속기",
+    "레이아웃 설계"
+   ],
+   "summary": "본 글에서는 Verilog RTL 설계 시 유용한 시스템 태스크(System Tasks), 서브프로그램(Tasks & Functions), 그리고 컴파일 지시자의 개념과 활용법을 다루고 있습니다. 또한 패리티(Parity) 생성기, 메모리 주소 크기를 계산하는 상수 함수(Constant Function), 그리고 2의 보수를 구하는 태스크 설계 실습 과정을 상세히 설명합니다. 이를 통해 시뮬레이션 제어 및 디버깅 방법과 모듈 내 파라미터 제어 기법을 익힐 수 있습니다.",
+   "keywords": [
+    "System Tasks",
+    "Verilog Subprograms",
+    "Compiler Directives",
+    "Parity Function",
+    "Constant Function"
+   ],
+   "excerpt": "[2024.04.12.금] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 시스템 작업(System Tasks) 1. System Tasks: 미리 작성된 코드의 모음 Simulation Tasks: 가시성과 디버깅 향상 Operations: 콘솔에 출력 / net의 값 모니터링 / 시뮬레이션 시작,정지 $로 시작 Verilog에서 타이밍 체크 2. System Tasks 예시 $display: 콘솔에 값 출력 ex. $display(\"At time %d, q = %b\", $time, q); $time, $realtime: 현재의 시뮬레이션 시간을 정수로 표현 $wirte: $display와 유사하나 새로운 줄을 자동으로 추가 x $write (\"Simulation ti",
+   "related": [
+    19,
+    20,
+    25,
+    12,
+    11
+   ]
+  },
+  {
+   "id": 33,
+   "url": "https://semicon-circuit.tistory.com/33",
+   "title": "댐핑저항과 신호 무결성(Signal Integrity): EMI·EMC 대책",
+   "date": "2024-04-12",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Vivado",
+    "레이아웃 설계",
+    "verilog",
+    "하드웨어 설계",
+    "auto p&r",
+    "반도체설계",
+    "취업준비",
+    "uart 설계",
+    "mux",
+    "uart"
+   ],
+   "summary": "본 글은 PCB 회로에서 LC 공진과 신호 왜곡을 줄이기 위해 사용하는 댐핑저항의 원리와 선택 방법을 설명합니다. 신호 무결성(SI)과 전원 무결성(PI)을 확보하기 위한 EMI/EMC 대책 및 전자기기 인증 기준을 다룹니다. 또한, 고속 동작에 유리한 패키징 기술과 노이즈 저감을 위한 페라이트 비즈 및 커플링 캐패시터의 활용법을 다룹니다.",
+   "keywords": [
+    "댐핑저항",
+    "신호 무결성",
+    "LC공진",
+    "EMC",
+    "커플링 캐패시터"
+   ],
+   "excerpt": "[2024.04.11.목] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 3-1. 댐핑저항 댐핑저항 댐핑저항이 클수록 공진 감소 LC filter에서 LC 공진에 의한 Peaking 대역 존재 방지를 위해 직렬 저항 구성 댐핑저항 선택 방법: 수Ω~100Ω 내의 저항 사용(주로 20Ω~30Ω) PCB에서 기생L, C에 의한 공진, 전자파 발생을 줄이기 위해 댐핑저항 설치 1. 댐핑 저항 10mΩ 설치 2. 100mΩ 설치 3. 댐핑저항 1kΩ 설치, maximum step size 30u으로 변경 입력 신호와 정확히 일치하지는 않는 모습 확인 4. 댐핑저항 3Ω 입력신호인 PULSE가 정확히 출력되는 파형 확인 가능 -> 신호 무결성 증가 5. 프로필ac로 변경, 입력을 AC로 변경하기 위해 P",
+   "related": [
+    32,
+    31,
+    35,
+    28,
+    26
+   ]
+  },
+  {
+   "id": 32,
+   "url": "https://semicon-circuit.tistory.com/32",
+   "title": "인덕터(Inductor) 원리: 앙페르 법칙과 전자기 유도 법칙",
+   "date": "2024-04-09",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Virtuoso",
+    "회로설계",
+    "AI가속기",
+    "verilog",
+    "C언어",
+    "uart 설계",
+    "multiplexer",
+    "하드웨어 설계",
+    "논리회로",
+    "코딩"
+   ],
+   "summary": "본 글은 전자회로 해석 및 설계 과정에서 다루는 기생저항과 다양한 캐패시터의 특성을 설명합니다. 앙페르 법칙과 전자기 유도 법칙을 바탕으로 인덕터의 동작 원리와 에너지 저장 메커니즘을 다룹니다. 마지막으로 PSpice를 활용한 인덕터 및 캐패시터 기반의 LPF(저역 통과 필터) 회로 시뮬레이션 실습 내용을 포함하고 있습니다.",
+   "keywords": [
+    "인덕터",
+    "캐패시터",
+    "전자기유도법칙",
+    "유도리액턴스",
+    "LC공진"
+   ],
+   "excerpt": "[2024.04.09.화] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 2. 에너지 저장소자 1. △R: 기생저항+접촉저항 기생저항(Parasitic Resistance): 패턴 내에 존재하는 보이지 않는 저항 접촉저항(Contact Resistance): 서로 접한 두 도체의 접촉면을 통해 전류가 흐를 때 그 접촉면에 생기는 저항, 고주파에서 기생 캐패시턴스와 기생 인덕턴스로 인해 접촉저항이 증가 cut-off frequency ω = 1 / (R+△R)C가 되므로, R이 매우 커야 저항 변동률이 작아짐 신호 처리용 적정 저항(R)값: 수백Ω~수십kΩ 2. 캐패시터의 종류 전해 캐패시터(전해콘덴서, 케미콘) 유전체로 얇은 산화막, 전극으로 알루미늄 사용 전극의 극성 존재 장점: 1uF~수만u",
+   "related": [
+    28,
+    31,
+    33,
+    26,
+    39
+   ]
+  },
+  {
+   "id": 31,
+   "url": "https://semicon-circuit.tistory.com/31",
+   "title": "캐패시터로 배우는 하이패스·로우패스·밴드패스 필터 원리",
+   "date": "2024-04-08",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "회로설계",
+    "auto p&r",
+    "C언어",
+    "AI가속기",
+    "multiplexer",
+    "uart",
+    "verilog",
+    "반도체설계",
+    "Virtuoso"
+   ],
+   "summary": "이 글은 캐패시터의 임피던스 및 주파수 특성을 바탕으로 한 RLC 회로의 동작 원리를 설명합니다. PSpice 시뮬레이션을 통해 전달함수와 데시벨(dB) 개념을 이해하고, 차단주파수(-3dB 지점)를 구하는 방법을 다룹니다. 또한, 수동 소자와 능동 소자의 차이 및 LPF, HPF, BPF 등 수동 필터의 종류와 차수별 특성을 정리합니다.",
+   "keywords": [
+    "캐패시터",
+    "임피던스",
+    "차단주파수",
+    "수동필터",
+    "PSpice"
+   ],
+   "excerpt": "[2024.04.08.월] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 2. 에너지 저장소자 RLC 회로의 I와 V 그래프 I = Q/t 이므로, 교류 전압의 주파수가 클 수록 Q의 흐름이 많아지고, I가 커져 저항 감소 1-1. 캐패시터의 임피던스 임피던스 저항과 용량성 리액턴스와 유도성 리액턴스의 조합을 포함한 회로에서 전류의 흐름 방해하는 것 단위: Ω 기호: Z 용량 리액턴스캐패시터의 임피던스 단위: Ω Zc: 용량 리액턴스 [Ω] f: 주파수 [Hz] C: 캐패시턴스 [F] 1-2. 캐패시터의 연결 직렬 합성 캐패시턴스 직렬 연결된 캐패시터에 충전된 전하량이 모두 동일 -> 각 축전기에 인가된 전위차의 총합 = 걸어준 전압 직렬 연결된 두 캐패시터의 합성 캐패시턴스는 둘 중 작은 캐패",
+   "related": [
+    32,
+    28,
+    33,
+    26,
+    39
+   ]
+  },
+  {
+   "id": 30,
+   "url": "https://semicon-circuit.tistory.com/30",
+   "title": "카르노맵(K-map)으로 논리식 간소화하는 방법",
+   "date": "2024-04-07",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "회로설계",
+    "프로그래밍",
+    "uart",
+    "하드웨어 설계",
+    "레이아웃 설계",
+    "uart 설계",
+    "취업준비",
+    "코딩",
+    "논리회로"
+   ],
+   "summary": "카르노맵(K-map)은 논리식과 진리표를 시각적으로 간소화하여 회로의 전파지연을 줄이고 동작 속도를 향상시키는 방법입니다. SOP와 POS 형태의 논리식을 바탕으로 진리표를 작성하고, 인접한 1들을 그룹화하여 최적화된 논리 회로를 구현할 수 있습니다. 또한, 무정의 조건(Don't care condition)인 'x'를 활용하여 논리식을 더욱 효율적으로 단순화할 수 있습니다.",
+   "keywords": [
+    "카르노맵",
+    "논리식 간소화",
+    "Sum-Of-Products",
+    "진리표",
+    "Don't care condition"
+   ],
+   "excerpt": "1. Sum - Of - Products(SOP) 형태 Sum - Of - Products(SOP): 곱의 합 형태(AND 연산된 항들을 OR연산을 통해 표현) SOP 예시 Products - Of - Sums(POS): 합의 곱 형태(OR 연산된 항들을 AND연산을 통해 표현) POS 예시 2. 논리회로의 단순화 논리회로의 단순화: 전파지연을 줄여 회로의 동작속도 향상 Boolean algebra와 Karnaugh mapping을 통해 단순화 가능 단순화 예시 좌측 논리회로의 결과값을 통해 우측 회로로 변환 가능 3. 대수적 단순화(Algebraic Simplification) DeMorgan의 정리를 이용하여 원래의 표현식을 SOP형식으로 표현 SOP형식에서 공통인수를 찾아내어 1개 이상의 항을 소거 A",
+   "related": [
+    29,
+    18,
+    41,
+    46,
+    11
+   ]
+  },
+  {
+   "id": 29,
+   "url": "https://semicon-circuit.tistory.com/29",
+   "title": "NAND·NOR 게이트 정리 — 진리표, 논리기호, 드모르간 법칙",
+   "date": "2024-04-07",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "uart",
+    "multiplexer",
+    "논리회로",
+    "취업준비",
+    "C언어",
+    "프로그래밍",
+    "하드웨어 설계",
+    "코딩",
+    "Virtuoso",
+    "uart 설계"
+   ],
+   "summary": "이 글은 NAND 및 NOR 게이트의 진리표와 논리기호, 부울 연산 규칙을 알기 쉽게 정리합니다. 또한 드모르간 법칙과 게이트의 범용성, 대안 논리기호의 변환 방법을 설명합니다. 마지막으로 논리 게이트 동작 시 발생하는 전파 지연과 측정 기준에 대해 다룹니다.",
+   "keywords": [
+    "NAND 게이트",
+    "NOR 게이트",
+    "드모르간 법칙",
+    "범용성",
+    "전파 지연"
+   ],
+   "excerpt": "이 글에서는 NAND·NOR 게이트의 진리표와 논리기호(회로도)를 예시와 함께 정리하고, 드모르간 법칙으로 이어지는 관계와 게이트의 범용성, 대안 논리기호, 전파 지연까지 설명합니다. 1. 논리 회로 출력값(Output) 구하기 부울 표현의 연산 규칙 괄호를 제외한 변수의 모든 역변환 수행 괄호 내의 연산 수행 AND 연산 후 OR 연산 수행 연산식에 바(NOT)가 있으면 내부 연산 수행 후 결과 역변환 부울 연산 예시 AND, OR, NOT 게이트를 이용한 논리회로에서의 Input에 따른 결과값 예시 2. NOR게이트와 NAND게이트 1. NOR 게이트 NOR 게이트의 결과값은 OR연산 수행 후 NOT연산을 진행하여 계산 가능 NOR 게이트 = NOT OR(OR 결과에 Inversion을 나타내는 Bubb",
+   "related": [
+    18,
+    40,
+    46,
+    45,
+    41
+   ]
+  },
+  {
+   "id": 28,
+   "url": "https://semicon-circuit.tistory.com/28",
+   "title": "OrCAD PSpice 실습: 최대 전력전달과 캐패시터 유전율",
+   "date": "2024-04-04",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "C언어",
+    "uart 설계",
+    "레이아웃 설계",
+    "verilog",
+    "auto p&r",
+    "코딩",
+    "회로설계",
+    "AI가속기",
+    "프로그래밍",
+    "반도체설계"
+   ],
+   "summary": "본 글은 OrCAD PSpice를 활용하여 최대 전력전달 조건과 캐패시터의 동작 특성을 실습하는 과정을 다루고 있습니다. DC Sweep 분석을 통해 부하 저항에 따른 최대 전력 전달 지점을 찾고, Transient 분석으로 캐패시터의 충·방전 및 전압·전류 관계를 확인합니다. 또한 회로 시뮬레이션 결과의 시각화 방법과 정현파, 실효값(RMS), 유전율 등 기초 전자회로 이론을 함께 설명합니다.",
+   "keywords": [
+    "OrCAD PSpice",
+    "최대 전력전달",
+    "캐패시터",
+    "정전용량",
+    "DC Sweep"
+   ],
+   "excerpt": "[2024.04.04.목] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 실습 1: 최대 전력 전달 측정 1. 새 프로젝트 생성(MaxPwr) - Create Blank Project 2. 20일차 참고하여 변수 선언 및 회로 구성 오실로스코프 출처: SparkFun Learn 프로브를 이용하여 전압 측정 디스플레이에 전압을 파형으로 표시 OrCAD에서는 다음 아이콘으로 측정 가능 W: 파워 측정 3. 파워 마커를 오른쪽 저항에 클릭 4. New Simulation Profile - DC로 이름 설정 5. Analysis 에서 Analysis Type을 DC Sweep로 설정 6. Sweep Variable의 글로벌 파라미터 선택 - 이름 입력 7. 저항을 1~1k까지 100옴씩 증가시키기 위해",
+   "related": [
+    32,
+    27,
+    31,
+    26,
+    37
+   ]
+  },
+  {
+   "id": 27,
+   "url": "https://semicon-circuit.tistory.com/27",
+   "title": "테브난·노턴 등가회로와 피에조 소자 아키텍처 설계",
+   "date": "2024-04-03",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "uart",
+    "multiplexer",
+    "논리회로",
+    "시스템반도체",
+    "회로설계",
+    "Virtuoso",
+    "하드웨어 설계",
+    "uart 설계",
+    "반도체 설계",
+    "레이아웃 설계"
+   ],
+   "summary": "이 글은 피에조 소자를 활용한 전자저울 아키텍처 설계와 하드웨어·소프트웨어적 성능 개선 방법을 설명합니다. 또한, 복잡한 회로를 단순화하기 위한 테브난 및 노턴 등가회로의 개념과 내부저항 도출 과정을 다룹니다. 마지막으로, OrCAD 프로그램을 활용한 회로 시뮬레이션 및 전압·전류 측정 실습 방법을 안내합니다.",
+   "keywords": [
+    "피에조 소자",
+    "등가회로",
+    "테브난",
+    "노턴",
+    "OrCAD"
+   ],
+   "excerpt": "[2024.04.03.수] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 회로해석 이론 1. 피에조 소자 압전 효과를 이용한 소자 기계적 자극에 의해 분극 현상이 일어나는 것을 이용한 소자 압력에 따라 저항이 달라져 전류가 달라짐 2. 노드 전압 구하기 예시 3. 위 회로로 전자저울 아키텍쳐 설계 R4 위치에 피에조 소자를 위치 피에조 소자에 가해지는 압력에 따라 전압 변화 이에 따라 Va도 변화 a와 b노드에 op-amp를 연결(a에 +, b에 -)하여 신호 증폭 ADC(Analog to Digital Converter)를 이용하여 아날로그 신호를 디지털 신호로 변환 Resolution: 해상도, 분해능 8Bit ADC -> 전압을 2^8개로 분해하여 분석 가능 10Bit ADC-> 전압을 2",
+   "related": [
+    26,
+    28,
+    37,
+    39,
+    46
+   ]
+  },
+  {
+   "id": 26,
+   "url": "https://semicon-circuit.tistory.com/26",
+   "title": "옴의 법칙과 키르히호프 법칙: 전자회로 해석 기초",
+   "date": "2024-04-02",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "프로그래밍",
+    "시스템반도체",
+    "uart",
+    "코딩",
+    "레이아웃 설계",
+    "AI가속기",
+    "하드웨어 설계",
+    "반도체설계",
+    "Vivado",
+    "auto p&r"
+   ],
+   "summary": "본 글은 전자회로 해석의 기초가 되는 단위, 전류, 전압의 개념과 물의 흐름 비유를 통한 이해를 다룹니다. 또한 옴의 법칙, 저항 합성, 노드와 접지, 그리고 PSpice 시뮬레이션 에러 해결 방법을 설명합니다. 마지막으로 회로망 분석의 핵심인 키르히호프의 전류 법칙(KCL)과 전압 법칙(KVL)을 소개합니다.",
+   "keywords": [
+    "옴의법칙",
+    "키르히호프법칙",
+    "합성저항",
+    "전압원",
+    "PSpice"
+   ],
+   "excerpt": "[2024.04.02.화] 인천인력개발원 하만 세미콘 아카데미 전자회로 해석 및 설계 회로 해석이론 1. 단위 접두어 10의 0제곱 이하로는 소문자, 이상은 대문자 기호로 표현 OrCAD 사용 시 주의점 대/소문자 구분 없음 Mega의 경우 m과 M이 중복되므로 meg 또는 MEG로 기술 단위 생략 가능 상온(Room Temperature): 300K = 섭씨 약 27도 **대문자 K는 켈빈, 소문자 k는 킬로 2. 전류(Current) 전하(electric charge): 대전된 물체가 갖는 전기의 양. +와 -로 구분 전하량: 전하의 양, Q [ C ] 전류(Current) 전하의 이동 또는 흐름 단위시간(!초)동안 이동한 전하량 단위: [ A ] (Ampere, 암페어) 1A = 1초동안 1C의 전하가",
+   "related": [
+    27,
+    32,
+    28,
+    39,
+    37
+   ]
+  },
+  {
+   "id": 25,
+   "url": "https://semicon-circuit.tistory.com/25",
+   "title": "Verilog 클록·리셋(Clock/Reset)과 카운터 테스트벤치 검증",
+   "date": "2024-04-01",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Vivado",
+    "반도체 설계",
+    "프로그래밍",
+    "uart",
+    "verilog",
+    "레이아웃 설계",
+    "시스템반도체",
+    "취업준비",
+    "논리회로",
+    "C언어"
+   ],
+   "summary": "본문은 Verilog를 활용한 클록과 리셋, 플립플롭의 개념을 다루며 카운터 회로 설계 및 실습 과정을 설명합니다. 또한 Verilog 루프문의 종류와 테스트벤치를 이용한 디지털 회로의 시뮬레이션 검증 방법을 다룹니다. 마지막으로 파라미터와 주파수를 설정하여 1초 주기 카운터를 설계하고 검증하는 실습 내용을 포함하고 있습니다.",
+   "keywords": [
+    "Verilog",
+    "Clock",
+    "Reset",
+    "Flip-Flop",
+    "Testbench"
+   ],
+   "excerpt": "[2024.04.01.월] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 Clock과 Reset Clock(clk, 클록) 디지털 시스템에서 데이터 처리의 타이밍을 제어하는 주기적인 신호 주파수, 주기를 통해 신호의 반복속도, 시간 등을 나타냄 Reset(rst) 디지털 시스템을 초기 상태로 되돌리는 데 사용 Synchronous Reset: 클록 신호에 동기화되어 작동 - 리셋 시 다음 클록 엣지에서 시스템 초기화 Asynchronous Reset: 클록 신호와 무관하게 즉시 작동 - 빠른 리셋이 가능하지만 동기화 문제 발생 가능 Flip-Flop(FF) 한 비트의 이진 정보를 저장하는 메모리 단위 클록 신호에 의해 제어 입력 데이터를 기반으로 두 가지 안정된 상태 ",
+   "related": [
+    38,
+    20,
+    99,
+    100,
+    34
+   ]
+  },
+  {
+   "id": 22,
+   "url": "https://semicon-circuit.tistory.com/22",
+   "title": "ATmega128 타이머/카운터 사용법 완전 정리",
+   "date": "2024-03-28",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "Vivado",
+    "논리회로",
+    "반도체 설계",
+    "회로설계",
+    "하드웨어 설계",
+    "uart",
+    "multiplexer",
+    "취업준비",
+    "코딩",
+    "uart 설계"
+   ],
+   "summary": "이 글은 ATmega128 마이크로컨트롤러의 8비트 및 16비트 타이머/카운터와 인터럽트 기능을 활용하여 7세그먼트 시간 표시 및 주방 타이머를 구현하는 방법을 설명합니다. TCCR, TIMSK 등 주요 레지스터 설정과 분주비 조정을 통해 정확한 시간 간격을 생성하는 실습 코드를 제공합니다. 또한 외부 인터럽트와 스위치를 연동하여 시작, 정지, 리셋 및 시간 설정 기능을 갖춘 응용 시스템 개발 과정을 보여줍니다.",
+   "keywords": [
+    "ATmega128",
+    "타이머카운터",
+    "인터럽트",
+    "분주비",
+    "주방타이머"
+   ],
+   "excerpt": "[2024.03.28.목] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 8비트 타이머 / 카운터 1. 타이커/카운터 인터럽트 현재까지의 펄스 수: TCNTn레지스터에 저장 오버플로 인터럽트 최대로 셀 수 있는 펄스 이상이 되면 TCNTn레지스터가 0으로 바뀌며 발생 비교일치 인터럽트 TCNTn의 값이 미리 설정된 OCRn레지스터값과 일치하면 발생 2. TCCR0 레지스터: 분주비 설정 CLK 주파수: 16,000,000Hz TCNT는 최대 256, TCCR은 16 -> 256*26 = 4096 (≒4K) TCCR이 64면 16K -> 16KHz가 ATmega의 최대 주파수 따라서 분주비를 64로 설정 3. TIMSK 레지스터: 인터럽트 활성화 EIMSK: External Inpu",
+   "related": [
+    15,
+    21,
+    14,
+    13,
+    10
+   ]
+  },
+  {
+   "id": 21,
+   "url": "https://semicon-circuit.tistory.com/21",
+   "title": "AVR 외부 인터럽트(Interrupt) 설정과 활용법",
+   "date": "2024-03-27",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "취업준비",
+    "verilog",
+    "하드웨어 설계",
+    "C언어",
+    "시스템반도체",
+    "auto p&r",
+    "코딩",
+    "uart 설계",
+    "레이아웃 설계"
+   ],
+   "summary": "이 글은 마이크로컨트롤러의 폴링과 인터럽트 방식의 차이점을 설명하고, ATmega128의 외부 인터럽트 설정 및 활용법을 다룹니다. 특히 SREG 레지스터와 EIMSK, EICRB 설정을 통한 인터럽트 활성화 방법과 ISR 작성 시 주의사항을 예제와 함께 소개합니다. 마지막으로 FND 세그먼트와 외부 인터럽트를 결합한 스탑워치 설계 실습 과정을 보여줍니다.",
+   "keywords": [
+    "인터럽트",
+    "ISR",
+    "ATmega128",
+    "외부 인터럽트",
+    "volatile"
+   ],
+   "excerpt": "[2024.03.27.수] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 복습 1. 풀업 저항 플로팅 상태를 없애기 위해 설치하는 저항 다음과 같은 구조로 설치 스위치와 Vdd사이에 풀업저항 설치 2. 프로그램의 실행순서: Start - Function(함수 실행) - End [선형 구조] 인터럽트(Interrupt) 함수 실행 시 정해진 시점에 진행이 아닌, 임의의 시점에 진행하는 것 1. 폴링 vs 인터럽트 폴링 코드 나열 순서에 의해 실행 결정 모든 코드는 동일한 실행 우선순위 코드 A에 의해 코드 B 실행에 지연 발생 가능 정해진 순서에 따라 실행되므로 하드웨어의 지원이 불필요 코드 작성 & 이해 용이 인터럽트 우선 순위에 따라 실행 순서 결정 인터럽트에 따라 서로 다른 우",
+   "related": [
+    22,
+    14,
+    13,
+    10,
+    15
+   ]
+  },
+  {
+   "id": 20,
+   "url": "https://semicon-circuit.tistory.com/20",
+   "title": "Verilog if-else·case문으로 비교기(Comparator) 설계하기",
+   "date": "2024-03-26",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "auto p&r",
+    "반도체 설계",
+    "레이아웃 설계",
+    "uart",
+    "mux",
+    "Virtuoso",
+    "Vivado",
+    "시스템반도체",
+    "C언어",
+    "논리회로"
+   ],
+   "summary": "이 글은 Verilog를 이용한 RTL 시스템 반도체 설계 과정에서 절차적 모델링, 타이밍 제어, 조건문 활용법을 다루고 있습니다. 특히 if-else문과 case문을 활용하여 비교기(Comparator)와 7세그먼트 디코더를 실제로 구현하는 실습 과정을 상세히 설명합니다. 비바도(Vivado) 툴을 활용한 합성 및 구현, 그리고 하드웨어 동작 확인 방법까지 체계적으로 담고 있습니다.",
+   "keywords": [
+    "Verilog",
+    "RTL",
+    "Comparator",
+    "if-else",
+    "case"
+   ],
+   "excerpt": "[2024.03.26.화] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 Continuous Assignment Dataflow: 부울 연산과 연산자를 이용한 모델 동작적 / 절차적 모델링: 모델 설계 알고리즘 1. Data Flow 코드와 구조 예시 D Flip-Flop module dff (input d, clk, rst, output reg q); always @ (posedge clk) if(rst) q <= 1'b0; else q <= d; endmodule //dff​ 3-Bit Counter module count3 (input clk, rst, ouput[2:0] q); wire n1, n2; assign n1 = (q[0] ^ q[1]); assign ",
+   "related": [
+    25,
+    34,
+    38,
+    12,
+    100
+   ]
+  },
+  {
+   "id": 19,
+   "url": "https://semicon-circuit.tistory.com/19",
+   "title": "Verilog 버스·배열 기초와 반가산기로 전가산기 설계하기",
+   "date": "2024-03-25",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "uart 설계",
+    "multiplexer",
+    "uart",
+    "C언어",
+    "반도체 설계",
+    "하드웨어 설계",
+    "반도체설계",
+    "mux",
+    "회로설계",
+    "프로그래밍"
+   ],
+   "summary": "이 글은 Verilog의 버스, 배열, 문자열, 모듈 구조에 대한 기초 개념을 설명합니다. 반가산기를 활용하여 전가산기 및 2비트 가산기를 직접 설계하고 하드웨어에 구현하는 실습 과정을 다룹니다. 또한 비트 연산, 논리 연산, 산술 연산 등 다양한 Verilog 연산자의 종류와 사용법을 예시와 함께 정리합니다.",
+   "keywords": [
+    "Verilog",
+    "버스",
+    "전가산기",
+    "모듈",
+    "연산자"
+   ],
+   "excerpt": "[2024.03.25.월] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 Verilog의 버스 & 배열 1. Verilog 버스 버스: 비트의 모음 모든 wire나 reg 데이터 타입은 버스로 표현 가능 reg 버스: reg 비트의 모음 wire 버스: wire 비트의 모음 - 예시: 버스를 선언할 때 상수나 변수 사용 가능 module cntr64 (input...); `define data_msb 63 wire [`data_msb:0] data_bus;​ 비트 선택: 벡터나 배열 내의 개별 비트 표시 선언 예시 wire [31:0] data_bus; wire [0:7] h_byte; reg [15:0] control; int i, j; assign h_byte[i]",
+   "related": [
+    12,
+    11,
+    34,
+    20,
+    61
+   ]
+  },
+  {
+   "id": 18,
+   "url": "https://semicon-circuit.tistory.com/18",
+   "title": "부울 대수(Boolean Algebra) 기초: 진리표와 논리 게이트",
+   "date": "2024-03-23",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "취업준비",
+    "프로그래밍",
+    "Vivado",
+    "uart",
+    "uart 설계",
+    "하드웨어 설계",
+    "시스템반도체",
+    "회로설계",
+    "auto p&r",
+    "C언어"
+   ],
+   "summary": "부울 대수는 0과 1의 두 가지 값만을 사용하여 논리 연산을 수행하는 회로설계의 기초입니다. 진리표는 입력의 수에 따른 모든 가능한 입력과 출력의 관계를 체계적으로 나타냅니다. OR, AND, NOT 게이트는 부울 대수의 기본 연산을 구현하는 핵심 논리 소자입니다.",
+   "keywords": [
+    "부울 대수",
+    "진리표",
+    "OR 게이트",
+    "AND 게이트",
+    "NOT 게이트"
+   ],
+   "excerpt": "1. 부울 상수 & 변수(Boolean Constants and Variables) 부울 대수에서는 0과 1의 두 값만 사용 Logic 0 = False, Off, Low, No, Open switch Logic 1 = True, On, High, Yes, Closed switchㄷ 논리연산: OR, AND, NOT 2. 진리표(Truth Table) 논리회로에서 입력(Input)과 출력(Output)의 관계를 나타내는 표 결과값은 2의 입력 수 제곱만큼 발생 - 입력이 2개면 2의 제곱인 4가지의 결과값 생성 - 입력이 4개면 2의 4제곱인 16가지의 결과값 생성 3. OR 게이트를 이용한 OR 연산 OR 연산의 부울 표현: X = A + B \"X equals A OR B\" 입력이 2개인 OR 연산의 진리",
+   "related": [
+    29,
+    11,
+    30,
+    19,
+    40
+   ]
+  },
+  {
+   "id": 17,
+   "url": "https://semicon-circuit.tistory.com/17",
+   "title": "BCD 코드와 그레이코드 변환 정리 (2진수·16진수 변환 포함)",
+   "date": "2024-03-23",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "uart 설계",
+    "반도체 설계",
+    "Virtuoso",
+    "C언어",
+    "AI가속기",
+    "verilog",
+    "반도체설계",
+    "취업준비",
+    "코딩"
+   ],
+   "summary": "이 글은 2진수, 16진수, BCD 코드, 그리고 그레이코드 간의 상호 변환 방법을 다룹니다. 자릿수 계산과 비트 연산을 통해 다양한 수체계를 변환하는 과정을 예시와 함께 설명합니다. 또한 데이터 단위와 아스키(ASCII) 코드를 활용한 데이터 전송 방식의 기본 개념을 정리합니다.",
+   "keywords": [
+    "2진수",
+    "16진수",
+    "BCD코드",
+    "그레이코드",
+    "아스키코드"
+   ],
+   "excerpt": "1. 2진수 - 10진수 변환 2진수 -> 10진수 변환 : 오른쪽부터 2^0, 2^1, 2^2, ... 순으로 각 자릿수의 숫자와 곱하여 변환 예시) - 1 0011(2)인 이진수 -> 2^4 * 1 + 2^3 * 0 + 2^2 * 0 + 2^1 * 1 + 2^0 * 1 = 16 + 2 + 1 = 19(10) - 1011 0101(2) -> 2^7 + 2^5 + 2^4 + 2^2 + 2^0 = 128 + 32 + 16+ 4 + 1 = 181(10) 10진수 -> 2진수 변환: 10진수를 2로 나누며 나머지를 구하여 2진수로 변환 2. 16진수: 2진수의 4비트씩 묶어 0~9, A(10)~F(15)의 16자리로 표현 [16진수, 10진수, 2진수의 관계] 16진수 -> 10진수 변환: 2진수 -> 10진수 ",
+   "related": [
+    16,
+    3,
+    29,
+    98,
+    79
+   ]
+  },
+  {
+   "id": 16,
+   "url": "https://semicon-circuit.tistory.com/16",
+   "title": "디지털 논리회로 기초: 신호·에지·레벨 트리거란?",
+   "date": "2024-03-23",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "시스템반도체",
+    "Vivado",
+    "verilog",
+    "코딩",
+    "Virtuoso",
+    "논리회로",
+    "uart 설계",
+    "반도체 설계",
+    "하드웨어 설계",
+    "회로설계"
+   ],
+   "summary": "이 글은 디지털 논리회로의 기초가 되는 신호의 천이와 트리거 방식, 그리고 디지털과 아날로그 시스템의 차이점을 설명합니다. 또한 10진수, 16진수, 2진수 등의 수치 표현 방식과 데이터의 병렬 및 직렬 전송 개념을 다룹니다. 마지막으로 이진수를 일시적 또는 영구적으로 저장하는 메모리의 중요성과 저장 방식을 소개합니다.",
+   "keywords": [
+    "디지털 신호",
+    "에지 트리거",
+    "레벨 트리거",
+    "디지털 시스템",
+    "병렬 전송"
+   ],
+   "excerpt": "1. 디지털 신호(Digital Signals) 디지털 신호의 종류 하강 Edge(=Falling edge, Negative edge): 1 -> 0으로 천이(transition)되는 신호 상승 Edge(=Rising edge, Positive edge): 0 -> 1으로 천이(transition)되는 신호 하강 에지와 상승 에지 예시 이벤트(Event): 0과 1 두 개의 상태를 갖는 시스템에서 High -> Low 또는 Low -> High로 천이되는 것 트리거(Trigger): 특정 상태에서 응답하는 회로 레벨 트리거(Level Trigger): High 또는 Low의 특정 레벨에서 응답(천이, transition)하는 회로 에지 트리거(Edge Trigger): 상승 Edge 또는 하강 Edge에 응",
+   "related": [
+    99,
+    17,
+    29,
+    11,
+    18
+   ]
+  },
+  {
+   "id": 15,
+   "url": "https://semicon-circuit.tistory.com/15",
+   "title": "ATmega128 7-Segment 디스플레이 제어 프로그래밍",
+   "date": "2024-03-22",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "코딩",
+    "논리회로",
+    "C언어",
+    "mux",
+    "verilog",
+    "반도체설계",
+    "multiplexer",
+    "uart",
+    "취업준비",
+    "반도체 설계"
+   ],
+   "summary": "ATmega128 마이크로컨트롤러를 활용하여 7-Segment 디스플레이에 16진수 숫자를 출력하는 제어 실습을 진행했습니다. 사용자 정의 함수를 구현하여 4자리 7-Segment에 동적 점멸 및 10진수를 16진수로 변환하는 기능을 추가했습니다. 최종적으로 버튼 입력을 이용한 스탑워치 동작 제어 프로그램을 완성하여 작동을 확인했습니다.",
+   "keywords": [
+    "ATmega128",
+    "7-Segment",
+    "임베디드 시스템",
+    "C언어",
+    "스탑워치"
+   ],
+   "excerpt": "[2024.03.22.금] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 실습 1: 7세그먼트로 0~F까지 16진수로 표시 코드 수정 #define F_CPU 16000000L //Board CLK 정보(16MHz) #include <avr/io.h> #include <avr/delay.h> int main(void) { uint8_t digit[] = { 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x27, 0x7F, 0x67, 0x77, 0x7c, 0x58, 0x5e, 0x79, 0x71 }; int i, j; DDRD = 0xFF; //세그먼트 제어 핀 8개를 출력으로 설정 DDRC = 0x0F; //자릿수 선택 핀 4개를 출력으로 설정 whi",
+   "related": [
+    22,
+    105,
+    14,
+    21,
+    106
+   ]
+  },
+  {
+   "id": 14,
+   "url": "https://semicon-circuit.tistory.com/14",
+   "title": "ATmega128 GPIO 실습: LED 점멸과 7세그먼트 출력",
+   "date": "2024-03-21",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "multiplexer",
+    "uart 설계",
+    "취업준비",
+    "Virtuoso",
+    "uart",
+    "프로그래밍",
+    "C언어",
+    "반도체설계",
+    "Vivado",
+    "코딩"
+   ],
+   "summary": "이 글은 ATmega128 마이크로컨트롤러의 GPIO 레지스터 설정 방법을 다루며, LED 점멸 제어와 스위치 입력 처리 실습을 설명합니다. 또한 풀업 및 풀다운 저항의 개념과 플로팅 상태 해결 방법을 소개합니다. 마지막으로, 7세그먼트 표시장치를 이용한 숫자 출력 및 자릿수 제어 실습 코드를 제공합니다.",
+   "keywords": [
+    "ATmega128",
+    "GPIO",
+    "DDR",
+    "풀업저항",
+    "7세그먼트"
+   ],
+   "excerpt": "[2024.03.21.목] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 디지털 데이터 입출력 1. 디지털 데이터 출력 PORT 레지스터 (출력 레지스터) 포트: 8개의 핀을 하나로 묶어 관리하는 것 PORTA, PRTAB, ... PORTG까지의 레지스터 PORTA~PORTF에는 0~7까지 8개의 비트가 존재 - 비트 표현: PORTA1, PORTA2, ... PORTXn으료 표시 가능(X는 포트 종류, n은 비트) PORTG에는 5개의 비트만 존재하므로 상위 3개의 비트 사용 불가 특정 비트를 1로 설정 시: 1<<PORTA4사용 DDR(Data Direction Register): 핀의 입출력 방향 선택 데이터 핀을 사용하기 전에 입력 또는 출력 중 사용 용도를 결정하는 레지",
+   "related": [
+    21,
+    15,
+    22,
+    13,
+    10
+   ]
+  },
+  {
+   "id": 13,
+   "url": "https://semicon-circuit.tistory.com/13",
+   "title": "ATmega128 개발환경 구축: Atmel·Microchip Studio 설치법",
+   "date": "2024-03-20",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "Vivado",
+    "multiplexer",
+    "하드웨어 설계",
+    "시스템반도체",
+    "uart",
+    "AI가속기",
+    "auto p&r",
+    "C언어",
+    "mux"
+   ],
+   "summary": "본 글에서는 임베디드 시스템 설계에 사용되는 ATmega128 마이크로컨트롤러의 기본 개념과 특징을 설명합니다. 또한, Microchip Studio(아트멜 스튜디오)를 활용한 개발환경 구축 방법과 CP210x USB 드라이버 설치 과정을 다룹니다. 마지막으로, C언어를 이용해 LED를 점멸하고 제어하는 구체적인 실습 코드를 제공합니다.",
+   "keywords": [
+    "ATmega128",
+    "Microchip Studio",
+    "임베디드 시스템",
+    "마이크로컨트롤러",
+    "플래시메모리"
+   ],
+   "excerpt": "[2024.03.20.수] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 마이크로 컨트롤러 & CISC / RISC 마이크로 컨트롤러(칩 위의 컴퓨터) ex) ATmega128, 아두이노 등 컴퓨터의 메인보드+메 마이크로 프로세서+메모리+입출력 인터페이스 컴퓨터 메인보드와 하드디스크 기능을 하나의 IC칩으로 집적시켜 만든 반도체 소자 특수 목적용 낮은 사양의 컴퓨터 / 작고 간단한 제어장치 제작에 사용 임베디드 시스팀: 다른 시스템의 일부로 사용 마이크로컨트롤러 VS. 데스크톱 컴퓨터 항목 마이크로컨트롤러 데스크톱 컴퓨터 CPU ATmega128 인텔 Core i7 비트 8 64 메모리 128KB 8GB 클록 16MHz 3.4GHz(Quad Core) 마이크로 프로세서 중앙처리장치",
+   "related": [
+    10,
+    21,
+    69,
+    14,
+    22
+   ]
+  },
+  {
+   "id": 12,
+   "url": "https://semicon-circuit.tistory.com/12",
+   "title": "CORA Z7 FPGA 실습: AND·XOR·가산기 Verilog 구현",
+   "date": "2024-03-19",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "C언어",
+    "verilog",
+    "AI가속기",
+    "회로설계",
+    "반도체 설계",
+    "하드웨어 설계",
+    "반도체설계",
+    "프로그래밍",
+    "mux",
+    "Vivado"
+   ],
+   "summary": "본 글은 CORA Z7 FPGA와 Vivado 툴을 활용하여 Verilog로 기본적인 논리회로와 산술 연산기를 구현하는 실습 과정을 다루고 있습니다. 프로젝트 생성부터 Elaborated Design, Synthesis, Implementation, Bitstream 생성 및 하드웨어 프로그래밍까지의 전체 RTL 설계 흐름을 설명합니다. 또한 Verilog의 기본 데이터 값, 수치 표현 방식, wire와 reg 등의 데이터 타입 문법을 함께 정리하고 있습니다.",
+   "keywords": [
+    "FPGA",
+    "Verilog",
+    "Vivado",
+    "RTL",
+    "Adder"
+   ],
+   "excerpt": "[2024.03.19.화] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 CORA Z7 실습 1. Project Create(my_and.v) 2. Elaborated design 3. Synthesis 4. Implementation 5. Configuration 6. H/W manage [DIGILENT - CORA Z7보드] 번호 명칭 번호 명칭 1 Power select jumper (Ext. supply / USB) 11 마이크로SD card 슬롯 (underside of board) 2 Power jack (for optional ext. supply) 12 USB 호스트 포트 3 Shared USB JTAG / UART port 13 FPGA program",
+   "related": [
+    11,
+    19,
+    20,
+    104,
+    34
+   ]
+  },
+  {
+   "id": 11,
+   "url": "https://semicon-circuit.tistory.com/11",
+   "title": "FPGA 논리게이트 기초 정리와 Vivado 설치 방법",
+   "date": "2024-03-18",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "회로설계",
+    "하드웨어 설계",
+    "uart 설계",
+    "multiplexer",
+    "verilog",
+    "반도체 설계",
+    "Virtuoso",
+    "레이아웃 설계",
+    "시스템반도체",
+    "반도체설계"
+   ],
+   "summary": "본문은 FPGA의 기본 개념과 진법 변환, 그리고 기본적인 논리 게이트의 동작 원리를 설명하고 있습니다. 또한 칩 제작 순서와 하드웨어 기술 언어(HDL)의 개념을 다루며, Verilog를 활용한 Vivado 설치 및 프로젝트 생성 과정을 안내합니다. 마지막으로 AMD의 Cora Z7 보드를 이용한 소스 코드 작성부터 합성, 핀 할당, 비트스트림 생성까지의 실습 과정을 상세히 다룹니다.",
+   "keywords": [
+    "FPGA",
+    "논리 게이트",
+    "Verilog",
+    "Vivado",
+    "Cora Z7"
+   ],
+   "excerpt": "[2024.03.18.월] 인천인력개발원 하만 세미콘 아카데미 Verilog를 이용한 RTL 시스템 반도체 설계 FPGA, Bit, 논리 게이트 FPGA(Field-Programabble Gate Arrays): 하드웨어 플랫폼 재구성 가능: 사용자가 특정 작업을 수행하도록 구성할 수 있으며, 구성 변경도 가능 병렬 처리 능력: 여러 작업을 동시에 수행할 수 있는 병렬 처리 능력을 갖춤. 고속 연산이 필요한 분야에서 유리 낮은 지연시간: 프로세서 기반 시스템과 다르게 하드웨어 수준에서 직접 연산을 처리하므로 지연시간이 짧음 고성능: FPGA는 고성능을 요구하는 애플리케이션에서 ASIC의 대안으로 사용 가능하며 ASIC대비 개발 비용&시간이 적음 2bit <-> 8bit: 3bit씩 묶어 계산 ex1) 100",
+   "related": [
+    12,
+    19,
+    20,
+    104,
+    34
+   ]
+  },
+  {
+   "id": 10,
+   "url": "https://semicon-circuit.tistory.com/10",
+   "title": "ATmega128 마이크로컨트롤러 구조와 AVR 특징 정리",
+   "date": "2024-03-15",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "하드웨어 설계",
+    "uart",
+    "mux",
+    "verilog",
+    "논리회로",
+    "Vivado",
+    "레이아웃 설계",
+    "프로그래밍",
+    "반도체설계",
+    "multiplexer"
+   ],
+   "summary": "본 글은 임베디드 시스템 실습에 사용되는 ATmega128 마이크로컨트롤러의 구조와 주요 특징을 정리하고 있습니다. 또한 C언어를 활용하여 문자열 처리, 아스키코드 출력, 포인터 기반의 값 교환, 피라미드 및 수학 함수 구현 등의 다양한 실습 과제 소스코드를 제공합니다. 최종적으로 사용자 정의 함수와 헤더 파일을 분리하여 모듈화하는 프로그래밍 기법을 다루고 있습니다.",
+   "keywords": [
+    "ATmega128",
+    "마이크로컨트롤러",
+    "AVR",
+    "포인터",
+    "임베디드"
+   ],
+   "excerpt": "[2024.03.15.금] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 ATmega128 수업 시작에 앞서 ATmega128 기본 모듈을 지급받았다. 다음주부터는 이 모듈을 이용하여 실습을 진행할 예정인데, 그에 앞서 ATmega128 모듈에 대해 알아보고자 한다. ATmega128 기본 모듈 AVR 마이크로컨트롤러 고성능, 저전력 AVR 8비트 마이크로컨트롤러 사용 산업 제어, 스마트 홈, 자동화 시스템 등에 활용 주요 특징 CPU 성능: 최대 16MIPS(Million Instructions Per Second)의 처리속도와 16MHz의 클록 속도 메모리: 128kb의 플래시 메모리를 사용하여 대용량의 코드 저장 가능. 또한 4kb의 SRAM과 4kb의 EEPROM을 내장하여",
+   "related": [
+    13,
+    21,
+    14,
+    2,
+    15
+   ]
+  },
+  {
+   "id": 9,
+   "url": "https://semicon-circuit.tistory.com/9",
+   "title": "C언어 문자열 처리 함수와 사용자 정의 함수 구현",
+   "date": "2024-03-14",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체설계",
+    "논리회로",
+    "시스템반도체",
+    "취업준비",
+    "회로설계",
+    "Virtuoso",
+    "multiplexer",
+    "uart 설계",
+    "mux",
+    "verilog"
+   ],
+   "summary": "이 글은 C언어에서의 문자열 입출력 함수와 버퍼의 개념을 설명하고, strlen, strcpy, strcat, strcmp 등의 표준 문자열 함수 사용법을 다룹니다. 특히 상속 영역과 지역 메모리의 차이로 인한 오류 해결 방법을 실습을 통해 보여줍니다. 또한, 문자열의 길이를 반환하거나 두 문자열을 비교하는 사용자 정의 함수를 직접 구현하는 과정을 소개합니다.",
+   "keywords": [
+    "C언어",
+    "문자열 처리",
+    "표준 입출력",
+    "메모리 영역",
+    "사용자 정의 함수"
+   ],
+   "excerpt": "[2024.03.14.목] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 문자와 문자열 처리 함수 C 표준함수 printf, scanf, getch등과 같이 기본적으로 제공되는 라이브러리 모든 플랫폼에 적용(getch는 windows만 지원) 호환성이 좋다 = 이식성이 높다 데이터 형식 기본 데이터 형식 - 문자 포함 사용자 정의 데이터 형식 - 구조체 등 문자열은 기본 데이터 형식과 사용자 정의 데이터 형식 사이 입출력의 이해 파일 / 콘솔 / 소켓 / serial port(COM port)에서의 입출력 파일: Data파일( binary / text ) 등 -> binary는 메모장에서 알아볼 수 없는 형태, text는 메모장에서 인식 가능한 글자로 표현 콘솔: 키보드(입력)+모",
+   "related": [
+    8,
+    5,
+    2,
+    10,
+    3
+   ]
+  },
+  {
+   "id": 8,
+   "url": "https://semicon-circuit.tistory.com/8",
+   "title": "C언어 포인터·구조체·공용체(Union) 완전 정리",
+   "date": "2024-03-13",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "코딩",
+    "취업준비",
+    "반도체설계",
+    "논리회로",
+    "시스템반도체",
+    "Virtuoso",
+    "uart",
+    "C언어",
+    "반도체 설계",
+    "mux"
+   ],
+   "summary": "본 글은 임베디드 시스템 소프트웨어 구조 설계를 위한 C언어의 포인터, 배열, 그리고 함수 포인터의 핵심 개념과 실습 예제를 다룹니다. 포인터 연산과 메모리 주소 할당 방식을 이해하고, Call-by-Value와 Call-by-Reference의 차이를 학습합니다. 또한, 함수 포인터와 void 포인터를 활용한 동적 함수 호출 및 메모리 제어 기법을 설명합니다.",
+   "keywords": [
+    "포인터",
+    "배열",
+    "Call-by-Reference",
+    "함수 포인터",
+    "메모리 주소"
+   ],
+   "excerpt": "[2024.03.13.수] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 포인터 포인터 메모리의 주소 값을 저장하는 변수(=표인터 변수) 컴퓨터의 주소 체계에 따라 크기 결정(32비트 시스템 -> 4바이트) 포인터 타입&선언 포인터 선언 시 연산자 * 사용 A형 포인터: A형 변수에 주소 값을 저장 주소 관련 연산자 &연산자: 변수의 주소 값 반환 *연산자: 포인터가 가리키는 메모리 참조 포인터와 배열 배열 이름: 첫 번째 요소의 주소값을 나타냄 => 배열 이름은 상수 포인터 연산: 포인터의 값을 증감 포인터가 가리키는 대상의 자료형에 따라 증감되는 값의 차이가 발생 포인터 연산을 통한 배열 요소의 접근 *b = a; //이면 *(b+n) = a[n];​​​ 1. 배열 요소의 인덱",
+   "related": [
+    5,
+    9,
+    2,
+    3,
+    10
+   ]
+  },
+  {
+   "id": 5,
+   "url": "https://semicon-circuit.tistory.com/5",
+   "title": "C언어 함수와 다차원 배열·포인터 기초 정리",
+   "date": "2024-03-12",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "취업준비",
+    "multiplexer",
+    "레이아웃 설계",
+    "시스템반도체",
+    "Vivado",
+    "verilog",
+    "auto p&r",
+    "반도체 설계",
+    "회로설계",
+    "프로그래밍"
+   ],
+   "summary": "이 글은 C언어의 함수 정의와 호출 방식, 그리고 지역·전역·정적 변수의 개념을 설명합니다. 또한, 1차원 및 다차원 배열의 구조와 초기화 방법을 다루며 포인터의 기본 원리와 메모리 주소 연산을 실습 예제로 정리합니다. 마지막으로 배열 이름과 포인터의 차이점을 통해 메모리 주소 다루는 법을 안내합니다.",
+   "keywords": [
+    "C언어",
+    "함수",
+    "다차원 배열",
+    "포인터",
+    "메모리 주소"
+   ],
+   "excerpt": "[2024.03.12.화] 임베디드 시스템을 위한 SW 구조설계 C언어 함수 함수 기본 형태 ① int ② main ③ (void) ④ { ⑤ 함수 몸체 ⑥ } <명칭> ① 반환 형태 ② 함수 이름 ③ 매개 변수 ④ 몸체 시작 ⑤ 함수 몸체 ⑥ 몸체 끝 함수 호출 과정 위에서 아래로 호출 흐름(시작: main 함수) 코드 중 함수가 있으면 해당 함수 호출 함수는 호출되기 전에 정의되어야 함 다양한 형태의 함수 반환값(return)이 없는 함수: 반환 형태가 void ex) void 함수이름 (int val) { 실행내용 }​ 매개변수가 없는 함수 ex) getch() 함수의 선언 이후에 정의될 함수에 대한 정보 제공 int Add(int a, int b); //=>Add 함수의 원형 선언 int main()",
+   "related": [
+    8,
+    2,
+    9,
+    3,
+    10
+   ]
+  },
+  {
+   "id": 3,
+   "url": "https://semicon-circuit.tistory.com/3",
+   "title": "C언어 반복문·조건문·배열 기초 완전 정리",
+   "date": "2024-03-11",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "반도체 설계",
+    "mux",
+    "Vivado",
+    "uart 설계",
+    "uart",
+    "Virtuoso",
+    "하드웨어 설계",
+    "시스템반도체",
+    "auto p&r",
+    "AI가속기"
+   ],
+   "summary": "이 글은 임베디드 시스템 소프트웨어 구조 설계를 위한 C언어의 기초인 연산자, 자료형, 조건문, 반복문, 그리고 배열의 개념을 정리하고 있습니다. 다양한 연산자의 종류와 우선순위부터 데이터 표현 방식, 형 변환, 그리고 조건문과 반복문을 활용한 실습 예제까지 다룹니다. 마지막으로 1차원 배열의 선언과 초기화 방법을 설명하여 C언어 프로그래밍의 기본기를 다질 수 있도록 구성되어 있습니다.",
+   "keywords": [
+    "C언어",
+    "연산자",
+    "자료형",
+    "조건문",
+    "반복문"
+   ],
+   "excerpt": "[2024.03.11.월] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 변수와 연산자 대입 연산자: =, +, -, *, /, % 축약형태 - a = a + b; => a += b; - a = a - b; => a -= b; - a = a * b; => a *= b; - a = a / b; => a /= b; - a = a % b; => a %= b; 증감 연산자 ++a : 선 증가, 후 연산 a++ : 선 연산, 후 증가 --b : 선 감소, 후 연산 b-- : 선 연산, 후 감소 [example] int a = 10; printf(\"%d\", ++a); //=> 11출력 int b = 10; printf(\"%d\", b--); //=> 10출력 후 b 값 9로 변경​ 관계 연산자",
+   "related": [
+    2,
+    5,
+    8,
+    10,
+    9
+   ]
+  },
+  {
+   "id": 2,
+   "url": "https://semicon-circuit.tistory.com/2",
+   "title": "C언어 printf·scanf 입출력 함수와 ARM Cortex 기초",
+   "date": "2024-03-09",
+   "category": "반도체 시사(10)",
+   "tags": [
+    "취업준비",
+    "논리회로",
+    "Vivado",
+    "프로그래밍",
+    "AI가속기",
+    "시스템반도체",
+    "uart",
+    "반도체설계",
+    "레이아웃 설계",
+    "회로설계"
+   ],
+   "summary": "본 글은 임베디드 시스템 SW 구조설계를 위한 ARM Cortex 프로세서의 기초와 RISC 및 CISC 아키텍처의 차이점을 설명합니다. C언어의 컴파일 과정, 함수의 구조, 그리고 표준 입출력 함수인 printf와 scanf의 기본적인 사용법과 실습 내용을 다룹니다. 또한, 변수의 선언과 데이터 단위를 이해하고 비주얼 스튜디오 환경에서의 디버깅 실습 과정을 소개합니다.",
+   "keywords": [
+    "ARM Cortex",
+    "RISC",
+    "C언어",
+    "printf",
+    "scanf"
+   ],
+   "excerpt": "[2024.03.08.금] 인천인력개발원 하만 세미콘 아카데미 임베디드 시스템을 위한 SW 구조설계 ARM 프로그래밍 Arm cortex -> cpu : ARM 제작 Cortex-M 계열 : Microcontrollers Cortex-A 계열 : Application Processor ARM: Advanced RISC Maschines (RISC: Reduced Instruction Set CPU <-> CISC : Complex ~~) RISC VS. CISC : 발열 차이가 가장 큼 (CISC 의 소모 전류가 큼 . 왜냐하면 CISC 에 TR 이 많음 ) 사용 언어 : C 언어 ARM Processors : RISC 구조를 가지는 32 비트 프로세서 장비 제어 프로그래밍 (C 언어 ) 구동을 위한 하드웨",
+   "related": [
+    5,
+    3,
+    8,
+    10,
+    9
    ]
   }
  ]
