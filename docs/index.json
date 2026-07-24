@@ -1,0 +1,208 @@
+{
+ "blog": "https://semicon-circuit.tistory.com",
+ "generated": "2026-07-24",
+ "mode": "demo",
+ "count": 7,
+ "posts": [
+  {
+   "id": 121,
+   "url": "https://semicon-circuit.tistory.com/121",
+   "title": "BISR란? Built-In Self-Repair로 결함 복구하기",
+   "date": "2025-05-06",
+   "category": "반도체 시사",
+   "tags": [
+    "AI가속기",
+    "BISR",
+    "SystolicArray",
+    "결함복구",
+    "반도체설계"
+   ],
+   "summary": "Systolic Array 기반 AI 가속기에서 결함이 있는 PE를 효율적으로 복구하기 위한 BISR 메커니즘 네 가지를 설명합니다. PE Bypass, Weight Swapping, Weight Allocation, Row Bypass with Column Skipping 기법을 통해 하드웨어 오버헤드를 최소화하면서 성능을 유지할 수 있습니다. STRAIT 논문에 기반한 자가진단 결과를 활용하여 결함 PE를 우회하거나 가중치를 재할당하는 방식을 소개합니다.",
+   "keywords": [
+    "BISR (Built-In Self-Repair)",
+    "Systolic Array",
+    "PE Bypass",
+    "Weight Swapping",
+    "Self-Recovery"
+   ],
+   "excerpt": "Systolic Array 기반 AI 가속기에서는 수천 개의 PE(Processing Element)가 고속 병렬 연산을 수행합니다. 하지만 그 중 일부가 고장나면 전체 연산에 영향을 줄 수 있기 때문에, 결함 복구(Self-Recovery) 기술이 필수적입니다. STRAIT는 Built-In Self-Test뿐만 아니라, 효율적인 Self-Recovery까지 지원하는 구조를 제안합니다.",
+   "related": [
+    118,
+    119,
+    120,
+    117,
+    115
+   ]
+  },
+  {
+   "id": 120,
+   "url": "https://semicon-circuit.tistory.com/120",
+   "title": "반도체 Self-Diagnosis(자가 진단) 회로 동작 원리",
+   "date": "2025-05-06",
+   "category": "반도체 시사",
+   "tags": [
+    "DFT",
+    "DLC",
+    "PE결함진단",
+    "Self-Diagnosis",
+    "STRAIT논문",
+    "AI가속기"
+   ],
+   "summary": "AI 가속기의 Systolic Array에서 발생하는 결함을 진단하기 위해 Local/Row/Column 세 가지 유형으로 분류하여 위치를 식별합니다. Diagnostic Loop Chain(DLC)은 각 PE마다 배치된 오류 플래그 누적 회로로서 비교기의 오류 신호를 OR 게이트를 통해 순환시키며 감지합니다. 식별된 결함 정보는 eNVM에 저장되어 이후 복구 알고리즘과 PE 마스킹에 활용됩니다.",
+   "keywords": [
+    "Self-Diagnosis",
+    "DLC (Diagnostic Loop Chain)",
+    "Systolic Array",
+    "결함 유형 분류",
+    "BIST"
+   ],
+   "excerpt": "지난 포스팅에서는 자가 테스트 진행 방법을 알아보았습니다. 이번에는 자가 진단 방법에 대해 알아보고, 결함 유형과 진단 논리 구조에 대해서 다룹니다. STRAIT에서는 PE 내부의 결함이 위치에 따라 서로 다른 방식으로 영향을 미칩니다.",
+   "related": [
+    119,
+    115,
+    118,
+    121
+   ]
+  },
+  {
+   "id": 119,
+   "url": "https://semicon-circuit.tistory.com/119",
+   "title": "BIST(Built-In Self Test)란? 회로 설계와 컨트롤러 동작 정리",
+   "date": "2025-05-05",
+   "category": "반도체 시사",
+   "tags": [
+    "AI가속기",
+    "BIST",
+    "DFT",
+    "RTL설계",
+    "스캔체인",
+    "회로설계"
+   ],
+   "summary": "BIST는 스캔 체인을 활용하여 회로 내부 결함을 자동으로 검출하는 기술로, SA 테스트와 TD 테스트를 통해 stuck-at 결함과 타이밍 결함을 판단합니다. MBIST와 LBIST를 결합한 하이브리드 BIST는 메모리와 연산 로직을 각각 테스트하여 대규모 AI 가속기의 신뢰성을 보장합니다. STRAIT 아키텍처에서는 BIST 로직 검증, 메모리 테스트, Systolic Array 테스트 순서로 진행합니다.",
+   "keywords": [
+    "Scan Chain",
+    "Stuck-At Test",
+    "Transition-Delay Test",
+    "MBIST",
+    "LBIST"
+   ],
+   "excerpt": "자가 테스트는 Scan Chain을 활용하여 이루어집니다. 여기서 Scan Chain이란, 내부 레지스터를 직렬로 연결하여 결함 테스트 패턴을 주입하고 결과를 수집하는 구조입니다.",
+   "related": [
+    118,
+    120,
+    121
+   ]
+  },
+  {
+   "id": 118,
+   "url": "https://semicon-circuit.tistory.com/118",
+   "title": "BIST 기반 AI 가속기 자가 테스트·복구 구조(STRAIT) 정리",
+   "date": "2025-05-05",
+   "category": "반도체 시사",
+   "tags": [
+    "STRAIT",
+    "BISR",
+    "자가진단",
+    "자가복구",
+    "테스트 설계"
+   ],
+   "summary": "STRAIT 아키텍처를 통해 Systolic Array 기반 AI 가속기의 결함을 스스로 탐지하고 복구하는 기술을 설명합니다. Hybrid BIST, Diagnosis Module, BISR, eNVM 등 네 가지 핵심 모듈이 협력하여 결함 PE를 신속하게 식별하고 우회 처리합니다. 하드웨어 교체 없이 가중치 리맵핑 방식으로 AI 가속기의 신뢰성과 내구성을 향상시킵니다.",
+   "keywords": [
+    "Systolic Array",
+    "BIST",
+    "BISR",
+    "Processing Element (PE)",
+    "eNVM"
+   ],
+   "excerpt": "최근 AI 가속기의 신뢰성과 안전성이 중요해지면서, Systolic Array 기반 AI 가속기 내부 결함을 스스로 테스트하고 복구하는 기술이 주목받고 있습니다. 특히 고장난 PE를 실시간으로 진단하고 재구성할 수 있는 STRAIT 구조는 AI 하드웨어의 내구성과 효율성을 크게 향상시킬 수 있는 핵심 기술입니다.",
+   "related": [
+    121,
+    119,
+    120
+   ]
+  },
+  {
+   "id": 117,
+   "url": "https://semicon-circuit.tistory.com/117",
+   "title": "AI 가속기(5) : Systolic Array 설계의 도전 과제",
+   "date": "2025-05-05",
+   "category": "반도체 시사",
+   "tags": [
+    "ai 가속기",
+    "systolic array",
+    "DNN",
+    "sparsity",
+    "loop unrolling"
+   ],
+   "summary": "Systolic Array는 병렬 처리와 데이터 재사용에 최적화되었지만, 구조적 제한으로 FC/CONV 레이어 외의 복잡한 연산 처리가 어렵다는 유연성 문제가 있습니다. DNN Pruning 기반의 희소 행렬 연산에서 불필요한 0 값 요소까지 연산 대상으로 처리하게 되어 전력 낭비와 PE 유휴 시간이 증가합니다. 설계 최적화를 위한 복잡한 설계 공간 문제는 자동화 도구와 성능 분석 지원의 필요성을 보여줍니다.",
+   "keywords": [
+    "Systolic Array",
+    "DNN 가속기",
+    "im2col 알고리즘",
+    "희소성 최적화",
+    "설계 공간 탐색"
+   ],
+   "excerpt": "Systolic Array는 병렬성과 데이터 재사용에 최적화된 구조로, DNN 연산을 빠르게 처리할 수 있는 하드웨어 가속기입니다. 하지만 단순한 구조만큼이나 설계의 유연성이 제한되고, 다양한 AI 워크로드를 처리하기 위한 확장성이나 최적화가 쉽지 않다는 단점도 존재합니다.",
+   "related": [
+    116,
+    115,
+    121
+   ]
+  },
+  {
+   "id": 116,
+   "url": "https://semicon-circuit.tistory.com/116",
+   "title": "Systolic Array 성능 최적화: PE와 파이프라이닝",
+   "date": "2025-05-05",
+   "category": "반도체 시사",
+   "tags": [
+    "systolic array",
+    "ai 가속기",
+    "tiling",
+    "on chip buffer",
+    "bandwidth"
+   ],
+   "summary": "시스톨릭 어레이의 성능을 높이기 위해 어레이 크기와 타일링, 온칩 버퍼, 대역폭 등 세 가지 핵심 요소를 최적화하는 방법을 설명합니다. 워크로드를 작은 타일로 분할하여 처리하고, 적절한 버퍼 크기와 메모리 대역폭을 설정하면 연산 지연과 전력 소모를 줄일 수 있습니다. 하드웨어 자원 제약과 데이터 흐름 효율을 균형있게 고려한 설계가 중요합니다.",
+   "keywords": [
+    "Systolic Array",
+    "Tiling",
+    "On-Chip Buffer",
+    "Bandwidth",
+    "AI가속기"
+   ],
+   "excerpt": "Systolic Array의 성능을 개선하는 방법으로 loop unrolling과 dataflow를 조정하는 것 외에도 Tiling, On-Chip Buffer와 Bandwidth 최적화를 통한 방법이 있습니다. Array Size는 Systolic Array 내부의 PE의 행 × 열 크기를 의미합니다.",
+   "related": [
+    115,
+    117
+   ]
+  },
+  {
+   "id": 115,
+   "url": "https://semicon-circuit.tistory.com/115",
+   "title": "Systolic Array 데이터 흐름(Dataflow) 정리 — WS·OS·IS 방식 비교",
+   "date": "2025-05-05",
+   "category": "반도체 시사",
+   "tags": [
+    "systolic array",
+    "ai 가속기",
+    "dataflow",
+    "loop unrolling"
+   ],
+   "summary": "AI 가속기의 성능 향상을 위한 루프 언롤링과 데이터 흐름 전략을 상세히 설명합니다. 출력 고정(OS), 가중치 고정(WS), 입력 고정(IS) 세 가지 데이터 흐름 방식의 동작 원리와 PE 할당 방식을 비교 분석합니다. 각 데이터 흐름에 따라 필요한 PE 개수와 루프 언롤링 방식이 달라지며, 설계자는 하드웨어 자원과 성능을 고려하여 최적의 전략을 선택해야 합니다.",
+   "keywords": [
+    "Loop Unrolling",
+    "Data Flow",
+    "Systolic Array",
+    "PE (Processing Element)",
+    "딥러닝 가속기"
+   ],
+   "excerpt": "이번 포스팅에서는 AI 가속기 구조인 Systolic Array의 성능을 개선하기 위한 방안을 다룹니다. Systolic Array 기반 DNN 가속기에서 성능을 높이기 위한 가장 중요한 설계 포인트 중 하나는 loop unrolling과 data flow 전략입니다.",
+   "related": [
+    116,
+    120,
+    117,
+    121
+   ]
+  }
+ ]
+}
