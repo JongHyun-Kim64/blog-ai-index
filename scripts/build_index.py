@@ -32,8 +32,16 @@ from bs4 import BeautifulSoup
 
 UA = {"User-Agent": "Mozilla/5.0 (compatible; blog-ai-indexer/1.0)"}
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-GEMINI_TEXT_MODEL = os.environ.get("GEMINI_TEXT_MODEL", "gemini-2.5-flash-lite")
-GEMINI_EMBED_MODEL = os.environ.get("GEMINI_EMBED_MODEL", "gemini-embedding-001")
+# 모델은 후보 목록(쉼표 구분) — 404(미제공/폐기)면 다음 후보로 자동 폴백.
+# '-latest' 별칭을 앞에 둬서 구글이 세대 교체해도 코드 수정 없이 따라가게 함.
+GEMINI_TEXT_MODELS = [m.strip() for m in os.environ.get(
+    "GEMINI_TEXT_MODEL",
+    "gemini-flash-lite-latest,gemini-flash-latest,gemini-2.5-flash,gemini-3-flash-preview"
+).split(",") if m.strip()]
+GEMINI_EMBED_MODELS = [m.strip() for m in os.environ.get(
+    "GEMINI_EMBED_MODEL",
+    "gemini-embedding-001,text-embedding-004"
+).split(",") if m.strip()]
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta"
 
 # 무료 티어 보호용: 호출 간 대기 (초). 429가 나면 자동으로 더 기다립니다.
@@ -138,20 +146,43 @@ def fetch_post(url):
 
 # ---------------------------------------------------------------- Gemini
 
-def _gemini_post(path, payload, max_retry=5):
+def _gemini_post(path, payload, max_retry=4):
+    """(json, http상태) 반환. 429는 재시도, 그 외 오류는 즉시 반환."""
     url = f"{GEMINI_BASE}/{path}?key={GEMINI_KEY}"
+    last = None
     for i in range(max_retry):
         resp = requests.post(url, json=payload, timeout=60)
+        last = resp.status_code
         if resp.status_code == 200:
             time.sleep(API_DELAY)
-            return resp.json()
+            return resp.json(), 200
         if resp.status_code == 429:          # 무료 티어 rate limit
-            wait = 20 * (i + 1)
+            wait = 15 * (i + 1)
             print(f"    [rate limit] {wait}s 대기...", flush=True)
             time.sleep(wait)
             continue
-        print(f"    [Gemini 오류 {resp.status_code}] {resp.text[:200]}", flush=True)
-        return None
+        print(f"    [Gemini 오류 {resp.status_code}] {resp.text[:160]}", flush=True)
+        return None, resp.status_code
+    return None, last
+
+
+_working_model = {}  # {"text": ..., "embed": ...} — 이번 실행에서 확인된 사용 가능 모델
+
+
+def _gemini_fallback(kind, candidates, make_path, payload):
+    """후보 모델을 순서대로 시도, 404(미제공)면 다음 후보. 성공 모델은 기억."""
+    first = _working_model.get(kind)
+    order = ([first] + [m for m in candidates if m != first]) if first else candidates
+    for model in order:
+        out, status = _gemini_post(make_path(model), payload)
+        if out is not None:
+            if _working_model.get(kind) != model:
+                _working_model[kind] = model
+                print(f"    [{kind} 모델] {model} 사용", flush=True)
+            return out
+        if status != 404:      # 404 외 실패는 모델을 바꿔도 소용없음
+            return None
+        print(f"    [모델 교체] {model} 미제공(404) → 다음 후보", flush=True)
     return None
 
 
@@ -162,8 +193,9 @@ def gemini_summarize(post):
         '"keywords": ["핵심 기술용어 5개"]}\n\n'
         f"제목: {post['title']}\n본문: {post['_text'][:8000]}"
     )
-    out = _gemini_post(
-        f"models/{GEMINI_TEXT_MODEL}:generateContent",
+    out = _gemini_fallback(
+        "text", GEMINI_TEXT_MODELS,
+        lambda m: f"models/{m}:generateContent",
         {"contents": [{"parts": [{"text": prompt}]}],
          "generationConfig": {"responseMimeType": "application/json"}},
     )
@@ -180,8 +212,9 @@ def gemini_summarize(post):
 
 
 def gemini_embed(text):
-    out = _gemini_post(
-        f"models/{GEMINI_EMBED_MODEL}:embedContent",
+    out = _gemini_fallback(
+        "embed", GEMINI_EMBED_MODELS,
+        lambda m: f"models/{m}:embedContent",
         {"content": {"parts": [{"text": text[:6000]}]},
          "taskType": "SEMANTIC_SIMILARITY",
          "outputDimensionality": 256},
