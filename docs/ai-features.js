@@ -401,6 +401,11 @@
     function replySearch(q) {
       var items = searchPosts(posts, q, 5);
       if (!items.length) {
+        if (CONFIG.WORKER_URL) {
+          // 인덱스 검색으로 못 찾으면 실시간 AI에게 넘겨서 답변 시도
+          askWorker(q);
+          return;
+        }
         var b = aiBubble("“" + esc(q) + "”에 대한 글을 찾지 못했어요. 이런 주제는 어떠세요?");
         b.appendChild(suggestChips(topKeywords(6)));
         return;
@@ -485,22 +490,40 @@
     }
 
     function isQuestion(q) {
-      return /\?|뭐|무엇|어떻|어떤가|왜|언제|어디|누구|차이|비교|인가요|일까|건가요|맞나/.test(q);
+      return /\?|뭐|무엇|어떻|어떤가|왜|언제|어디|누구|차이|비교|인가요|일까|건가요|맞나|설명해|말해줘|궁금/.test(q);
+    }
+
+    // "이 글/이 페이지/더 자세히" 등 지금 보는 글에 대한 이어가기 요청
+    var CONTEXTUAL_RE = /이\s*(글|페이지|내용|포스트)|지금\s*(글|보는)|현재\s*글|본문|더\s*자세|자세히|부연|추가\s*설명|쉽게\s*설명|풀어서/;
+
+    function askWorker(q) {
+      // 맥락 의존 질문이거나 주제가 안 잡히는 질문이면 현재 글 제목을 붙여
+      // AI가 어떤 글 이야기인지 알 수 있게 함
+      var send = q;
+      if (curPost && (CONTEXTUAL_RE.test(q) || residualTopic(q).length < 2)) {
+        send = "“" + curPost.title + "” 글을 읽다가 나온 질문입니다: " + q;
+      }
+      replyWorker(send);
     }
 
     function route(q) {
-      if (CONFIG.WORKER_URL && isQuestion(q)) { replyWorker(q); return; }
       var it = parseIntent(q);
-      if (it.kind === "greet") replyGreet();
-      else if (it.kind === "thanks") replyThanks();
-      else if (it.kind === "help") replyHelp();
-      else if (it.kind === "popular") replyPopular();
-      else if (it.kind === "topics") replyTopics();
-      else if (it.kind === "count") replyCount();
-      else if (it.kind === "summary") replySummary(it.topic);
-      else if (it.kind === "related") replyRelated(it.topic);
-      else if (it.kind === "recent") replyRecent();
-      else replySearch(it.topic);
+      if (it.kind === "greet") { replyGreet(); return; }
+      if (it.kind === "thanks") { replyThanks(); return; }
+      if (it.kind === "help") { replyHelp(); return; }
+      if (it.kind === "popular") { replyPopular(); return; }
+      if (it.kind === "topics") { replyTopics(); return; }
+      if (it.kind === "count") { replyCount(); return; }
+      if (it.kind === "summary") { replySummary(it.topic); return; }
+      if (it.kind === "related") { replyRelated(it.topic); return; }
+      if (it.kind === "recent") { replyRecent(); return; }
+      // 여기부터는 자유 입력 — 맥락 요청/질문형이면 실시간 AI, 아니면 검색
+      if (CONFIG.WORKER_URL &&
+          ((curPost && CONTEXTUAL_RE.test(q)) || isQuestion(q))) {
+        askWorker(q);
+        return;
+      }
+      replySearch(it.topic);
     }
 
     function submit(text) {
