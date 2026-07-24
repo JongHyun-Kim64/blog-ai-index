@@ -21,8 +21,8 @@
     // 선택: Q&A 챗봇용 Cloudflare Worker 주소 (비우면 인덱스 기반 응답만)
     WORKER_URL: "",
     RELATED_COUNT: 5,
-    // 우하단 "맨 위로" 버튼(46px, right 32/bottom 18px)과 같은 높이, 왼쪽 옆에 배치
-    FAB_BOTTOM: 19,
+    // 우하단 "맨 위로" 버튼(46px, right 32 / 보일 때 bottom 32)과 같은 높이, 왼쪽 옆에 배치
+    FAB_BOTTOM: 33,
     FAB_RIGHT: 90
   };
 
@@ -85,7 +85,7 @@
 ".aiblog-fab:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,23,51,.24)}" +
 ".aiblog-fab:active{transform:translateY(0)}" +
 /* --- 어시스턴트 패널 --- */
-".aiblog-wrap{position:fixed;right:24px;bottom:75px;z-index:9999;width:376px;max-width:calc(100vw - 32px);opacity:0;pointer-events:none;transform:translateY(10px) scale(.98);transition:opacity .18s ease,transform .18s ease}" +
+".aiblog-wrap{position:fixed;right:24px;bottom:89px;z-index:9999;width:376px;max-width:calc(100vw - 32px);opacity:0;pointer-events:none;transform:translateY(10px) scale(.98);transition:opacity .18s ease,transform .18s ease}" +
 ".aiblog-wrap.open{opacity:1;pointer-events:auto;transform:none}" +
 ".aiblog-panel{background:var(--bg,#fff);border:1px solid var(--border,#e5e8eb);border-radius:20px;box-shadow:0 20px 60px rgba(0,23,51,.18);display:flex;flex-direction:column;max-height:min(560px,calc(100vh - 170px));overflow:hidden;color:var(--text,#191f28)}" +
 ".aiblog-head{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--border,#e5e8eb)}" +
