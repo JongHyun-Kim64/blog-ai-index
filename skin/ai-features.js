@@ -238,6 +238,27 @@
     document.body.appendChild(fab);
     document.body.appendChild(wrap);
 
+    // 티스토리 기본 툴바(왼쪽 아래 .menu_toolbar)와 겹치면 그 위로 자동 회피
+    function dodgeTistoryToolbar() {
+      var tb = document.querySelector(".menu_toolbar, .toolbar_lb");
+      var tr = tb && tb.offsetWidth ? tb.getBoundingClientRect() : null;
+      var fabW = fab.offsetWidth || 76;
+      var overlapX = tr && tr.width > 0 &&
+        CONFIG.FAB_LEFT < tr.right && (CONFIG.FAB_LEFT + fabW) > tr.left;
+      if (overlapX) {
+        var clear = Math.round(window.innerHeight - tr.top) + 10;
+        if (clear > 0 && clear < 220) {
+          fab.style.bottom = clear + "px";
+          wrap.style.bottom = (clear + 56) + "px";
+          return;
+        }
+      }
+      fab.style.bottom = "";
+      wrap.style.bottom = "";
+    }
+    dodgeTistoryToolbar();
+    window.addEventListener("resize", dodgeTistoryToolbar);
+
     /* ---- 말풍선 헬퍼 ---- */
 
     function scrollDown() { chat.scrollTop = chat.scrollHeight; }
