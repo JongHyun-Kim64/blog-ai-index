@@ -33,9 +33,14 @@ let cachedAt = 0;
 let dayKey = "";
 let dayCount = 0;
 
+// 설정값의 흔한 실수(끝 슬래시·공백) 정규화
+function normOrigin(s) {
+  return String(s || "").trim().replace(/\/+$/, "").toLowerCase();
+}
+
 function cors(env) {
   return {
-    "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
+    "Access-Control-Allow-Origin": normOrigin(env.ALLOWED_ORIGIN) || "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
@@ -81,9 +86,16 @@ export default {
       return new Response("POST only", { status: 405, headers: cors(env) });
 
     // 브라우저 밖(curl 등)에서 직접 호출해 무료 쿼터를 소모하는 것 차단
+    // (대소문자·끝 슬래시·공백 차이는 허용, 거부 시 원인을 로그로 남김)
     const origin = request.headers.get("Origin") || "";
-    if (env.ALLOWED_ORIGIN && origin !== env.ALLOWED_ORIGIN)
+    if (env.ALLOWED_ORIGIN && normOrigin(origin) !== normOrigin(env.ALLOWED_ORIGIN)) {
+      console.log("AILOG", JSON.stringify({
+        t: "origin_reject",
+        got: origin.slice(0, 60),
+        want: String(env.ALLOWED_ORIGIN).slice(0, 60),
+      }));
       return new Response("Forbidden", { status: 403, headers: cors(env) });
+    }
 
     const url = new URL(request.url);
 
