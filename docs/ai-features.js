@@ -489,7 +489,10 @@
         b.appendChild(suggestChips(topKeywords(6)));
         return;
       }
-      aiBubble("“" + esc(q) + "” 관련해서 이런 글이 있어요.").appendChild(cardList(items));
+      var sb = aiBubble("“" + esc(q) + "” 관련해서 이런 글이 있어요.");
+      sb.appendChild(cardList(items));
+      if (CONFIG.WORKER_URL)
+        sb.appendChild(suggestChips([{ label: "AI 답변으로 듣기", q: q + " 설명해줘" }]));
     }
 
     function replyGreet() {
@@ -632,9 +635,17 @@
       if (it.kind === "summary") { replySummary(it.topic); return; }
       if (it.kind === "related") { replyRelated(it.topic); return; }
       if (it.kind === "recent") { replyRecent(); return; }
-      // 여기부터는 자유 입력 — 맥락 요청/질문형이면 실시간 AI, 아니면 검색
-      if (CONFIG.WORKER_URL &&
-          ((curPost && CONTEXTUAL_RE.test(q)) || isQuestion(q))) {
+      // 여기부터는 자유 입력 — 라우팅 기준:
+      //  · "찾아줘/검색" 명시 → 글 목록 검색
+      //  · 질문형·맥락 요청·문장형(3단어 이상 or 요청 어미) → 실시간 AI
+      //    (AI 답변에는 근거 글 링크가 붙으므로 검색의 상위호환)
+      //  · 1~2단어 키워드 → 글 목록 검색
+      var t = q.replace(/\s+/g, "");
+      var wantsList = /찾아|검색|목록|리스트/.test(t);
+      var sentenceLike = q.split(/\s+/).filter(Boolean).length >= 3 ||
+        /(해줘|해봐|주세요|알려|설명|정리|비교|추천해|어때|할까|좋을까|하는법)/.test(t);
+      if (CONFIG.WORKER_URL && !wantsList &&
+          ((curPost && CONTEXTUAL_RE.test(q)) || isQuestion(q) || sentenceLike)) {
         askWorker(q);
         return;
       }
