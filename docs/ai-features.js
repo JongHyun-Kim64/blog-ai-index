@@ -64,6 +64,27 @@
     });
   }
 
+  /* ---- 익명 사용 기록: Worker /log → Cloudflare 대시보드 Logs에서 열람.
+     방문자 신원·IP는 기록하지 않고 이벤트 종류/검색어/글 번호만 보냄. ---- */
+  function logEvt(t, data) {
+    if (!CONFIG.WORKER_URL) return;
+    try {
+      var pid = postIdFromUrl();
+      var payload = { t: t, path: location.pathname, from: pid ? String(pid) : "" };
+      if (data) for (var k in data) payload[k] = data[k];
+      var body = JSON.stringify(payload);
+      // text/plain이라 CORS preflight 없이 전송됨 (Worker가 JSON으로 파싱)
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(CONFIG.WORKER_URL + "/log",
+          new Blob([body], { type: "text/plain" }));
+      } else {
+        fetch(CONFIG.WORKER_URL + "/log", { method: "POST", body: body, keepalive: true });
+      }
+    } catch (e) {}
+  }
+
+  var openAssistant = null; // buildAssistant가 채움 — 요약 박스 CTA가 사용
+
   var SPARK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.8l2.6 7.6 7.6 2.6-7.6 2.6L12 22.2l-2.6-7.6L1.8 12l7.6-2.6z"/></svg>';
   var SEND = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4l17.8-8.4L3.4 3.6l-.01 6.53L15 12 3.39 13.87z"/></svg>';
 
@@ -76,10 +97,8 @@
 ".aiblog-badge{font-size:10px;background:var(--accent,#2b2f36);color:var(--bg,#fff);border-radius:5px;padding:2px 6px;font-weight:700;letter-spacing:.3px}" +
 ".aiblog-keywords{margin-top:12px}" +
 ".aiblog-keywords span{display:inline-block;background:var(--aiblog-chipbg,#eef1f4);color:var(--aiblog-chiptx,#4e5968);border-radius:20px;padding:3px 11px;font-size:12px;margin:2px 5px 2px 0;font-weight:500}" +
-".aiblog-related a{display:block;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--text,#191f28)}" +
-".aiblog-related a:hover{background:var(--aiblog-hover,#eef1f4)}" +
-".aiblog-related .aiblog-rel-title{font-weight:700;font-size:14px}" +
-".aiblog-related .aiblog-rel-sum{font-size:12.5px;color:var(--aiblog-sub,#8b95a1);margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}" +
+".aiblog-more{display:block;margin-top:12px;border:none;background:none;padding:0;color:var(--aiblog-chiptx,#4e5968);font-size:12.5px;font-family:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}" +
+".aiblog-more:hover{color:var(--text,#191f28)}" +
 /* --- 플로팅 AI 버튼 (맨위로 버튼 위에 정렬) --- */
 ".aiblog-fab{position:fixed;left:" + CONFIG.FAB_LEFT + "px;bottom:" + CONFIG.FAB_BOTTOM + "px;z-index:9998;height:44px;padding:0 15px 0 13px;display:flex;align-items:center;gap:7px;border-radius:22px;border:none;background:var(--accent,#2b2f36);color:#fff;font-size:13.5px;font-weight:800;letter-spacing:.4px;font-family:inherit;cursor:pointer;box-shadow:0 8px 24px rgba(0,23,51,.18);transition:transform .16s ease,box-shadow .16s ease}" +
 ".aiblog-fab:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,23,51,.24)}" +
@@ -94,7 +113,7 @@
 ".aiblog-head .c{font-size:11.5px;color:var(--aiblog-sub,#8b95a1);margin-left:auto;margin-right:6px}" +
 ".aiblog-x{border:none;background:none;color:var(--aiblog-sub,#8b95a1);font-size:20px;line-height:1;cursor:pointer;padding:2px 4px;border-radius:8px}" +
 ".aiblog-x:hover{background:var(--aiblog-hover,#eef1f4)}" +
-".aiblog-chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}" +
+".aiblog-chat{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px;display:flex;flex-direction:column;gap:10px}" +
 ".aiblog-mu{align-self:flex-end;background:var(--accent,#2b2f36);color:#fff;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:13.5px;line-height:1.55;max-width:85%;word-break:break-word}" +
 ".aiblog-ma{align-self:flex-start;background:var(--aiblog-soft,#f2f4f6);color:var(--text,#191f28);padding:11px 13px;border-radius:16px 16px 16px 4px;font-size:13.5px;line-height:1.65;max-width:94%;word-break:break-word}" +
 ".aiblog-ma b{font-weight:800}" +
@@ -122,7 +141,7 @@
 "html[data-theme=dark] .aiblog-fab,html[data-theme=dark] .aiblog-send,html[data-theme=dark] .aiblog-mu{background:#f2f4f6;color:#191f28}" +
 "html[data-theme=dark] .aiblog-badge{background:#f2f4f6;color:#191f28}" +
 "html[data-theme=dark] .aiblog-keywords span,html[data-theme=dark] .aiblog-kwrow span{--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd}" +
-"html[data-theme=dark] .aiblog-related a:hover,html[data-theme=dark] .aiblog-x:hover{--aiblog-hover:#262b33}" +
+"html[data-theme=dark] .aiblog-x:hover{--aiblog-hover:#262b33}" +
 "html[data-theme=dark] .aiblog-panel{box-shadow:0 20px 60px rgba(0,0,0,.5)}" +
 "@media (max-width:768px){" +
 ".aiblog-fab{left:16px;bottom:20px}" +
@@ -190,23 +209,14 @@
       post.keywords.forEach(function (k) { kws.appendChild(el("span", "", esc(k))); });
       box.appendChild(kws);
     }
+    var more = el("button", "aiblog-more", "이 글이 궁금하면 AI에게 질문하기 →");
+    more.type = "button";
+    more.onclick = function (e) {
+      e.stopPropagation(); // 패널의 "바깥 클릭 시 닫기"에 걸리지 않게
+      if (openAssistant) openAssistant();
+    };
+    box.appendChild(more);
     article.insertBefore(box, article.firstChild);
-  }
-
-  function renderRelated(article, post, byId) {
-    var ids = (post.related || []).slice(0, CONFIG.RELATED_COUNT);
-    var items = ids.map(function (id) { return byId[id]; }).filter(Boolean);
-    if (!items.length) return;
-    var box = el("div", "aiblog-box aiblog-related");
-    box.appendChild(el("h4", "", SPARK + ' 함께 보면 좋은 글'));
-    items.forEach(function (p) {
-      var a = el("a", "");
-      a.href = p.url;
-      a.appendChild(el("div", "aiblog-rel-title", esc(p.title)));
-      if (p.summary) a.appendChild(el("div", "aiblog-rel-sum", esc(p.summary)));
-      box.appendChild(a);
-    });
-    article.appendChild(box);
   }
 
   /* ---------------------------------------------------- AI 어시스턴트 패널 */
@@ -242,6 +252,60 @@
     wrap.appendChild(panel);
     document.body.appendChild(fab);
     document.body.appendChild(wrap);
+
+    chat.setAttribute("role", "log");
+    chat.setAttribute("aria-live", "polite");
+
+    /* ---- 대화 지속: 같은 탭에서 글을 이동해도 대화가 유지됨 ---- */
+
+    var hist = [];
+    try { hist = JSON.parse(sessionStorage.getItem("aiblog_hist") || "[]"); } catch (e) {}
+
+    function saveHist() {
+      try { sessionStorage.setItem("aiblog_hist", JSON.stringify(hist.slice(-3))); } catch (e) {}
+    }
+
+    function saveChat() {
+      try {
+        var items = [], kids = chat.children;
+        for (var i = Math.max(0, kids.length - 40); i < kids.length; i++) {
+          // 로딩 표시("생각 중…")는 저장하지 않음 — 이동 시 유령 말풍선 방지
+          if ((kids[i].className || "").indexOf("aiblog-typing") >= 0) continue;
+          items.push({ c: kids[i].className, h: kids[i].innerHTML });
+        }
+        sessionStorage.setItem("aiblog_chat", JSON.stringify(items));
+      } catch (e) {}
+    }
+
+    function restoreChat() {
+      try {
+        var items = JSON.parse(sessionStorage.getItem("aiblog_chat") || "[]");
+        if (!items.length) return false;
+        items.forEach(function (it) {
+          if ((it.c || "").indexOf("aiblog-typing") >= 0) return; // 과거 저장분 방어
+          var d = document.createElement("div");
+          d.className = it.c;
+          d.innerHTML = it.h; // 우리가 직접 만들어 저장한 마크업(동일 출처)만 복원
+          chat.appendChild(d);
+        });
+        return chat.children.length > 0;
+      } catch (e) { return false; }
+    }
+
+    var saveTimer = null;
+    new MutationObserver(function () {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveChat, 400);
+    }).observe(chat, { childList: true, subtree: true });
+
+    // 칩/카드 클릭은 위임으로 처리 — 복원된 대화의 칩도 그대로 동작
+    chat.addEventListener("click", function (e) {
+      if (!e.target || !e.target.closest) return;
+      var s = e.target.closest(".aiblog-schip");
+      if (s) { submit(s.getAttribute("data-q") || s.textContent); return; }
+      var a = e.target.closest(".aiblog-cards a");
+      if (a) logEvt("click", { to: (a.href.match(/(\d+)\/?$/) || [])[1] || "", ui: "chat" });
+    });
 
     // 티스토리 기본 툴바(왼쪽 아래 .menu_toolbar)와 겹치면 그 위로 자동 회피
     function dodgeTistoryToolbar() {
@@ -329,11 +393,15 @@
     }
 
     function suggestChips(words) {
+      // 문자열 또는 {label, q} — 클릭 처리는 chat 위임 핸들러가 담당(data-q).
+      // 대화 복원 후에도 칩이 동작하도록 개별 onclick을 쓰지 않는다.
       var box = el("div", "aiblog-sugg");
       words.forEach(function (w) {
-        var s = el("button", "aiblog-schip", esc(w));
+        var label = typeof w === "string" ? w : w.label;
+        var q = typeof w === "string" ? w : w.q;
+        var s = el("button", "aiblog-schip", esc(label));
         s.type = "button";
-        s.onclick = function () { submit(w); };
+        s.setAttribute("data-q", q);
         box.appendChild(s);
       });
       return box;
@@ -365,6 +433,12 @@
       if (target !== curPost) {
         b.appendChild(cardList([target], false));
       }
+      // 칩에 대상 글 제목을 담아, 페이지를 이동했거나 다른 글 요약이어도
+      // 항상 "그 글"에 대해 이어가게 함
+      var follow = [{ label: "관련 글 추천", q: target.title + " 관련 글 찾아줘" }];
+      if (CONFIG.WORKER_URL)
+        follow.push({ label: "더 자세히 듣기", q: target.title + " 더 자세히 설명해줘" });
+      b.appendChild(suggestChips(follow));
     }
 
     function replyRelated(topic) {
@@ -401,6 +475,8 @@
     function replySearch(q) {
       var items = searchPosts(posts, q, 5);
       if (!items.length) {
+        // 못 찾은 검색어 = "방문자가 원했지만 없는 콘텐츠" — 가장 값진 기록
+        logEvt("search_empty", { q: q });
         if (CONFIG.WORKER_URL) {
           // 인덱스 검색으로 못 찾으면 실시간 AI에게 넘겨서 답변 시도
           askWorker(q);
@@ -468,24 +544,45 @@
       }
     }
 
-    function replyWorker(q) {
+    var pendingAsk = false;
+
+    function replyWorker(sendText, displayQ) {
+      if (pendingAsk) return;
+      pendingAsk = true;
+      send.disabled = true;
       var typing = el("div", "aiblog-typing", "AI가 답변을 생각하는 중…");
       chat.appendChild(typing); scrollDown();
+      var ctxIds = hist.length ? (hist[hist.length - 1].ids || []) : [];
       fetch(CONFIG.WORKER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q })
+        body: JSON.stringify({
+          question: sendText,
+          history: hist.slice(-3).map(function (h) { return { q: h.q, a: h.a }; }),
+          context_ids: ctxIds,
+          postId: curPost ? curPost.id : 0
+        })
       }).then(function (r) { return r.json(); }).then(function (data) {
         typing.remove();
-        var b = aiBubble(esc(data.answer || "답변을 생성하지 못했어요."));
+        pendingAsk = false; send.disabled = false;
+        var answer = data.answer || "답변을 생성하지 못했어요.";
+        var b = aiBubble(esc(answer));
+        var ids = [];
         if (data.sources && data.sources.length) {
+          ids = data.sources.map(function (s) { return s.id; }).filter(Boolean);
           b.appendChild(cardList(data.sources.map(function (s) {
             return { url: s.url, title: s.title };
           }), false));
         }
+        hist.push({ q: displayQ || sendText, a: answer.slice(0, 400), ids: ids });
+        saveHist();
+        if (ids.length && CONFIG.WORKER_URL)
+          b.appendChild(suggestChips([{ label: "더 자세히", q: "더 자세히 설명해줘" }]));
       }).catch(function () {
         typing.remove();
-        aiBubble("답변 생성 중 오류가 났어요. 잠시 후 다시 시도해주세요.");
+        pendingAsk = false; send.disabled = false;
+        var b = aiBubble("답변 생성 중 오류가 났어요.");
+        b.appendChild(suggestChips([{ label: "다시 시도", q: displayQ || sendText }]));
       });
     }
 
@@ -493,17 +590,22 @@
       return /\?|뭐|무엇|어떻|어떤가|왜|언제|어디|누구|차이|비교|인가요|일까|건가요|맞나|설명해|말해줘|궁금/.test(q);
     }
 
-    // "이 글/이 페이지/더 자세히" 등 지금 보는 글에 대한 이어가기 요청
-    var CONTEXTUAL_RE = /이\s*(글|페이지|내용|포스트)|지금\s*(글|보는)|현재\s*글|본문|더\s*자세|자세히|부연|추가\s*설명|쉽게\s*설명|풀어서/;
+    // "이 글/이 페이지" = 지금 보는 글을 콕 집는 표현 / "더 자세히" = 대화 이어가기
+    var THIS_PAGE_RE = /이\s*(글|페이지|내용|포스트)|지금\s*(글|보는)|현재\s*글|본문/;
+    var MORE_RE = /더\s*자세|자세히|부연|추가\s*설명|쉽게\s*설명|풀어서/;
+    var CONTEXTUAL_RE = new RegExp(THIS_PAGE_RE.source + "|" + MORE_RE.source);
 
     function askWorker(q) {
-      // 맥락 의존 질문이거나 주제가 안 잡히는 질문이면 현재 글 제목을 붙여
-      // AI가 어떤 글 이야기인지 알 수 있게 함
-      var send = q;
-      if (curPost && (CONTEXTUAL_RE.test(q) || residualTopic(q).length < 2)) {
-        send = "“" + curPost.title + "” 글을 읽다가 나온 질문입니다: " + q;
+      var sendText = q;
+      if (curPost && THIS_PAGE_RE.test(q)) {
+        // "이 글"을 지목하면 항상 현재 글을 맥락으로
+        sendText = "“" + curPost.title + "” 글을 읽다가 나온 질문입니다: " + q;
+      } else if (curPost && !hist.length && residualTopic(q).length < 2) {
+        // 질문에 주제가 전혀 없고 이어갈 대화도 없을 때만 현재 글로 추정
+        // (질문에 글 제목 등 주제가 있으면 그대로 — 다른 글 이야기일 수 있음)
+        sendText = "“" + curPost.title + "” 글을 읽다가 나온 질문입니다: " + q;
       }
-      replyWorker(send);
+      replyWorker(sendText, q);
     }
 
     function route(q) {
@@ -527,10 +629,12 @@
     }
 
     function submit(text) {
+      if (pendingAsk) return; // AI 응답 대기 중에는 새 입력 보류
       var q = (text !== undefined ? text : input.value).trim();
       if (!q) return;
       input.value = "";
       userBubble(q);
+      logEvt("input", { q: q });
       setTimeout(function () { route(q); }, 180);
     }
 
@@ -559,9 +663,10 @@
 
     /* ---- 이벤트 ---- */
 
-    var greeted = false;
+    var greeted = restoreChat();
     function openPanel() {
       wrap.classList.add("open");
+      logEvt("open", {});
       if (!greeted) {
         greeted = true;
         var hello = curPost
@@ -569,9 +674,14 @@
           : "안녕하세요! 이 블로그의 글 " + posts.length + "개를 학습했어요.<br>궁금한 주제를 검색하거나 “인기 글”, “주제 보기”를 눌러보세요.";
         aiBubble(hello);
       }
-      setTimeout(function () { input.focus(); }, 120);
+      scrollDown();
+      // 모바일에서는 자동 포커스 생략 — 열자마자 키보드가 올라오는 것 방지
+      var touch = ("ontouchstart" in window) ||
+        (window.matchMedia && matchMedia("(max-width:768px)").matches);
+      if (!touch) setTimeout(function () { input.focus(); }, 120);
     }
     function closePanel() { wrap.classList.remove("open"); }
+    openAssistant = openPanel;
 
     fab.onclick = function () {
       if (wrap.classList.contains("open")) closePanel(); else openPanel();
@@ -587,6 +697,8 @@
 
     send.onclick = function () { submit(); };
     input.addEventListener("keydown", function (e) {
+      // 한글 IME 조합 중 Enter는 조합 확정용 — 이중 전송/글자 잘림 방지
+      if (e.isComposing || e.keyCode === 229) return;
       if (e.key === "Enter") submit();
     });
   }
@@ -616,10 +728,7 @@
 
         if (curPost) {
           var article = findArticleEl();
-          if (article) {
-            renderSummary(article, curPost);
-            renderRelated(article, curPost, byId);
-          }
+          if (article) renderSummary(article, curPost);
         }
       })
       .catch(function (e) { console.warn("[ai-features] 인덱스 로드 실패:", e); });
