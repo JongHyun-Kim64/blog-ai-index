@@ -181,7 +181,10 @@
 ".aihome-scard .sl li:before{content:counter(ai);flex:none;width:18px;height:18px;border-radius:50%;background:var(--aiblog-chipbg,#eef1f4);color:var(--aiblog-chiptx,#4e5968);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;position:relative;top:2px}" +
 ".aihome-scard .sl a{font-size:13.5px;color:var(--text,#191f28);text-decoration:none;line-height:1.5}" +
 ".aihome-scard .sl a:hover{text-decoration:underline;text-underline-offset:3px}" +
-"html[data-theme=dark] .aihome-sec{--aiblog-sub:#9aa4af;--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd}" +
+/* 다크: var()가 어떤 환경에서 안 먹어도 안전하게 명시값 병행 */
+"html[data-theme=dark] .aihome-sec{--aiblog-sub:#9aa4af;--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd;color:#ecf0f3}" +
+"html[data-theme=dark] .aihome-topic,html[data-theme=dark] .aihome-scard{background:#17171c;border-color:#2a2f37}" +
+"html[data-theme=dark] .aihome-topic .tl,html[data-theme=dark] .aihome-scard .st,html[data-theme=dark] .aihome-scard .sl a{color:#ecf0f3}" +
 "@media (max-width:768px){.aihome-sec{padding:0 16px}}" +
 "@media (prefers-reduced-motion:reduce){.aihome-topic{transition:none}}" +
 /* 홈 다듬기: 데스크톱 캐러셀 소폭 축소 — 다음 섹션이 첫 화면에 걸치게 (스크롤 단서) */
