@@ -160,6 +160,32 @@
 "@supports (height:100dvh){.aiblog-panel{max-height:calc(100dvh - 70px)}}" +
 "}" +
 "@media (prefers-reduced-motion:reduce){.aiblog-fab,.aiblog-wrap,.aiblog-chip{transition:none}}" +
+/* --- 홈 섹션: 주제별 허브 & 시리즈 정주행 (스킨 CSS 변수로 라이트/다크 자동) --- */
+".aihome-sec{margin:10px auto 44px;padding:0 24px;box-sizing:border-box;color:var(--text,#191f28)}" +
+".aihome-tit{display:block;font-size:22px;font-weight:800;margin:0 0 14px}" +
+".aihome-sub{margin:-8px 0 14px;font-size:13px;color:var(--aiblog-sub,#6b7684)}" +
+".aihome-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}" +
+".aihome-grid2{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}" +
+".aihome-topic{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border,#e5e8eb);border-radius:14px;padding:14px 16px;text-decoration:none;background:var(--bg,#fff);transition:border-color .15s,transform .15s}" +
+".aihome-topic:hover{border-color:var(--accent,#2b2f36);transform:translateY(-2px)}" +
+".aihome-topic .tl{font-weight:800;font-size:14.5px;color:var(--text,#191f28)}" +
+".aihome-topic .tn{font-weight:700;font-size:11.5px;color:var(--aiblog-chiptx,#4e5968);background:var(--aiblog-chipbg,#eef1f4);border-radius:10px;padding:1px 7px;margin-left:4px}" +
+".aihome-topic .td{font-size:12.5px;color:var(--aiblog-sub,#6b7684)}" +
+".aihome-scard{border:1px solid var(--border,#e5e8eb);border-radius:16px;padding:16px 18px;background:var(--bg,#fff)}" +
+".aihome-scard .st{display:block;font-size:15.5px;font-weight:800}" +
+".aihome-scard .sd{display:block;font-size:12.5px;color:var(--aiblog-sub,#6b7684);margin:3px 0 10px}" +
+".aihome-scard .sl{margin:0;padding:0;list-style:none;counter-reset:ai}" +
+".aihome-scard .sl li{counter-increment:ai;display:flex;gap:8px;align-items:baseline;padding:5px 0;border-top:1px dashed var(--border,#e5e8eb)}" +
+".aihome-scard .sl li:first-child{border-top:none}" +
+".aihome-scard .sl li:before{content:counter(ai);flex:none;width:18px;height:18px;border-radius:50%;background:var(--aiblog-chipbg,#eef1f4);color:var(--aiblog-chiptx,#4e5968);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;position:relative;top:2px}" +
+".aihome-scard .sl a{font-size:13.5px;color:var(--text,#191f28);text-decoration:none;line-height:1.5}" +
+".aihome-scard .sl a:hover{text-decoration:underline;text-underline-offset:3px}" +
+"html[data-theme=dark] .aihome-sec{--aiblog-sub:#9aa4af;--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd}" +
+"@media (max-width:768px){.aihome-sec{padding:0 16px}}" +
+"@media (prefers-reduced-motion:reduce){.aihome-topic{transition:none}}" +
+/* 홈 다듬기: Recent 카드 설명 3줄 클램프 + 데스크톱 캐러셀 소폭 축소(다음 섹션이 첫 화면에 걸치게) */
+".link_notice .text{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}" +
+"@media (min-width:769px){.type_featured .link_slide,.type_featured .slick-list,.type_featured .slick-track{height:420px !important}}" +
 /* 스킨 헤더 보정: 중간 폭에서 상단 카테고리 메뉴가 우측 아이콘(테마/검색/메뉴)과
    겹치는 문제 — 1800px 이하는 메뉴 글자 축소, 1560px 이하는 메뉴를 숨겨
    스킨의 햄버거(≡) 메뉴로 대체 (실측: 메뉴 폭 ~985px, 원래 1800px 밑에서 충돌) */
@@ -229,6 +255,110 @@
     };
     box.appendChild(more);
     article.insertBefore(box, article.firstChild);
+  }
+
+  /* ------------------------------------------- 홈 화면 섹션 (주제 허브 · 시리즈 정주행) */
+
+  // 시리즈는 글 id를 읽는 순서대로 큐레이션 (제목·URL은 인덱스에서 최신으로 가져옴)
+  var SERIES_DEF = [
+    { tit: "칩이 스스로 고장을 찾고 고친다", desc: "AI 가속기 자가 테스트·복구(STRAIT) 시리즈", ids: [118, 119, 120, 121] },
+    { tit: "AI 가속기 입문 — Systolic Array", desc: "구조 → 데이터 흐름 → 최적화 → NPU 설계까지", ids: [114, 113, 115, 116, 117] },
+    { tit: "UART 통신·설계", desc: "개념부터 TX·RX Verilog 구현까지", ids: [98, 95, 96, 97] },
+    { tit: "FPGA로 게임 만들기", desc: "하드웨어 아키텍처부터 SW/HW 통합까지", ids: [109, 110, 111] }
+  ];
+
+  var TOPIC_DESC = [
+    [/^Verilog/, "RTL 설계·문법·FPGA 프로젝트"],
+    [/^Full Custom/, "Virtuoso 레이아웃·DRC/LVS"],
+    [/^전자회로/, "회로 해석·전력 반도체"],
+    [/^임베디드/, "STM32·ATmega128 실습"],
+    [/^반도체 시사/, "NPU·자가복구 아키텍처 논문 정리"],
+    [/^ARM/, "ARM 아키텍처·RTOS"],
+    [/^SoC/, "버스·페리페럴 설계"]
+  ];
+
+  function isHomeCover() {
+    return /^\/(m\/?)?$/.test(location.pathname) &&
+      !/[?&]page=/.test(location.search) &&
+      !!document.querySelector(".type_featured");
+  }
+
+  // 주제 카드는 사이드바 카테고리에서 런타임에 읽음 — 글 수가 항상 최신
+  function topicsFromSidebar() {
+    var seen = {}, out = [];
+    var links = document.querySelectorAll('a[href^="/category/"]');
+    for (var i = 0; i < links.length; i++) {
+      var href = links[i].getAttribute("href");
+      if (seen[href]) continue;
+      seen[href] = 1;
+      var dec;
+      try { dec = decodeURIComponent(href.slice(10)); } catch (e) { continue; }
+      if (dec.indexOf("/") >= 0) continue; // 하위 카테고리 제외 (상위만)
+      var m = links[i].textContent.match(/(.+?)\s*\((\d+)\)\s*$/);
+      if (!m) continue;
+      var n = parseInt(m[2], 10);
+      if (n < 3) continue; // 글이 너무 적은 주제는 생략
+      var label = m[1].trim(), desc = "";
+      for (var j = 0; j < TOPIC_DESC.length; j++)
+        if (TOPIC_DESC[j][0].test(label)) { desc = TOPIC_DESC[j][1]; break; }
+      out.push({ label: label, n: n, href: href, desc: desc });
+    }
+    out.sort(function (a, b) { return b.n - a.n; });
+    return out.slice(0, 8);
+  }
+
+  function injectHome(byId) {
+    if (!isHomeCover()) return;
+    var featured = document.querySelector(".type_featured");
+
+    // ① 주제별 골라 읽기 (캐러셀 바로 아래)
+    var topics = topicsFromSidebar();
+    var hub = null;
+    if (topics.length >= 3) {
+      hub = el("div", "aihome-sec aihome-hub");
+      hub.appendChild(el("strong", "aihome-tit", "주제별 골라 읽기"));
+      var grid = el("div", "aihome-grid");
+      topics.forEach(function (t) {
+        var a = el("a", "aihome-topic");
+        a.href = t.href;
+        a.appendChild(el("span", "tl", esc(t.label) + ' <span class="tn">' + t.n + "편</span>"));
+        if (t.desc) a.appendChild(el("span", "td", esc(t.desc)));
+        grid.appendChild(a);
+      });
+      hub.appendChild(grid);
+      featured.insertAdjacentElement("afterend", hub);
+    }
+
+    // ② 시리즈 정주행 (Recent 아래)
+    var rows = [];
+    SERIES_DEF.forEach(function (s) {
+      var items = s.ids.map(function (id) { return byId[id]; }).filter(Boolean);
+      if (items.length >= 3) rows.push({ def: s, items: items });
+    });
+    if (rows.length) {
+      var sec = el("div", "aihome-sec aihome-series");
+      sec.appendChild(el("strong", "aihome-tit", "시리즈 정주행"));
+      sec.appendChild(el("p", "aihome-sub", "이어지는 글은 순서대로 읽을 때 가장 쉽습니다"));
+      var g2 = el("div", "aihome-grid aihome-grid2");
+      rows.forEach(function (r) {
+        var card = el("div", "aihome-scard");
+        card.appendChild(el("strong", "st", esc(r.def.tit)));
+        card.appendChild(el("span", "sd", esc(r.def.desc)));
+        var ol = el("ol", "sl");
+        r.items.forEach(function (p) {
+          var li = el("li", "");
+          var a = el("a", "", esc(p.title));
+          a.href = p.url;
+          li.appendChild(a);
+          ol.appendChild(li);
+        });
+        card.appendChild(ol);
+        g2.appendChild(card);
+      });
+      sec.appendChild(g2);
+      var recent = document.querySelector(".type_notice");
+      (recent || hub || featured).insertAdjacentElement("afterend", sec);
+    }
   }
 
   /* ---------------------------------------------------- AI 어시스턴트 패널 */
@@ -794,7 +924,7 @@
   /* ---------------------------------------------------- 초기화 */
 
   function cleanup() {
-    ["#aiblog-style", ".aiblog-fab", ".aiblog-wrap", ".aiblog-box", ".aiblog-modal"]
+    ["#aiblog-style", ".aiblog-fab", ".aiblog-wrap", ".aiblog-box", ".aiblog-modal", ".aihome-sec"]
       .forEach(function (sel) {
         document.querySelectorAll(sel).forEach(function (n) { n.remove(); });
       });
@@ -818,6 +948,9 @@
           var article = findArticleEl();
           if (article) renderSummary(article, curPost);
         }
+
+        // 홈 커버에 주제 허브·시리즈 선반 삽입 (실패해도 어시스턴트에 영향 없게)
+        try { injectHome(byId); } catch (e) {}
       })
       .catch(function (e) { console.warn("[ai-features] 인덱스 로드 실패:", e); });
   }
