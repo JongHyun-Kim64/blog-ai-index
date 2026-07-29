@@ -389,12 +389,12 @@
       clearTimeout(alignTimer);
       alignTimer = setTimeout(alignHomeSections, 120);
     }
+    // 둘 다 등록: 스킨 재배치(resize 이벤트 기반)가 끝난 뒤에도 한 번 더 정렬되도록
     if (window.ResizeObserver) {
       var ro = new ResizeObserver(queueAlign);
       ro.observe(document.body);
-    } else {
-      window.addEventListener("resize", queueAlign);
     }
+    window.addEventListener("resize", queueAlign);
   }
 
   /* ---------------------------------------------------- AI 어시스턴트 패널 */
