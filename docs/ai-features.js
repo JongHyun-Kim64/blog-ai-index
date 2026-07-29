@@ -183,8 +183,10 @@
 ".aihome-scard .sl a:hover{text-decoration:underline;text-underline-offset:3px}" +
 /* 다크: var()가 어떤 환경에서 안 먹어도 안전하게 명시값 병행 */
 "html[data-theme=dark] .aihome-sec{--aiblog-sub:#9aa4af;--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd;color:#ecf0f3}" +
-"html[data-theme=dark] .aihome-topic,html[data-theme=dark] .aihome-scard{background:#17171c;border-color:#2a2f37}" +
-"html[data-theme=dark] .aihome-topic .tl,html[data-theme=dark] .aihome-scard .st,html[data-theme=dark] .aihome-scard .sl a{color:#ecf0f3}" +
+/* 앵커(<a>)는 스킨의 크로스오리진 CSS가 커버 영역에서 !important로 강제 — 맞대응 필요 (실측) */
+"html[data-theme=dark] .aihome-topic,html[data-theme=dark] .aihome-scard{background:#17171c !important;border-color:#2a2f37}" +
+"html[data-theme=dark] .aihome-topic .tl,html[data-theme=dark] .aihome-scard .st{color:#ecf0f3}" +
+"html[data-theme=dark] .aihome-scard .sl a{color:#ecf0f3 !important}" +
 "@media (max-width:768px){.aihome-sec{padding:0 16px}}" +
 "@media (prefers-reduced-motion:reduce){.aihome-topic{transition:none}}" +
 /* 홈 다듬기: 데스크톱 캐러셀 소폭 축소 — 다음 섹션이 첫 화면에 걸치게 (스크롤 단서) */
