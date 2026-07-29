@@ -165,7 +165,8 @@
    그런데 CSS 변수(--text 등)는 다크 값으로 바뀌므로, 변수를 쓰면 흰 바탕에
    흰 글씨가 됨. 스킨 자체 홈 카드처럼 라이트 고정 팔레트로 통일한다. */
 /* 폭은 스킨 섹션(콘텐츠 1180px, 내부 패딩 18px)과 정렬 — 실측 기준 */
-".aihome-sec{max-width:1216px;margin:10px auto 44px;padding:0 18px;box-sizing:border-box;color:#191f28}" +
+/* 상하 리듬은 스킨 섹션과 동일(위 72/모바일 48, 아래 0) — 정확한 값은 alignHomeSections가 스킨에서 복사 */
+".aihome-sec{max-width:1216px;margin:72px auto 0;padding:0 18px;box-sizing:border-box;color:#191f28}" +
 ".aihome-tit{display:block;font-size:22px;font-weight:800;margin:0 0 14px;color:#191f28}" +
 ".aihome-sub{margin:-8px 0 14px;font-size:13px;color:#6b7684}" +
 ".aihome-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}" +
@@ -184,13 +185,11 @@
 ".aihome-scard .sl li:before{content:counter(ai);flex:none;width:18px;height:18px;border-radius:50%;background:#eef1f4;color:#4e5968;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;position:relative;top:2px}" +
 ".aihome-scard .sl a{font-size:13.5px;color:#191f28;text-decoration:none;line-height:1.5}" +
 ".aihome-scard .sl a:hover{text-decoration:underline;text-underline-offset:3px}" +
-"@media (max-width:768px){.aihome-sec{padding:0 16px}}" +
+"@media (max-width:768px){.aihome-sec{padding:0 16px;margin-top:48px}}" +
 /* 허브는 상단 카테고리 메뉴가 보이는 폭(>1560px)에선 중복이라 숨김 —
    메뉴가 햄버거로 숨는 폭(≤1560px, 아래 헤더 보정 참고)에서만 표시 */
 "@media (min-width:1561px){.aihome-hub{display:none}}" +
 "@media (prefers-reduced-motion:reduce){.aihome-topic{transition:none}}" +
-/* 홈 다듬기: 데스크톱 캐러셀 소폭 축소 — 다음 섹션이 첫 화면에 걸치게 (스크롤 단서) */
-"@media (min-width:769px){.type_featured .link_slide,.type_featured .slick-list,.type_featured .slick-track{height:420px !important}}" +
 /* 스킨 헤더 보정: 중간 폭에서 상단 카테고리 메뉴가 우측 아이콘(테마/검색/메뉴)과
    겹치는 문제 — 1800px 이하는 메뉴 글자 축소, 1560px 이하는 메뉴를 숨겨
    스킨의 햄버거(≡) 메뉴로 대체 (실측: 메뉴 폭 ~985px, 원래 1800px 밑에서 충돌) */
@@ -331,6 +330,9 @@
       if (R - L >= 320) rr = { left: L, right: R }; // 지나치게 좁으면 다음 후보로
     }
     if (!rr) return; // 신뢰할 기준 없음 — CSS 기본 폭 유지
+    // 상하 리듬도 스킨 섹션의 marginTop을 그대로 복사 (폭마다 72/48 등 스킨이 결정)
+    var skinSec = document.querySelector(".type_card") || document.querySelector(".type_notice");
+    var mt = skinSec ? getComputedStyle(skinSec).marginTop : "";
     document.querySelectorAll(".aihome-sec").forEach(function (sec) {
       sec.style.maxWidth = "none";
       sec.style.paddingLeft = "0";
@@ -338,6 +340,7 @@
       var sr = sec.getBoundingClientRect();
       sec.style.paddingLeft = Math.max(0, Math.round(rr.left - sr.left)) + "px";
       sec.style.paddingRight = Math.max(0, Math.round(sr.right - rr.right)) + "px";
+      if (mt) { sec.style.marginTop = mt; sec.style.marginBottom = "0"; }
     });
   }
 
