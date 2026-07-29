@@ -307,6 +307,24 @@
     return out.slice(0, 8);
   }
 
+  // 스킨 섹션의 실제 콘텐츠 좌우 여백에 런타임 정렬 (스킨 업데이트에도 안전)
+  function alignHomeSections() {
+    var ref = document.querySelector(".link_notice") ||
+              document.querySelector(".type_card .item") ||
+              document.querySelector(".txt_section");
+    if (!ref) return;
+    var rr = ref.getBoundingClientRect();
+    if (!rr.width) return;
+    document.querySelectorAll(".aihome-sec").forEach(function (sec) {
+      sec.style.maxWidth = "none";
+      sec.style.paddingLeft = "0";
+      sec.style.paddingRight = "0";
+      var sr = sec.getBoundingClientRect();
+      sec.style.paddingLeft = Math.max(0, Math.round(rr.left - sr.left)) + "px";
+      sec.style.paddingRight = Math.max(0, Math.round(sr.right - rr.right)) + "px";
+    });
+  }
+
   function injectHome(byId) {
     if (!isHomeCover()) return;
     var featured = document.querySelector(".type_featured");
@@ -359,6 +377,15 @@
       var recent = document.querySelector(".type_notice");
       (recent || hub || featured).insertAdjacentElement("afterend", sec);
     }
+
+    // 스킨 콘텐츠 폭에 정렬 — 폰트 로드 등으로 늦게 흔들릴 수 있어 재시도
+    alignHomeSections();
+    [400, 1500].forEach(function (t) { setTimeout(alignHomeSections, t); });
+    var alignTimer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(alignTimer);
+      alignTimer = setTimeout(alignHomeSections, 120);
+    });
   }
 
   /* ---------------------------------------------------- AI 어시스턴트 패널 */
