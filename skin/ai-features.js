@@ -185,6 +185,9 @@
 ".aihome-scard .sl a{font-size:13.5px;color:#191f28;text-decoration:none;line-height:1.5}" +
 ".aihome-scard .sl a:hover{text-decoration:underline;text-underline-offset:3px}" +
 "@media (max-width:768px){.aihome-sec{padding:0 16px}}" +
+/* 허브는 상단 카테고리 메뉴가 보이는 폭(>1560px)에선 중복이라 숨김 —
+   메뉴가 햄버거로 숨는 폭(≤1560px, 아래 헤더 보정 참고)에서만 표시 */
+"@media (min-width:1561px){.aihome-hub{display:none}}" +
 "@media (prefers-reduced-motion:reduce){.aihome-topic{transition:none}}" +
 /* 홈 다듬기: 데스크톱 캐러셀 소폭 축소 — 다음 섹션이 첫 화면에 걸치게 (스크롤 단서) */
 "@media (min-width:769px){.type_featured .link_slide,.type_featured .slick-list,.type_featured .slick-track{height:420px !important}}" +
