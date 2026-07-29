@@ -380,14 +380,21 @@
       (recent || hub || featured).insertAdjacentElement("afterend", sec);
     }
 
-    // 스킨 콘텐츠 폭에 정렬 — 폰트 로드 등으로 늦게 흔들릴 수 있어 재시도
+    // 스킨 콘텐츠 폭에 정렬 — 폰트 로드 등으로 늦게 흔들릴 수 있어 재시도.
+    // 뷰포트 변화는 resize 이벤트가 유실될 수 있어(실측) ResizeObserver로 감시.
     alignHomeSections();
     [400, 1500].forEach(function (t) { setTimeout(alignHomeSections, t); });
     var alignTimer = null;
-    window.addEventListener("resize", function () {
+    function queueAlign() {
       clearTimeout(alignTimer);
       alignTimer = setTimeout(alignHomeSections, 120);
-    });
+    }
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(queueAlign);
+      ro.observe(document.body);
+    } else {
+      window.addEventListener("resize", queueAlign);
+    }
   }
 
   /* ---------------------------------------------------- AI 어시스턴트 패널 */
