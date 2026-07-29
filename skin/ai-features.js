@@ -160,33 +160,30 @@
 "@supports (height:100dvh){.aiblog-panel{max-height:calc(100dvh - 70px)}}" +
 "}" +
 "@media (prefers-reduced-motion:reduce){.aiblog-fab,.aiblog-wrap,.aiblog-chip{transition:none}}" +
-/* --- 홈 섹션: 주제별 허브 & 시리즈 정주행 (스킨 CSS 변수로 라이트/다크 자동) --- */
+/* --- 홈 섹션: 주제별 허브 & 시리즈 정주행 ---
+   ⚠ 이 스킨의 다크모드는 홈 커버를 어둡게 하지 않음(body 흰색 유지, 실측).
+   그런데 CSS 변수(--text 등)는 다크 값으로 바뀌므로, 변수를 쓰면 흰 바탕에
+   흰 글씨가 됨. 스킨 자체 홈 카드처럼 라이트 고정 팔레트로 통일한다. */
 /* 폭은 스킨 섹션(콘텐츠 1180px, 내부 패딩 18px)과 정렬 — 실측 기준 */
-".aihome-sec{max-width:1216px;margin:10px auto 44px;padding:0 18px;box-sizing:border-box;color:var(--text,#191f28)}" +
-".aihome-tit{display:block;font-size:22px;font-weight:800;margin:0 0 14px}" +
-".aihome-sub{margin:-8px 0 14px;font-size:13px;color:var(--aiblog-sub,#6b7684)}" +
+".aihome-sec{max-width:1216px;margin:10px auto 44px;padding:0 18px;box-sizing:border-box;color:#191f28}" +
+".aihome-tit{display:block;font-size:22px;font-weight:800;margin:0 0 14px;color:#191f28}" +
+".aihome-sub{margin:-8px 0 14px;font-size:13px;color:#6b7684}" +
 ".aihome-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}" +
 ".aihome-grid2{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}" +
-".aihome-topic{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border,#e5e8eb);border-radius:14px;padding:14px 16px;text-decoration:none;background:var(--bg,#fff);transition:border-color .15s,transform .15s}" +
-".aihome-topic:hover{border-color:var(--accent,#2b2f36);transform:translateY(-2px)}" +
-".aihome-topic .tl{font-weight:800;font-size:14.5px;color:var(--text,#191f28)}" +
-".aihome-topic .tn{font-weight:700;font-size:11.5px;color:var(--aiblog-chiptx,#4e5968);background:var(--aiblog-chipbg,#eef1f4);border-radius:10px;padding:1px 7px;margin-left:4px}" +
-".aihome-topic .td{font-size:12.5px;color:var(--aiblog-sub,#6b7684)}" +
-".aihome-scard{border:1px solid var(--border,#e5e8eb);border-radius:16px;padding:16px 18px;background:var(--bg,#fff)}" +
-".aihome-scard .st{display:block;font-size:15.5px;font-weight:800}" +
-".aihome-scard .sd{display:block;font-size:12.5px;color:var(--aiblog-sub,#6b7684);margin:3px 0 10px}" +
+".aihome-topic{display:flex;flex-direction:column;gap:4px;border:1px solid #e5e8eb;border-radius:14px;padding:14px 16px;text-decoration:none;background:#fff;transition:border-color .15s,transform .15s}" +
+".aihome-topic:hover{border-color:#2b2f36;transform:translateY(-2px)}" +
+".aihome-topic .tl{font-weight:800;font-size:14.5px;color:#191f28}" +
+".aihome-topic .tn{font-weight:700;font-size:11.5px;color:#4e5968;background:#eef1f4;border-radius:10px;padding:1px 7px;margin-left:4px}" +
+".aihome-topic .td{font-size:12.5px;color:#6b7684}" +
+".aihome-scard{border:1px solid #e5e8eb;border-radius:16px;padding:16px 18px;background:#fff}" +
+".aihome-scard .st{display:block;font-size:15.5px;font-weight:800;color:#191f28}" +
+".aihome-scard .sd{display:block;font-size:12.5px;color:#6b7684;margin:3px 0 10px}" +
 ".aihome-scard .sl{margin:0;padding:0;list-style:none;counter-reset:ai}" +
-".aihome-scard .sl li{counter-increment:ai;display:flex;gap:8px;align-items:baseline;padding:5px 0;border-top:1px dashed var(--border,#e5e8eb)}" +
+".aihome-scard .sl li{counter-increment:ai;display:flex;gap:8px;align-items:baseline;padding:5px 0;border-top:1px dashed #e5e8eb}" +
 ".aihome-scard .sl li:first-child{border-top:none}" +
-".aihome-scard .sl li:before{content:counter(ai);flex:none;width:18px;height:18px;border-radius:50%;background:var(--aiblog-chipbg,#eef1f4);color:var(--aiblog-chiptx,#4e5968);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;position:relative;top:2px}" +
-".aihome-scard .sl a{font-size:13.5px;color:var(--text,#191f28);text-decoration:none;line-height:1.5}" +
+".aihome-scard .sl li:before{content:counter(ai);flex:none;width:18px;height:18px;border-radius:50%;background:#eef1f4;color:#4e5968;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;position:relative;top:2px}" +
+".aihome-scard .sl a{font-size:13.5px;color:#191f28;text-decoration:none;line-height:1.5}" +
 ".aihome-scard .sl a:hover{text-decoration:underline;text-underline-offset:3px}" +
-/* 다크: var()가 어떤 환경에서 안 먹어도 안전하게 명시값 병행 */
-"html[data-theme=dark] .aihome-sec{--aiblog-sub:#9aa4af;--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd;color:#ecf0f3}" +
-/* 앵커(<a>)는 스킨의 크로스오리진 CSS가 커버 영역에서 !important로 강제 — 맞대응 필요 (실측) */
-"html[data-theme=dark] .aihome-topic,html[data-theme=dark] .aihome-scard{background:#17171c !important;border-color:#2a2f37}" +
-"html[data-theme=dark] .aihome-topic .tl,html[data-theme=dark] .aihome-scard .st{color:#ecf0f3}" +
-"html[data-theme=dark] .aihome-scard .sl a{color:#ecf0f3 !important}" +
 "@media (max-width:768px){.aihome-sec{padding:0 16px}}" +
 "@media (prefers-reduced-motion:reduce){.aihome-topic{transition:none}}" +
 /* 홈 다듬기: 데스크톱 캐러셀 소폭 축소 — 다음 섹션이 첫 화면에 걸치게 (스크롤 단서) */
