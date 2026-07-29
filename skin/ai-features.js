@@ -110,8 +110,8 @@
 ".aiblog-head{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--border,#e5e8eb)}" +
 ".aiblog-head svg{color:var(--accent,#2b2f36);flex:none}" +
 ".aiblog-head .t{font-weight:800;font-size:15px}" +
-".aiblog-head .c{font-size:11.5px;color:var(--aiblog-sub,#8b95a1);margin-left:auto;margin-right:6px}" +
-".aiblog-x{border:none;background:none;color:var(--aiblog-sub,#8b95a1);font-size:20px;line-height:1;cursor:pointer;padding:2px 4px;border-radius:8px}" +
+".aiblog-head .c{font-size:11.5px;color:var(--aiblog-sub,#6b7684);margin-left:auto;margin-right:6px}" +
+".aiblog-x{border:none;background:none;color:var(--aiblog-sub,#6b7684);font-size:20px;line-height:1;cursor:pointer;padding:2px 4px;border-radius:8px}" +
 ".aiblog-x:hover{background:var(--aiblog-hover,#eef1f4)}" +
 ".aiblog-chat{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px;display:flex;flex-direction:column;gap:10px}" +
 ".aiblog-mu{align-self:flex-end;background:var(--accent,#2b2f36);color:#fff;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:13.5px;line-height:1.55;max-width:85%;word-break:break-word}" +
@@ -120,7 +120,7 @@
 ".aiblog-cards a{display:block;background:var(--bg,#fff);border:1px solid var(--border,#e5e8eb);border-radius:12px;padding:10px 12px;margin-top:8px;text-decoration:none}" +
 ".aiblog-cards a:hover{border-color:var(--accent,#2b2f36)}" +
 ".aiblog-cards .ct{font-weight:700;font-size:13.5px;color:var(--text,#191f28)}" +
-".aiblog-cards .cs{font-size:12px;color:var(--aiblog-sub,#8b95a1);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}" +
+".aiblog-cards .cs{font-size:12px;color:var(--aiblog-sub,#6b7684);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}" +
 ".aiblog-kwrow{margin-top:8px}" +
 ".aiblog-kwrow span{display:inline-block;background:var(--aiblog-chipbg,#e8ebee);color:var(--aiblog-chiptx,#4e5968);border-radius:14px;padding:2px 9px;font-size:11.5px;margin:2px 4px 0 0}" +
 ".aiblog-chips{padding:4px 14px 8px;display:flex;flex-wrap:wrap;gap:6px}" +
@@ -131,7 +131,7 @@
 ".aiblog-in:focus{border-color:var(--accent,#2b2f36);background:var(--bg,#fff)}" +
 ".aiblog-send{width:40px;height:40px;flex:none;border:none;border-radius:12px;background:var(--accent,#2b2f36);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}" +
 ".aiblog-send:disabled{opacity:.45;cursor:default}" +
-".aiblog-typing{align-self:flex-start;color:var(--aiblog-sub,#8b95a1);font-size:12.5px;padding:2px 4px}" +
+".aiblog-typing{align-self:flex-start;color:var(--aiblog-sub,#6b7684);font-size:12.5px;padding:2px 4px}" +
 ".aiblog-sugg{margin-top:8px}" +
 ".aiblog-schip{border:1px solid var(--border,#e5e8eb);background:var(--bg,#fff);color:var(--text,#191f28);border-radius:14px;padding:4px 10px;font-size:12px;font-family:inherit;cursor:pointer;margin:2px 4px 0 0}" +
 ".aiblog-schip:hover{border-color:var(--accent,#2b2f36)}" +
@@ -143,11 +143,23 @@
 "html[data-theme=dark] .aiblog-keywords span,html[data-theme=dark] .aiblog-kwrow span{--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd}" +
 "html[data-theme=dark] .aiblog-x:hover{--aiblog-hover:#262b33}" +
 "html[data-theme=dark] .aiblog-panel{box-shadow:0 20px 60px rgba(0,0,0,.5)}" +
+// 다크에서는 보조 텍스트를 살짝 밝게 (라이트 기본 #6b7684는 어두운 배경에서 침침함)
+"html[data-theme=dark] .aiblog-wrap,html[data-theme=dark] .aiblog-box{--aiblog-sub:#9aa4af}" +
+// 최신 브라우저: 모바일 URL바 변동에 흔들리지 않는 dvh 사용
+"@supports (height:100dvh){.aiblog-panel{max-height:min(560px,calc(100dvh - 170px))}}" +
 "@media (max-width:768px){" +
-".aiblog-fab{left:16px;bottom:20px}" +
-".aiblog-wrap{right:12px;left:12px;bottom:76px;width:auto}" +
+// iPhone 홈 인디케이터(safe-area) 회피
+".aiblog-fab{left:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px))}" +
+".aiblog-wrap{right:12px;left:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:auto}" +
 ".aiblog-in{font-size:16px}" + /* iOS 자동 줌 방지 */
 "}" +
+/* 짧은 화면(가로 모드 폰 등): 패널을 화면에 꽉 채워 채팅 영역 확보 */
+"@media (max-height:520px){" +
+".aiblog-wrap{bottom:60px}" +
+".aiblog-panel{max-height:calc(100vh - 70px)}" +
+"@supports (height:100dvh){.aiblog-panel{max-height:calc(100dvh - 70px)}}" +
+"}" +
+"@media (prefers-reduced-motion:reduce){.aiblog-fab,.aiblog-wrap,.aiblog-chip{transition:none}}" +
 /* 스킨 헤더 보정: 중간 폭에서 상단 카테고리 메뉴가 우측 아이콘(테마/검색/메뉴)과
    겹치는 문제 — 1800px 이하는 메뉴 글자 축소, 1560px 이하는 메뉴를 숨겨
    스킨의 햄버거(≡) 메뉴로 대체 (실측: 메뉴 폭 ~985px, 원래 1800px 밑에서 충돌) */
@@ -227,9 +239,12 @@
     var fab = el("button", "aiblog-fab", SPARK + "<span>AI</span>");
     fab.type = "button";
     fab.setAttribute("aria-label", "AI 어시스턴트 열기");
+    fab.setAttribute("aria-expanded", "false");
 
     var wrap = el("div", "aiblog-wrap");
     var panel = el("div", "aiblog-panel");
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-label", "AI 어시스턴트");
     var head = el("div", "aiblog-head",
       SPARK + '<span class="t">AI 어시스턴트</span><span class="c">글 ' + posts.length + '개 학습</span>');
     var xBtn = el("button", "aiblog-x", "&times;");
@@ -242,6 +257,7 @@
     var inrow = el("div", "aiblog-inrow");
     var input = el("input", "aiblog-in");
     input.placeholder = "요약, 관련 글, 검색어를 입력해보세요";
+    input.setAttribute("aria-label", "AI에게 질문 입력");
     var send = el("button", "aiblog-send", SEND);
     send.type = "button";
     send.setAttribute("aria-label", "보내기");
@@ -308,6 +324,7 @@
     });
 
     // 티스토리 기본 툴바(왼쪽 아래 .menu_toolbar)와 겹치면 그 위로 자동 회피
+    var kbLift = false; // 모바일 키보드 보정 중에는 dodge가 wrap을 건드리지 않음
     function dodgeTistoryToolbar() {
       var tb = document.querySelector(".menu_toolbar, .toolbar_lb");
       var tr = tb && tb.offsetWidth ? tb.getBoundingClientRect() : null;
@@ -318,15 +335,41 @@
         var clear = Math.round(window.innerHeight - tr.top) + 10;
         if (clear > 0 && clear < 220) {
           fab.style.bottom = clear + "px";
-          wrap.style.bottom = (clear + 56) + "px";
+          // 패널까지 같이 올리는 건 화면이 충분히 클 때만 —
+          // 짧은 화면(가로 모드)에서 올리면 패널 위가 화면 밖으로 나감 (실측)
+          if (!kbLift)
+            wrap.style.bottom = (window.innerHeight - (clear + 56) >= 280)
+              ? (clear + 56) + "px" : "";
           return;
         }
       }
       fab.style.bottom = "";
-      wrap.style.bottom = "";
+      if (!kbLift) wrap.style.bottom = "";
     }
     dodgeTistoryToolbar();
     window.addEventListener("resize", dodgeTistoryToolbar);
+    // 툴바는 우리 스크립트보다 늦게 렌더될 수 있음(콜드 캐시에서 실측) — 재시도
+    window.addEventListener("load", dodgeTistoryToolbar);
+    [700, 2000, 4500].forEach(function (t) { setTimeout(dodgeTistoryToolbar, t); });
+
+    // 모바일 키보드가 입력줄을 가리는 문제: visualViewport로 패널을 키보드 위로 올림
+    if (window.visualViewport) {
+      var vvFix = function () {
+        if (!wrap.classList.contains("open")) return;
+        var vv = window.visualViewport;
+        var covered = window.innerHeight - vv.height - vv.offsetTop;
+        if (covered > 60) { // 키보드가 올라온 것으로 판단
+          kbLift = true;
+          wrap.style.bottom = (covered + 10) + "px";
+        } else if (kbLift) {
+          kbLift = false;
+          wrap.style.bottom = "";
+          dodgeTistoryToolbar();
+        }
+      };
+      window.visualViewport.addEventListener("resize", vvFix);
+      window.visualViewport.addEventListener("scroll", vvFix);
+    }
 
     /* ---- 말풍선 헬퍼 ---- */
 
@@ -569,9 +612,13 @@
       var typing = el("div", "aiblog-typing", "AI가 답변을 생각하는 중…");
       chat.appendChild(typing); scrollDown();
       var ctxIds = hist.length ? (hist[hist.length - 1].ids || []) : [];
+      // 25초 타임아웃 — 없으면 네트워크가 멈췄을 때 입력이 영영 잠김
+      var ctrl = ("AbortController" in window) ? new AbortController() : null;
+      var tmo = ctrl ? setTimeout(function () { ctrl.abort(); }, 25000) : null;
       fetch(CONFIG.WORKER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: ctrl ? ctrl.signal : undefined,
         body: JSON.stringify({
           question: sendText,
           history: hist.slice(-3).map(function (h) { return { q: h.q, a: h.a }; }),
@@ -579,10 +626,15 @@
           postId: curPost ? curPost.id : 0
         })
       }).then(function (r) { return r.json(); }).then(function (data) {
+        if (tmo) clearTimeout(tmo);
         typing.remove();
         pendingAsk = false; send.disabled = false;
         var answer = data.answer || "답변을 생성하지 못했어요.";
-        var b = aiBubble(esc(answer));
+        // 개행·**강조**만 최소 렌더 (esc 이후 처리라 안전)
+        var html = esc(answer)
+          .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+          .replace(/\n/g, "<br>");
+        var b = aiBubble(html);
         var ids = [];
         if (data.sources && data.sources.length) {
           ids = data.sources.map(function (s) { return s.id; }).filter(Boolean);
@@ -594,10 +646,14 @@
         saveHist();
         if (ids.length && CONFIG.WORKER_URL)
           b.appendChild(suggestChips([{ label: "더 자세히", q: "더 자세히 설명해줘" }]));
-      }).catch(function () {
+      }).catch(function (err) {
+        if (tmo) clearTimeout(tmo);
         typing.remove();
         pendingAsk = false; send.disabled = false;
-        var b = aiBubble("답변 생성 중 오류가 났어요.");
+        var msg = (err && err.name === "AbortError")
+          ? "답변이 너무 오래 걸려서 중단했어요. 네트워크 상태를 확인하고 다시 시도해주세요."
+          : "답변 생성 중 오류가 났어요.";
+        var b = aiBubble(msg);
         b.appendChild(suggestChips([{ label: "다시 시도", q: displayQ || sendText }]));
       });
     }
@@ -690,6 +746,7 @@
     var greeted = restoreChat();
     function openPanel() {
       wrap.classList.add("open");
+      fab.setAttribute("aria-expanded", "true");
       logEvt("open", {});
       if (!greeted) {
         greeted = true;
@@ -704,15 +761,22 @@
         (window.matchMedia && matchMedia("(max-width:768px)").matches);
       if (!touch) setTimeout(function () { input.focus(); }, 120);
     }
-    function closePanel() { wrap.classList.remove("open"); }
+    function closePanel() {
+      wrap.classList.remove("open");
+      fab.setAttribute("aria-expanded", "false");
+    }
     openAssistant = openPanel;
 
     fab.onclick = function () {
       if (wrap.classList.contains("open")) closePanel(); else openPanel();
     };
-    xBtn.onclick = closePanel;
+    xBtn.onclick = function () { closePanel(); fab.focus(); };
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closePanel();
+      // 키보드로 닫으면 포커스를 버튼으로 되돌림 (접근성)
+      if (e.key === "Escape" && wrap.classList.contains("open")) {
+        closePanel();
+        fab.focus();
+      }
     });
     document.addEventListener("click", function (e) {
       if (wrap.classList.contains("open") &&
