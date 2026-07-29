@@ -309,14 +309,25 @@
     return out.slice(0, 8);
   }
 
-  // 스킨 섹션의 실제 콘텐츠 좌우 여백에 런타임 정렬 (스킨 업데이트에도 안전)
+  // 스킨 섹션의 실제 콘텐츠 좌우 여백에 런타임 정렬 (스킨 업데이트에도 안전).
+  // ⚠ 넓은 화면에서 스킨 카드는 여러 칼럼 그리드가 되므로 카드 "하나"가 아니라
+  //   같은 종류 카드 전체의 유니언(min left ~ max right)을 콘텐츠 폭으로 삼는다.
   function alignHomeSections() {
-    var ref = document.querySelector(".link_notice") ||
-              document.querySelector(".type_card .item") ||
-              document.querySelector(".txt_section");
-    if (!ref) return;
-    var rr = ref.getBoundingClientRect();
-    if (!rr.width) return;
+    var groups = [".link_notice", ".type_card .item", ".txt_section"];
+    var rr = null;
+    for (var gi = 0; gi < groups.length && !rr; gi++) {
+      var els = document.querySelectorAll(groups[gi]);
+      if (!els.length) continue;
+      var L = Infinity, R = -Infinity;
+      for (var i = 0; i < els.length; i++) {
+        var b = els[i].getBoundingClientRect();
+        if (!b.width) continue;
+        if (b.left < L) L = b.left;
+        if (b.right > R) R = b.right;
+      }
+      if (R - L >= 320) rr = { left: L, right: R }; // 지나치게 좁으면 다음 후보로
+    }
+    if (!rr) return; // 신뢰할 기준 없음 — CSS 기본 폭 유지
     document.querySelectorAll(".aihome-sec").forEach(function (sec) {
       sec.style.maxWidth = "none";
       sec.style.paddingLeft = "0";
