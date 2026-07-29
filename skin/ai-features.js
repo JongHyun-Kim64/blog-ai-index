@@ -161,7 +161,8 @@
 "}" +
 "@media (prefers-reduced-motion:reduce){.aiblog-fab,.aiblog-wrap,.aiblog-chip{transition:none}}" +
 /* --- 홈 섹션: 주제별 허브 & 시리즈 정주행 (스킨 CSS 변수로 라이트/다크 자동) --- */
-".aihome-sec{margin:10px auto 44px;padding:0 24px;box-sizing:border-box;color:var(--text,#191f28)}" +
+/* 폭은 스킨 섹션(콘텐츠 1180px, 내부 패딩 18px)과 정렬 — 실측 기준 */
+".aihome-sec{max-width:1216px;margin:10px auto 44px;padding:0 18px;box-sizing:border-box;color:var(--text,#191f28)}" +
 ".aihome-tit{display:block;font-size:22px;font-weight:800;margin:0 0 14px}" +
 ".aihome-sub{margin:-8px 0 14px;font-size:13px;color:var(--aiblog-sub,#6b7684)}" +
 ".aihome-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}" +
@@ -183,8 +184,7 @@
 "html[data-theme=dark] .aihome-sec{--aiblog-sub:#9aa4af;--aiblog-chipbg:#262b33;--aiblog-chiptx:#aab2bd}" +
 "@media (max-width:768px){.aihome-sec{padding:0 16px}}" +
 "@media (prefers-reduced-motion:reduce){.aihome-topic{transition:none}}" +
-/* 홈 다듬기: Recent 카드 설명 3줄 클램프 + 데스크톱 캐러셀 소폭 축소(다음 섹션이 첫 화면에 걸치게) */
-".link_notice .text{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}" +
+/* 홈 다듬기: 데스크톱 캐러셀 소폭 축소 — 다음 섹션이 첫 화면에 걸치게 (스크롤 단서) */
 "@media (min-width:769px){.type_featured .link_slide,.type_featured .slick-list,.type_featured .slick-track{height:420px !important}}" +
 /* 스킨 헤더 보정: 중간 폭에서 상단 카테고리 메뉴가 우측 아이콘(테마/검색/메뉴)과
    겹치는 문제 — 1800px 이하는 메뉴 글자 축소, 1560px 이하는 메뉴를 숨겨
