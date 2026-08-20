@@ -130,6 +130,8 @@ const firstResponse = await worker.fetch(makeRequest(), env, {
 await Promise.all(pending);
 const firstBody = await firstResponse.json();
 assert.equal(firstResponse.status, 200);
+assert.equal(firstResponse.headers.get("X-AI-Cache"), "MISS");
+assert.equal(firstBody.cached, false);
 assert.equal(firstBody.sources[0].id, 2);
 assert.match(firstBody.answer, /\[1\]/);
 assert.equal(cacheStore.size, 1, "first answer should be cached");
@@ -137,7 +139,10 @@ assert.equal(fetchCalls, 3, "index, embedding, and generation should each run on
 
 const secondResponse = await worker.fetch(makeRequest(), env, { waitUntil() {} });
 const secondBody = await secondResponse.json();
-assert.deepEqual(secondBody, firstBody);
+assert.equal(secondResponse.headers.get("X-AI-Cache"), "HIT");
+assert.equal(secondBody.cached, true);
+assert.equal(secondBody.answer, firstBody.answer);
+assert.deepEqual(secondBody.sources, firstBody.sources);
 assert.equal(fetchCalls, 3, "identical first-turn question should use edge cache");
 
 console.log("worker retrieval tests passed");

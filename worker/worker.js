@@ -268,7 +268,12 @@ export default {
         const hit = await caches.default.match(cacheRequest);
         if (hit) {
           console.log("AILOG", JSON.stringify({ t: "qa_cache_hit", q: question.slice(0, 120), postId }));
-          return hit;
+          const cachedData = await hit.json();
+          return json(
+            { ...cachedData, cached: true },
+            env,
+            { "Cache-Control": "public, max-age=21600", "X-AI-Cache": "HIT" }
+          );
         }
       } catch (_) { cacheRequest = null; }
     }
@@ -390,7 +395,7 @@ export default {
         headings: chunks.filter((c) => c.post.id === p.id).map((c) => c.heading).slice(0, 3),
       })),
     };
-    const response = json(result, env);
+    const response = json(result, env, { "X-AI-Cache": "MISS" });
     if (cacheRequest && typeof caches !== "undefined") {
       const cachedResponse = response.clone();
       cachedResponse.headers.set("Cache-Control", "public, max-age=21600");
@@ -399,9 +404,9 @@ export default {
     }
     return response;
 
-    function json(obj, env2) {
+    function json(obj, env2, extraHeaders = {}) {
       return new Response(JSON.stringify(obj), {
-        headers: { "Content-Type": "application/json; charset=utf-8", ...cors(env2) },
+        headers: { "Content-Type": "application/json; charset=utf-8", ...cors(env2), ...extraHeaders },
       });
     }
   },
