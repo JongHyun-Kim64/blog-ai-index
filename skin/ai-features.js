@@ -117,10 +117,17 @@
 ".aiblog-mu{align-self:flex-end;background:var(--accent,#2b2f36);color:#fff;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:13.5px;line-height:1.55;max-width:85%;word-break:break-word}" +
 ".aiblog-ma{align-self:flex-start;background:var(--aiblog-soft,#f2f4f6);color:var(--text,#191f28);padding:11px 13px;border-radius:16px 16px 16px 4px;font-size:13.5px;line-height:1.65;max-width:94%;word-break:break-word}" +
 ".aiblog-ma b{font-weight:800}" +
+".aiblog-cite{font-size:10px;line-height:0;margin-left:2px;vertical-align:super}" +
+".aiblog-cite a{color:var(--text,#191f28);font-weight:800;text-decoration:none;border-bottom:1px solid var(--aiblog-sub,#6b7684)}" +
+".aiblog-cite a:hover{border-bottom-color:var(--text,#191f28)}" +
 ".aiblog-cards a{display:block;background:var(--bg,#fff);border:1px solid var(--border,#e5e8eb);border-radius:12px;padding:10px 12px;margin-top:8px;text-decoration:none}" +
 ".aiblog-cards a:hover{border-color:var(--accent,#2b2f36)}" +
 ".aiblog-cards .ct{font-weight:700;font-size:13.5px;color:var(--text,#191f28)}" +
 ".aiblog-cards .cs{font-size:12px;color:var(--aiblog-sub,#6b7684);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}" +
+".aiblog-feedback{display:flex;align-items:center;gap:6px;margin-top:9px;padding-top:8px;border-top:1px solid var(--border,#e5e8eb);color:var(--aiblog-sub,#6b7684);font-size:11.5px}" +
+".aiblog-fb{border:1px solid var(--border,#e5e8eb);background:var(--bg,#fff);color:var(--aiblog-sub,#6b7684);border-radius:12px;padding:3px 8px;font:inherit;cursor:pointer}" +
+".aiblog-fb:hover,.aiblog-fb.on{border-color:var(--text,#191f28);color:var(--text,#191f28)}" +
+".aiblog-fb:disabled{cursor:default;opacity:.62}" +
 ".aiblog-kwrow{margin-top:8px}" +
 ".aiblog-kwrow span{display:inline-block;background:var(--aiblog-chipbg,#e8ebee);color:var(--aiblog-chiptx,#4e5968);border-radius:14px;padding:2px 9px;font-size:11.5px;margin:2px 4px 0 0}" +
 ".aiblog-chips{padding:4px 14px 8px;display:flex;flex-wrap:wrap;gap:6px}" +
@@ -454,9 +461,21 @@
     // 칩/카드 클릭은 위임으로 처리 — 복원된 대화의 칩도 그대로 동작
     chat.addEventListener("click", function (e) {
       if (!e.target || !e.target.closest) return;
+      var fb = e.target.closest(".aiblog-fb");
+      if (fb) {
+        var feedback = fb.closest(".aiblog-feedback");
+        if (!feedback || feedback.getAttribute("data-done") === "1") return;
+        feedback.setAttribute("data-done", "1");
+        var buttons = feedback.querySelectorAll(".aiblog-fb");
+        for (var i = 0; i < buttons.length; i++) buttons[i].disabled = true;
+        fb.classList.add("on");
+        logEvt("feedback", { q: fb.getAttribute("data-q") || "", ui: fb.getAttribute("data-value") || "" });
+        feedback.appendChild(el("span", "", "감사합니다"));
+        return;
+      }
       var s = e.target.closest(".aiblog-schip");
       if (s) { submit(s.getAttribute("data-q") || s.textContent); return; }
-      var a = e.target.closest(".aiblog-cards a");
+      var a = e.target.closest(".aiblog-cards a, .aiblog-cite a");
       if (a) logEvt("click", { to: (a.href.match(/(\d+)\/?$/) || [])[1] || "", ui: "chat" });
     });
 
@@ -529,10 +548,29 @@
       items.forEach(function (p) {
         var a = el("a", "");
         a.href = p.url;
-        a.appendChild(el("div", "ct", esc(p.title)));
+        var prefix = p.sourceNo ? "[" + p.sourceNo + "] " : "";
+        a.appendChild(el("div", "ct", esc(prefix + p.title)));
         if (withSummary !== false && p.summary)
           a.appendChild(el("div", "cs", esc(p.summary)));
+        else if (p.headings && p.headings.length)
+          a.appendChild(el("div", "cs", esc(p.headings.join(" · "))));
         box.appendChild(a);
+      });
+      return box;
+    }
+
+    function feedbackBox(question) {
+      var box = el("div", "aiblog-feedback");
+      box.appendChild(el("span", "", "이 답변은 어땠나요?"));
+      [
+        { label: "도움됨", value: "helpful" },
+        { label: "부족함", value: "not_helpful" }
+      ].forEach(function (item) {
+        var button = el("button", "aiblog-fb", item.label);
+        button.type = "button";
+        button.setAttribute("data-value", item.value);
+        button.setAttribute("data-q", question);
+        box.appendChild(button);
       });
       return box;
     }
@@ -686,7 +724,7 @@
     function replyHelp() {
       var b = aiBubble(
         "저는 이 블로그 주인장이 만든 <b>AI 어시스턴트</b>예요. " +
-        "블로그 글 " + posts.length + "개를 미리 학습해두고 있고, 자유로운 질문은 " +
+        "블로그 글 " + posts.length + "개를 검색할 수 있도록 인덱싱해두었고, 자유로운 질문은 " +
         "구글 Gemini AI가 글 내용을 근거로 실시간 답변해요.<br><br>" +
         "<b>할 수 있는 일</b><br>" +
         "· <b>이 글 요약해줘</b> — 지금 보는 글 3줄 요약<br>" +
@@ -767,18 +805,26 @@
         typing.remove();
         pendingAsk = false; send.disabled = false;
         var answer = data.answer || "답변을 생성하지 못했어요.";
-        // 개행·**강조**만 최소 렌더 (esc 이후 처리라 안전)
+        var sources = Array.isArray(data.sources) ? data.sources : [];
+        // 개행·**강조**·출처 번호만 최소 렌더 (esc 이후 처리라 안전)
         var html = esc(answer)
           .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+          .replace(/\[(\d{1,2})\]/g, function (all, rawNo) {
+            var no = Number(rawNo);
+            var source = sources[no - 1];
+            if (!source || !source.url) return all;
+            return '<sup class="aiblog-cite"><a href="' + esc(source.url) + '" aria-label="출처 ' + no + ': ' + esc(source.title || "") + '">[' + no + ']</a></sup>';
+          })
           .replace(/\n/g, "<br>");
         var b = aiBubble(html);
         var ids = [];
-        if (data.sources && data.sources.length) {
-          ids = data.sources.map(function (s) { return s.id; }).filter(Boolean);
-          b.appendChild(cardList(data.sources.map(function (s) {
-            return { url: s.url, title: s.title };
+        if (sources.length) {
+          ids = sources.map(function (s) { return s.id; }).filter(Boolean);
+          b.appendChild(cardList(sources.map(function (s, i) {
+            return { url: s.url, title: s.title, sourceNo: i + 1, headings: s.headings || [] };
           }), false));
         }
+        b.appendChild(feedbackBox(displayQ || sendText));
         hist.push({ q: displayQ || sendText, a: answer.slice(0, 400), ids: ids });
         saveHist();
         if (ids.length && CONFIG.WORKER_URL)

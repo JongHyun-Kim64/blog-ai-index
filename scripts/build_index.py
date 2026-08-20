@@ -46,6 +46,8 @@ GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta"
 
 # 무료 티어 보호용: 호출 간 대기 (초). 429가 나면 자동으로 더 기다립니다.
 API_DELAY = float(os.environ.get("API_DELAY", "4.5"))
+CHUNK_TARGET_CHARS = int(os.environ.get("CHUNK_TARGET_CHARS", "900"))
+MAX_CHUNKS_PER_POST = int(os.environ.get("MAX_CHUNKS_PER_POST", "12"))
 
 
 # ---------------------------------------------------------------- 수집
@@ -77,6 +79,59 @@ CONTENT_SELECTORS = [
     "#article",
     "article",
 ]
+
+
+def clean_text(value):
+    """HTML에서 추출한 텍스트를 검색용 단일 공백 문자열로 정규화."""
+    return unicodedata.normalize("NFC", re.sub(r"\s+", " ", value or "").strip())
+
+
+def extract_chunks(body, fallback_text, target_chars=CHUNK_TARGET_CHARS,
+                   max_chunks=MAX_CHUNKS_PER_POST):
+    """본문을 heading 경계와 길이를 기준으로 작은 검색 Chunk로 분할."""
+    chunks = []
+    heading = "본문"
+    parts = []
+    part_len = 0
+
+    def flush():
+        nonlocal parts, part_len
+        text = clean_text(" ".join(parts))
+        parts, part_len = [], 0
+        if len(text) < 40:
+            return
+        chunks.append({"heading": heading[:120], "text": text[:1400]})
+
+    selected = {"h1", "h2", "h3", "h4", "p", "li", "pre"}
+    for node in body.find_all(list(selected)):
+        # li 안의 p처럼 부모/자식이 모두 선택된 경우 중복 수집하지 않음.
+        if node.find_parent(list(selected)):
+            continue
+        text = clean_text(node.get_text(" ", strip=True))
+        if not text:
+            continue
+        if node.name in {"h1", "h2", "h3", "h4"}:
+            flush()
+            heading = text
+            continue
+        if len(text) < 12:
+            continue
+        if parts and part_len + len(text) + 1 > target_chars:
+            flush()
+        parts.append(text)
+        part_len += len(text) + 1
+        if len(chunks) >= max_chunks:
+            break
+    if len(chunks) < max_chunks:
+        flush()
+
+    if not chunks:
+        text = clean_text(fallback_text)
+        for start in range(0, min(len(text), target_chars * max_chunks), target_chars):
+            piece = text[start:start + target_chars].strip()
+            if len(piece) >= 40:
+                chunks.append({"heading": "본문", "text": piece})
+    return chunks[:max_chunks]
 
 
 def fetch_post(url):
@@ -123,8 +178,8 @@ def fetch_post(url):
 
     for bad in body.select("script, style, .revenue_unit_wrap, .container_postbtn, .another_category"):
         bad.decompose()
-    text = re.sub(r"\s+", " ", body.get_text(" ", strip=True))
-    text = unicodedata.normalize("NFC", text)
+    text = clean_text(body.get_text(" ", strip=True))
+    chunks = extract_chunks(body, text)
 
     # 카테고리/태그 (스킨별 편차가 커서 실패해도 무방)
     cat_el = soup.select_one(".category, .link_cate, .txt_category, .category_label, a[href*='/category/']")
@@ -140,6 +195,7 @@ def fetch_post(url):
         "date": date,
         "category": category,
         "tags": tags,
+        "chunks": chunks,
         "_text": text,   # 인덱스 파일에는 저장하지 않음 (요약/임베딩 계산용)
     }
 
@@ -282,6 +338,14 @@ def cosine_dense(a, b):
     return num / (na * nb)
 
 
+def quantize_embedding(vec):
+    """정규화된 256차원 Embedding을 int8로 줄여 공개 Index 크기를 절약."""
+    if not vec:
+        return None
+    norm = math.sqrt(sum(float(x) * float(x) for x in vec)) or 1.0
+    return [max(-127, min(127, int(round(float(x) / norm * 127)))) for x in vec]
+
+
 def compute_related(posts, dense_vecs=None, sparse_vecs=None, top_k=5):
     """각 글의 관련 글 top-k를 계산해 posts[i]['related']에 id 리스트로 저장."""
     n = len(posts)
@@ -334,6 +398,23 @@ def main():
         pid = int(url.rstrip("/").rsplit("/", 1)[-1])
         cached = old.get(pid)
         if cached and cached.get("summary") and (not GEMINI_KEY or cached.get("_emb")):
+            # 구형 Cache에는 Chunk가 없으므로 글만 다시 읽고 기존 요약/Embedding은 보존.
+            if not cached.get("chunks"):
+                try:
+                    fresh = fetch_post(url)
+                except Exception as e:
+                    fresh = None
+                    print(f"    [Chunk 수집 실패] {e}", flush=True)
+                if fresh:
+                    cached = dict(cached)
+                    for key in ("url", "title", "date", "category", "tags", "chunks"):
+                        cached[key] = fresh.get(key, cached.get(key))
+                    cached["excerpt"] = fresh.get("_text", "")[:500]
+                    print(f"[{k}/{len(urls)}] {url} — Chunk {len(cached['chunks'])}개 보강", flush=True)
+                    time.sleep(0.35)
+            if not cached.get("chunks"):
+                fallback = cached.get("summary", "") + " " + cached.get("excerpt", "")
+                cached["chunks"] = [{"heading": "본문", "text": fallback[:900]}]
             posts.append(cached)
             texts.append(cached["title"] + " " + cached.get("summary", "") + " " +
                          " ".join(cached.get("keywords", [])) + " " + cached.get("excerpt", ""))
@@ -359,7 +440,7 @@ def main():
                 t for t in tokenize(p["title"] + " " + p["_text"]) if len(t) >= 3
             ).most_common(5)]
 
-        p["excerpt"] = p["_text"][:400]
+        p["excerpt"] = p["_text"][:500]
         emb = gemini_embed(p["title"] + "\n" + p["summary"] + "\n" + p["_text"][:3000]) if GEMINI_KEY else None
         p["_emb"] = emb
 
@@ -374,7 +455,7 @@ def main():
     sparse = None if use_dense else tfidf_vectors(texts)
     compute_related(posts, dense_vecs=embeds if use_dense else None, sparse_vecs=sparse)
 
-    # 클라이언트에 임베딩은 내보내지 않음 (파일 크기 절약) — 캐시 파일에만 유지
+    # 원본 float Embedding은 Cache에만 유지하고, 공개 Index에는 int8 양자화본만 포함.
     cache_path = args.out.replace(".json", ".cache.json")
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(cache_path, "w", encoding="utf-8") as f:
@@ -383,6 +464,9 @@ def main():
     slim = []
     for p in posts:
         q = {k: v for k, v in p.items() if k != "_emb"}
+        embq = quantize_embedding(p.get("_emb"))
+        if embq:
+            q["embq"] = embq
         slim.append(q)
     out_data = {
         "blog": args.blog,
