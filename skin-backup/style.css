@@ -2588,19 +2588,19 @@ a:link, a:visited { color: inherit; }
    inset shadow로 굴절된 유리처럼 보이게 한다. */
 .box_header .btn_theme {
   isolation: isolate;
-  width: 58px;
-  height: 32px;
+  width: 46px;
+  height: 24px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 12px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.54), rgba(235, 241, 248, 0.18)) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) contrast(1.04);
-  backdrop-filter: blur(16px) saturate(180%) contrast(1.04);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.50), rgba(225, 234, 244, 0.12)) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(190%) contrast(1.04);
+  backdrop-filter: blur(18px) saturate(190%) contrast(1.04);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.92),
     inset 0 -1px 0 rgba(95, 110, 126, 0.16),
-    0 5px 16px rgba(28, 39, 54, 0.13);
+    0 2px 7px rgba(28, 39, 54, 0.12);
   overflow: hidden;
   transition: border-color .28s ease, box-shadow .28s ease, background .28s ease;
 }
@@ -2610,13 +2610,13 @@ a:link, a:visited { color: inherit; }
   content: "";
   position: absolute;
   z-index: 0;
-  inset: 1px;
+  inset: .5px;
   border-radius: inherit;
   pointer-events: none;
   background:
-    radial-gradient(120% 90% at 14% -18%, rgba(255, 255, 255, 0.95) 0 20%, transparent 52%),
-    linear-gradient(108deg, transparent 18%, rgba(255, 255, 255, 0.42) 43%, transparent 66%);
-  opacity: .82;
+    radial-gradient(115% 82% at 15% -12%, rgba(255, 255, 255, 0.96) 0 18%, transparent 50%),
+    linear-gradient(108deg, transparent 20%, rgba(255, 255, 255, 0.38) 44%, transparent 68%);
+  opacity: .86;
 }
 
 /* 움직이는 refractive lens */
@@ -2624,20 +2624,20 @@ a:link, a:visited { color: inherit; }
   content: "";
   position: absolute;
   z-index: 1;
-  top: 3px;
-  left: 3px;
-  width: 24px;
-  height: 24px;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
   border: 1px solid rgba(255, 255, 255, 0.84);
   border-radius: 50%;
   background:
     radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.98) 0 10%, rgba(255, 255, 255, 0.56) 28%, rgba(255, 255, 255, 0.14) 67%, rgba(255, 255, 255, 0.38) 100%);
-  -webkit-backdrop-filter: blur(2px) saturate(200%) brightness(1.08);
-  backdrop-filter: blur(2px) saturate(200%) brightness(1.08);
+  -webkit-backdrop-filter: blur(1.5px) saturate(220%) brightness(1.12);
+  backdrop-filter: blur(1.5px) saturate(220%) brightness(1.12);
   box-shadow:
-    inset 2px 2px 3px rgba(255, 255, 255, 0.92),
-    inset -3px -3px 6px rgba(80, 96, 116, 0.20),
-    0 3px 8px rgba(31, 43, 58, 0.20),
+    inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.94),
+    inset -2px -2px 4px rgba(80, 96, 116, 0.18),
+    0 2px 5px rgba(31, 43, 58, 0.18),
     0 0 0 .5px rgba(255, 255, 255, 0.62);
   transform: translateX(0);
   transition: transform .42s cubic-bezier(.22, 1, .36, 1), box-shadow .28s ease;
@@ -2653,8 +2653,8 @@ html[data-theme="dark"] .box_header .btn_theme {
     0 6px 18px rgba(0, 0, 0, 0.30);
 }
 html[data-theme="dark"] .box_header .btn_theme::after {
-  left: 3px;
-  transform: translateX(28px);
+  left: 2px;
+  transform: translateX(24px);
 }
 
 .box_header .btn_theme:hover {
@@ -2664,7 +2664,7 @@ html[data-theme="dark"] .box_header .btn_theme::after {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 1),
     inset 0 -1px 0 rgba(95, 110, 126, 0.14),
-    0 7px 20px rgba(28, 39, 54, 0.18);
+    0 3px 9px rgba(28, 39, 54, 0.16);
 }
 html[data-theme="dark"] .box_header .btn_theme:hover {
   background:
@@ -2672,34 +2672,37 @@ html[data-theme="dark"] .box_header .btn_theme:hover {
   border-color: rgba(255, 255, 255, 0.34);
 }
 .box_header .btn_theme:active::after { transform: translateX(0) scale(.92); }
-html[data-theme="dark"] .box_header .btn_theme:active::after { transform: translateX(28px) scale(.92); }
+html[data-theme="dark"] .box_header .btn_theme:active::after { transform: translateX(24px) scale(.92); }
 .box_header .btn_theme:focus-visible {
-  outline: 3px solid color-mix(in srgb, #4da3ff 42%, transparent);
-  outline-offset: 3px;
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .92),
+    inset 0 -1px 0 rgba(95, 110, 126, .14),
+    0 2px 8px rgba(28, 39, 54, .16);
 }
 
 .box_header .btn_theme .ico_sun,
 .box_header .btn_theme .ico_moon {
   z-index: 2;
-  width: 13px !important;
-  height: 13px !important;
+  width: 10px !important;
+  height: 10px !important;
   filter: drop-shadow(0 1px 1px rgba(255, 255, 255, .55));
   transition: color .3s ease, opacity .3s ease, transform .42s cubic-bezier(.22, 1, .36, 1);
 }
-.box_header .btn_theme .ico_sun { left: 9px; }
-.box_header .btn_theme .ico_moon { right: 9px; }
+.box_header .btn_theme .ico_sun { left: 6px; }
+.box_header .btn_theme .ico_moon { right: 6px; }
 html[data-theme="light"] .box_header .btn_theme .ico_sun { opacity: .98; color: #6d7887; }
 html[data-theme="light"] .box_header .btn_theme .ico_moon { opacity: .42; color: #697484; }
 html[data-theme="dark"] .box_header .btn_theme .ico_sun { opacity: .42; color: #c2c8d0; }
 html[data-theme="dark"] .box_header .btn_theme .ico_moon { opacity: 1; color: #f2f5f8; }
 
 @media screen and (max-width: 1023px) {
-  .box_header .btn_theme { width: 54px; height: 30px; }
-  .box_header .btn_theme::after { width: 22px; height: 22px; }
-  html[data-theme="dark"] .box_header .btn_theme::after { transform: translateX(26px); }
-  html[data-theme="dark"] .box_header .btn_theme:active::after { transform: translateX(26px) scale(.92); }
-  .box_header .btn_theme .ico_sun { left: 8px; }
-  .box_header .btn_theme .ico_moon { right: 8px; }
+  .box_header .btn_theme { width: 44px; height: 24px; border-radius: 12px; }
+  .box_header .btn_theme::after { width: 18px; height: 18px; }
+  html[data-theme="dark"] .box_header .btn_theme::after { transform: translateX(22px); }
+  html[data-theme="dark"] .box_header .btn_theme:active::after { transform: translateX(22px) scale(.92); }
+  .box_header .btn_theme .ico_sun { left: 6px; }
+  .box_header .btn_theme .ico_moon { right: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
