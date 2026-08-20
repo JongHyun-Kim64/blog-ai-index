@@ -65,7 +65,10 @@ function tokenize(q) {
 function lexicalPostScore(tokens, p) {
   const title = p.title.toLowerCase();
   const kw = (p.keywords || []).concat(p.tags || []).join(" ").toLowerCase();
-  const body = ((p.summary || "") + " " + (p.excerpt || "")).toLowerCase();
+  const chunkText = (p.chunks || [])
+    .map((chunk) => `${chunk.heading || ""} ${chunk.text || ""}`)
+    .join(" ");
+  const body = ((p.summary || "") + " " + (p.excerpt || "") + " " + chunkText).toLowerCase();
   let score = 0;
   for (const t of tokens) {
     if (title.includes(t)) score += 5 * t.length;
@@ -133,13 +136,16 @@ function pickChunks(posts, question, currentPostId = 0, k = 6) {
         if (h.includes(t)) score += 4 * t.length;
         if (b.includes(t)) score += t.length;
       }
+      // 본문 답변보다 우선될 이유가 적은 Navigation/Bibliography Section은 후순위로 둔다.
+      if (/참고문헌|references?|시리즈.*(이어|모아)|함께\s*읽|관련\s*글/i.test(h)) score -= 80;
       rows.push({ post: p, heading, text: text.slice(0, 1200), index, score });
     });
   }
   rows.sort((a, b) => b.score - a.score || a.index - b.index);
   const out = [], perPost = new Map();
+  const hasPositive = rows.some((row) => row.score > 0);
   for (const row of rows) {
-    if (row.score <= 0 && out.length) continue;
+    if (hasPositive && row.score <= 0) continue;
     const used = perPost.get(row.post.id) || 0;
     if (used >= 3) continue;
     out.push(row);

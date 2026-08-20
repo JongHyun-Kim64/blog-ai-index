@@ -31,6 +31,7 @@ const index = {
       summary: "Timing Violation 분석과 개선 방법을 설명합니다.",
       excerpt: "",
       embq: [0, 127],
+      chunks: [{ heading: "본문 심화", text: "본문 뒤쪽에서 Hold Margin을 설명합니다." }],
     },
   ],
 };
@@ -47,6 +48,9 @@ const current = pickPosts(index, "Timing", {
 });
 assert.ok(current.some((post) => post.id === 1), "current post should remain retrievable");
 
+const deepKeyword = pickPosts(index, "Hold Margin", { k: 1 });
+assert.equal(deepKeyword[0].id, 2, "lexical retrieval should include full chunk text");
+
 const chunks = pickChunks([
   {
     id: 2,
@@ -54,6 +58,7 @@ const chunks = pickChunks([
     chunks: [
       { heading: "설계 배경", text: "행렬 연산 구조를 설명합니다." },
       { heading: "Timing Violation 분석", text: "Critical Path와 Slack을 측정합니다." },
+      { heading: "참고문헌", text: "Critical Path와 Slack 관련 논문 목록입니다." },
     ],
   },
 ], "Critical Path가 무엇인가요?", 0, 1);
