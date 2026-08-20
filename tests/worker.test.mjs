@@ -48,6 +48,12 @@ const current = pickPosts(index, "Timing", {
 });
 assert.ok(current.some((post) => post.id === 1), "current post should remain retrievable");
 
+const currentOnly = pickPosts(index, "완전히 무관한 질문", {
+  currentPostId: 1,
+  k: 1,
+});
+assert.equal(currentOnly[0].id, 1, "current post should provide context when keywords do not match");
+
 const deepKeyword = pickPosts(index, "Hold Margin", { k: 1 });
 assert.equal(deepKeyword[0].id, 2, "lexical retrieval should include full chunk text");
 
@@ -63,6 +69,17 @@ const chunks = pickChunks([
   },
 ], "Critical Path가 무엇인가요?", 0, 1);
 assert.equal(chunks[0].heading, "Timing Violation 분석");
+const rankedChunks = pickChunks([
+  {
+    id: 2,
+    title: "Systolic Array Timing Analysis",
+    chunks: [
+      { heading: "Timing Violation 분석", text: "Critical Path와 Slack을 측정합니다." },
+      { heading: "참고문헌", text: "Critical Path와 Slack 관련 논문 목록입니다." },
+    ],
+  },
+], "Critical Path가 무엇인가요?", 0, 3);
+assert.ok(!rankedChunks.some((chunk) => chunk.heading === "참고문헌"), "bibliography should not displace answer chunks");
 
 const cacheStore = new Map();
 globalThis.caches = {
