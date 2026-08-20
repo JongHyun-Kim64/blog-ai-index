@@ -160,7 +160,7 @@
 "@supports (height:100dvh){.aiblog-panel{max-height:calc(100dvh - 70px)}}" +
 "}" +
 "@media (prefers-reduced-motion:reduce){.aiblog-fab,.aiblog-wrap,.aiblog-chip{transition:none}}" +
-/* --- 홈 섹션: 주제별 허브 & 시리즈 정주행 ---
+/* --- 홈 섹션: 주제별 허브 ---
    ⚠ 이 스킨의 다크모드는 홈 커버를 어둡게 하지 않음(body 흰색 유지, 실측).
    그런데 CSS 변수(--text 등)는 다크 값으로 바뀌므로, 변수를 쓰면 흰 바탕에
    흰 글씨가 됨. 스킨 자체 홈 카드처럼 라이트 고정 팔레트로 통일한다. */
@@ -168,23 +168,12 @@
 /* 상하 리듬은 스킨 섹션과 동일(위 72/모바일 48, 아래 0) — 정확한 값은 alignHomeSections가 스킨에서 복사 */
 ".aihome-sec{max-width:1216px;margin:72px auto 0;padding:0 18px;box-sizing:border-box;color:#191f28}" +
 ".aihome-tit{display:block;font-size:22px;font-weight:800;margin:0 0 14px;color:#191f28}" +
-".aihome-sub{margin:-8px 0 14px;font-size:13px;color:#6b7684}" +
 ".aihome-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}" +
-".aihome-grid2{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}" +
 ".aihome-topic{display:flex;flex-direction:column;gap:4px;border:1px solid #e5e8eb;border-radius:14px;padding:14px 16px;text-decoration:none;background:#fff;transition:border-color .15s,transform .15s}" +
 ".aihome-topic:hover{border-color:#2b2f36;transform:translateY(-2px)}" +
 ".aihome-topic .tl{font-weight:800;font-size:14.5px;color:#191f28}" +
 ".aihome-topic .tn{font-weight:700;font-size:11.5px;color:#4e5968;background:#eef1f4;border-radius:10px;padding:1px 7px;margin-left:4px}" +
 ".aihome-topic .td{font-size:12.5px;color:#6b7684}" +
-".aihome-scard{border:1px solid #e5e8eb;border-radius:16px;padding:16px 18px;background:#fff}" +
-".aihome-scard .st{display:block;font-size:15.5px;font-weight:800;color:#191f28}" +
-".aihome-scard .sd{display:block;font-size:12.5px;color:#6b7684;margin:3px 0 10px}" +
-".aihome-scard .sl{margin:0;padding:0;list-style:none;counter-reset:ai}" +
-".aihome-scard .sl li{counter-increment:ai;display:flex;gap:8px;align-items:baseline;padding:5px 0;border-top:1px dashed #e5e8eb}" +
-".aihome-scard .sl li:first-child{border-top:none}" +
-".aihome-scard .sl li:before{content:counter(ai);flex:none;width:18px;height:18px;border-radius:50%;background:#eef1f4;color:#4e5968;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;position:relative;top:2px}" +
-".aihome-scard .sl a{font-size:13.5px;color:#191f28;text-decoration:none;line-height:1.5}" +
-".aihome-scard .sl a:hover{text-decoration:underline;text-underline-offset:3px}" +
 "@media (max-width:768px){.aihome-sec{padding:0 16px;margin-top:48px}}" +
 /* 허브는 상단 카테고리 메뉴가 보이는 폭(>1560px)에선 중복이라 숨김 —
    메뉴가 햄버거로 숨는 폭(≤1560px, 아래 헤더 보정 참고)에서만 표시 */
@@ -261,15 +250,7 @@
     article.insertBefore(box, article.firstChild);
   }
 
-  /* ------------------------------------------- 홈 화면 섹션 (주제 허브 · 시리즈 정주행) */
-
-  // 시리즈는 글 id를 읽는 순서대로 큐레이션 (제목·URL은 인덱스에서 최신으로 가져옴)
-  var SERIES_DEF = [
-    { tit: "칩이 스스로 고장을 찾고 고친다", desc: "AI 가속기 자가 테스트·복구(STRAIT) 시리즈", ids: [118, 119, 120, 121] },
-    { tit: "AI 가속기 입문 — Systolic Array", desc: "구조 → 데이터 흐름 → 최적화 → NPU 설계까지", ids: [114, 113, 115, 116, 117] },
-    { tit: "UART 통신·설계", desc: "개념부터 TX·RX Verilog 구현까지", ids: [98, 95, 96, 97] },
-    { tit: "FPGA로 게임 만들기", desc: "하드웨어 아키텍처부터 SW/HW 통합까지", ids: [109, 110, 111] }
-  ];
+  /* ---------------------------------------------------- 홈 화면 주제 허브 */
 
   var TOPIC_DESC = [
     [/^Verilog/, "RTL 설계·문법·FPGA 프로젝트"],
@@ -348,12 +329,12 @@
     if (!isHomeCover()) return;
     var featured = document.querySelector(".type_featured");
 
-    // ① 주제별 골라 읽기 (캐러셀 바로 아래)
+    // Category hub (캐러셀 바로 아래)
     var topics = topicsFromSidebar();
     var hub = null;
     if (topics.length >= 3) {
       hub = el("div", "aihome-sec aihome-hub");
-      hub.appendChild(el("strong", "aihome-tit", "주제별 골라 읽기"));
+      hub.appendChild(el("strong", "aihome-tit", "Category"));
       var grid = el("div", "aihome-grid");
       topics.forEach(function (t) {
         var a = el("a", "aihome-topic");
@@ -364,37 +345,6 @@
       });
       hub.appendChild(grid);
       featured.insertAdjacentElement("afterend", hub);
-    }
-
-    // ② 시리즈 정주행 (Recent 아래)
-    var rows = [];
-    SERIES_DEF.forEach(function (s) {
-      var items = s.ids.map(function (id) { return byId[id]; }).filter(Boolean);
-      if (items.length >= 3) rows.push({ def: s, items: items });
-    });
-    if (rows.length) {
-      var sec = el("div", "aihome-sec aihome-series");
-      sec.appendChild(el("strong", "aihome-tit", "시리즈 정주행"));
-      sec.appendChild(el("p", "aihome-sub", "이어지는 글은 순서대로 읽을 때 가장 쉽습니다"));
-      var g2 = el("div", "aihome-grid aihome-grid2");
-      rows.forEach(function (r) {
-        var card = el("div", "aihome-scard");
-        card.appendChild(el("strong", "st", esc(r.def.tit)));
-        card.appendChild(el("span", "sd", esc(r.def.desc)));
-        var ol = el("ol", "sl");
-        r.items.forEach(function (p) {
-          var li = el("li", "");
-          var a = el("a", "", esc(p.title));
-          a.href = p.url;
-          li.appendChild(a);
-          ol.appendChild(li);
-        });
-        card.appendChild(ol);
-        g2.appendChild(card);
-      });
-      sec.appendChild(g2);
-      var recent = document.querySelector(".type_notice");
-      (recent || hub || featured).insertAdjacentElement("afterend", sec);
     }
 
     // 스킨 콘텐츠 폭에 정렬 — 폰트 로드 등으로 늦게 흔들릴 수 있어 재시도.
