@@ -114,7 +114,15 @@ python scripts/build_index.py --blog https://your-blog.tistory.com --out docs/in
 
 ### 3. Cloudflare Worker (선택 — 실시간 Q&A용)
 
-`worker/worker.js`를 Worker에 붙여넣고 Settings → Variables에 등록합니다.
+`worker/worker.js`를 Worker에 붙여넣거나, `worker/`에서 Wrangler로 배포합니다.
+
+```bash
+cd worker
+npx wrangler deploy --dry-run
+npx wrangler deploy
+```
+
+`wrangler.toml`의 `keep_vars = true`가 Dashboard에서 관리하는 일반 환경변수를 보존하며, 기존 Secret도 배포 시 삭제되지 않습니다.
 
 | 변수 | 값 |
 |---|---|
