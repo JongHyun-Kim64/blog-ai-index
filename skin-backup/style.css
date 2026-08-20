@@ -2579,10 +2579,6 @@ a:link, a:visited { color: inherit; }
   transform: none !important;
   box-shadow: none !important;
 }
-[data-theme="dark"] .link_detail {
-  color: #1a1a1a !important;
-}
-
 /* ===== Theme toggle: iOS-inspired Liquid Glass =====
    backdrop-filter로 뒤 배경을 통과시키고, 움직이는 lens의 highlight와
    inset shadow로 굴절된 유리처럼 보이게 한다. */
@@ -2820,4 +2816,41 @@ html[data-theme="dark"] #article-view hr[data-ke-style] {
 html[data-theme="dark"] #article-view ::selection {
   color: #f7f9fb;
   background: rgba(69, 147, 252, .42);
+}
+
+/* ===== Dark home contrast and interaction fixes ===== */
+html[data-theme="dark"] .aihome-sec,
+html[data-theme="dark"] .aihome-tit {
+  color: #ecf0f3 !important;
+}
+html[data-theme="dark"] .aihome-topic {
+  color: #ecf0f3 !important;
+  background: #202027 !important;
+  border-color: #34343e !important;
+}
+html[data-theme="dark"] .aihome-topic:hover {
+  background: #292931 !important;
+  border-color: #555563 !important;
+}
+html[data-theme="dark"] .aihome-topic .tl { color: #ecf0f3 !important; }
+html[data-theme="dark"] .aihome-topic .tn {
+  color: #c5ccd4 !important;
+  background: #31313a !important;
+}
+html[data-theme="dark"] .aihome-topic .td { color: #9ea7b2 !important; }
+
+html[data-theme="dark"] .type_featured .link_detail,
+html[data-theme="dark"] .type_featured .link_detail:link,
+html[data-theme="dark"] .type_featured .link_detail:visited {
+  color: #fff !important;
+  background: #3182f6 !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+html[data-theme="dark"] .type_featured .link_detail:hover,
+html[data-theme="dark"] .type_featured .link_detail:focus-visible {
+  color: #fff !important;
+  background: #1b64da !important;
+  opacity: 1 !important;
+  filter: none !important;
 }

@@ -160,10 +160,7 @@
 "@supports (height:100dvh){.aiblog-panel{max-height:calc(100dvh - 70px)}}" +
 "}" +
 "@media (prefers-reduced-motion:reduce){.aiblog-fab,.aiblog-wrap,.aiblog-chip{transition:none}}" +
-/* --- 홈 섹션: 주제별 허브 ---
-   ⚠ 이 스킨의 다크모드는 홈 커버를 어둡게 하지 않음(body 흰색 유지, 실측).
-   그런데 CSS 변수(--text 등)는 다크 값으로 바뀌므로, 변수를 쓰면 흰 바탕에
-   흰 글씨가 됨. 스킨 자체 홈 카드처럼 라이트 고정 팔레트로 통일한다. */
+/* --- 홈 섹션: 주제별 허브 --- */
 /* 폭은 스킨 섹션(콘텐츠 1180px, 내부 패딩 18px)과 정렬 — 실측 기준 */
 /* 상하 리듬은 스킨 섹션과 동일(위 72/모바일 48, 아래 0) — 정확한 값은 alignHomeSections가 스킨에서 복사 */
 ".aihome-sec{max-width:1216px;margin:72px auto 0;padding:0 18px;box-sizing:border-box;color:#191f28}" +
@@ -174,6 +171,13 @@
 ".aihome-topic .tl{font-weight:800;font-size:14.5px;color:#191f28}" +
 ".aihome-topic .tn{font-weight:700;font-size:11.5px;color:#4e5968;background:#eef1f4;border-radius:10px;padding:1px 7px;margin-left:4px}" +
 ".aihome-topic .td{font-size:12.5px;color:#6b7684}" +
+"html[data-theme=dark] .aihome-sec{color:#ecf0f3}" +
+"html[data-theme=dark] .aihome-tit{color:#ecf0f3}" +
+"html[data-theme=dark] .aihome-topic{background:#202027;border-color:#34343e}" +
+"html[data-theme=dark] .aihome-topic:hover{background:#292931;border-color:#555563}" +
+"html[data-theme=dark] .aihome-topic .tl{color:#ecf0f3}" +
+"html[data-theme=dark] .aihome-topic .tn{color:#c5ccd4;background:#31313a}" +
+"html[data-theme=dark] .aihome-topic .td{color:#9ea7b2}" +
 "@media (max-width:768px){.aihome-sec{padding:0 16px;margin-top:48px}}" +
 /* 허브는 상단 카테고리 메뉴가 보이는 폭(>1560px)에선 중복이라 숨김 —
    메뉴가 햄버거로 숨는 폭(≤1560px, 아래 헤더 보정 참고)에서만 표시 */
