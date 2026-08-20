@@ -1,0 +1,47 @@
+name: WIP AI Index 생성
+
+on:
+  push:
+    branches:
+      - codex/ai-optimization-wip
+    paths:
+      - scripts/build_index.py
+      - .github/workflows/prepare-wip-index.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python 의존성 설치
+        run: pip install -r scripts/requirements.txt
+
+      - name: 전체 Index 생성
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          API_DELAY: "0.1"
+        run: |
+          python scripts/build_index.py \
+            --blog https://semicon-circuit.tistory.com \
+            --out docs/index.json
+
+      - name: Index 구조 검증
+        run: |
+          python -c "import json; d=json.load(open('docs/index.json')); assert d['count'] >= 90; assert all(p.get('chunks') for p in d['posts']); assert all(len(p.get('embq', [])) == 256 for p in d['posts']); print(f\"validated {d['count']} posts\")"
+
+      - name: WIP 브랜치에 결과 저장
+        run: |
+          git config user.name "blog-ai-bot"
+          git config user.email "actions@github.com"
+          git add docs/index.json docs/index.cache.json
+          git diff --cached --quiet || git commit -m "chore: prepare chunked AI index"
+          git push origin HEAD:codex/ai-optimization-wip
