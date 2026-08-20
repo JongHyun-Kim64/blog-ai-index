@@ -4,7 +4,7 @@
 
 반도체 회로 설계, DFT(BIST/BISR/Scan Chain), AI 가속기 아키텍처, Verilog/FPGA 실습을 다루는 블로그로, 글 97편이 인덱싱되어 있습니다.
 
-**운영비 0원** — 방문자가 글을 읽을 때는 API 호출이 전혀 발생하지 않습니다. 미리 계산해둔 JSON을 정적 파일로 읽어갈 뿐입니다.
+글 요약·관련 글·검색은 미리 계산한 JSON만 사용하므로 방문자가 글을 읽을 때 API 호출이 없습니다. 자유 질문 Q&A만 Gemini API를 사용하며, 동일한 첫 질문은 Cloudflare Edge Cache에서 6시간 재사용합니다.
 
 ---
 
@@ -18,9 +18,10 @@
 GitHub Actions (주 2회, 월·목 05시 KST)
    │
    ├─ sitemap.xml 크롤링 → 본문 추출 (requests + BeautifulSoup)
+   ├─ Heading 기준 본문 Chunk 생성
    ├─ Gemini API로 요약·키워드·임베딩 생성   ← 키 없으면 TF-IDF 폴백
    ├─ 임베딩 코사인 유사도로 관련 글 top-5 계산
-   └─ docs/index.json 커밋
+   └─ int8 양자화 Embedding + Chunk를 docs/index.json에 커밋
               │
               ▼
      GitHub Pages (정적 서빙)
@@ -29,7 +30,10 @@ GitHub Actions (주 2회, 월·목 05시 KST)
    티스토리 스킨 ai-features.js  ─── 요약 박스 / 관련 글 / 검색
               │
               ▼ (자유 질문일 때만)
-   Cloudflare Worker ─── Gemini 실시간 답변 + 근거 글 링크
+   Cloudflare Worker
+      ├─ Keyword + Embedding Hybrid Retrieval
+      ├─ 현재 글·직전 출처 Context Boost
+      └─ Gemini 근거 답변 + 문장별 Citation + Edge Cache
 ```
 
 인덱스: https://jonghyun-kim64.github.io/blog-ai-index/index.json
@@ -47,6 +51,7 @@ GitHub Actions (주 2회, 월·목 05시 KST)
 | `skin/ai-features.js` | 티스토리 스킨에 업로드하는 클라이언트 (채팅형 AI 패널) |
 | `worker/worker.js` | Cloudflare Worker — Q&A 프록시 + 익명 사용 로그 |
 | `skin-backup/` | 티스토리 원본 스킨 파일 백업 (`common.js`, `slick.js`, `style.css` 등) |
+| `tests/` | Index Chunk/양자화 및 Worker Retrieval 회귀 테스트 |
 
 ---
 
@@ -57,9 +62,13 @@ GitHub Actions (주 2회, 월·목 05시 KST)
 - **AI 세 줄 요약** — 글 상단에 자동 표시 (인덱스에서 읽음, 호출 0회)
 - **관련 글 추천** — 임베딩 유사도 기반. 카테고리·태그 매칭보다 정확합니다
 - **블로그 내 검색** — 제목·키워드·본문 대상, 클라이언트에서 처리
-- **자유 질문 Q&A** — Worker를 거쳐 Gemini가 실시간 답변, 근거가 된 글 링크가 함께 붙습니다
+- **자유 질문 Q&A** — Keyword와 Embedding을 결합해 관련 Chunk를 찾고 Gemini가 근거 기반으로 답합니다
+- **문장별 Citation** — 답변의 `[1]` 표시가 실제 근거 글과 해당 Section 정보로 연결됩니다
+- **현재 글 Context** — 질문한 페이지의 글과 직전 답변의 근거 글에 검색 우선순위를 부여합니다
 - **대화 지속** — 다른 글로 이동해도 sessionStorage로 대화가 복원됩니다
 - **후속 질문 맥락** — 직전 3턴과 근거 글을 함께 넘겨 "그럼 그건 왜?"가 통합니다
+- **답변 Feedback** — 도움됨/부족함을 익명 로그로 남겨 개선할 질문을 찾습니다
+- **Edge Cache** — 동일한 첫 질문은 6시간 재사용해 지연과 API 사용량을 줄입니다
 
 ### 입력 라우팅 기준
 
@@ -67,7 +76,7 @@ GitHub Actions (주 2회, 월·목 05시 KST)
 |---|---|---|
 | 고정 명령 (요약 / 관련 글 / 인기 글 / 최근 글) | 즉답 | 0원 |
 | 1~2단어 키워드, "~찾아줘 / 검색 / 목록" | 글 목록 검색 | 0원 |
-| 그 외 문장형 전부 | Gemini 실시간 답변 | Worker 경유 |
+| 그 외 문장형 전부 | Hybrid Retrieval + Gemini 실시간 답변 | Worker 경유 |
 
 AI 답변에는 근거 글 링크가 따라붙으므로 검색의 상위호환입니다. 그래서 **문장처럼 생겼으면 기본 AI**로 보냅니다.
 
@@ -114,6 +123,30 @@ python scripts/build_index.py --blog https://your-blog.tistory.com --out docs/in
 | `ALLOWED_ORIGIN` | 블로그 주소 (다른 사이트의 도용 차단) |
 
 무료 티어 보호를 위해 하루 답변 수가 `DAILY_LIMIT`(기본 200)로 제한됩니다.
+
+### Q&A 처리 순서
+
+1. 질문을 Gemini Embedding으로 변환합니다.
+2. 공개 Index의 int8 양자화 Embedding과 Keyword 점수를 결합합니다.
+3. 현재 글과 직전 답변의 출처 글을 가중하고, 관련 Heading Chunk 최대 6개를 선택합니다.
+4. Gemini는 선택된 Chunk만 근거로 최대 6문장 답변과 `[N]` Citation을 생성합니다.
+5. 첫 질문의 결과는 Index 생성 시각과 현재 글 번호를 포함한 Key로 6시간 Cache합니다.
+
+Embedding API가 일시적으로 실패하거나 구형 Index에 `embq`가 없으면 Keyword Retrieval로 자동 폴백합니다.
+
+---
+
+## 검증
+
+```bash
+python -m unittest discover -s tests -p "test_*.py" -v
+node --check docs/ai-features.js
+node --check skin/ai-features.js
+node --check worker/worker.js
+node tests/worker.test.mjs
+```
+
+`validate-ai.yml`은 WIP 브랜치와 Pull Request에서 위 검사에 더해 실제 블로그 2개 글을 크롤링하는 Smoke Test를 수행합니다.
 
 ---
 

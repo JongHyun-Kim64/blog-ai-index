@@ -1,0 +1,45 @@
+name: 블로그 AI 변경 검증
+
+on:
+  push:
+    branches:
+      - codex/ai-optimization-wip
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python 의존성 설치
+        run: pip install -r scripts/requirements.txt
+
+      - name: Python 단위 테스트
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: JavaScript 문법 및 Retrieval 테스트
+        run: |
+          node --check docs/ai-features.js
+          node --check skin/ai-features.js
+          node --check worker/worker.js
+          node tests/worker.test.mjs
+
+      - name: 실제 블로그 2개 글 Index Smoke Test
+        env:
+          API_DELAY: "0.1"
+        run: |
+          python scripts/build_index.py \
+            --blog https://semicon-circuit.tistory.com \
+            --out /tmp/blog-ai-index.json \
+            --limit 2
+          python -c "import json; d=json.load(open('/tmp/blog-ai-index.json')); assert d['count']==2; assert all(p.get('chunks') for p in d['posts']); print('crawl smoke test passed')"
