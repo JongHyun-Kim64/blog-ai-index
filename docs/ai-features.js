@@ -390,7 +390,7 @@
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-label", "AI 어시스턴트");
     var head = el("div", "aiblog-head",
-      SPARK + '<span class="t">AI 어시스턴트</span><span class="c">글 ' + posts.length + '개 학습</span>');
+      SPARK + '<span class="t">AI 어시스턴트</span><span class="c">글 ' + posts.length + '개 검색</span>');
     var xBtn = el("button", "aiblog-x", "&times;");
     xBtn.type = "button";
     xBtn.setAttribute("aria-label", "닫기");
@@ -741,7 +741,7 @@
     }
 
     function replyCount() {
-      aiBubble("지금까지 글 " + posts.length + "개를 학습하고 있어요. 새 글은 매주 자동으로 추가됩니다.");
+      aiBubble("현재 글 " + posts.length + "개가 검색 Index에 포함되어 있어요. 새 글은 매주 자동으로 추가됩니다.");
     }
 
     function replyPopular() {
@@ -934,8 +934,8 @@
       if (!greeted) {
         greeted = true;
         var hello = curPost
-          ? "안녕하세요! 이 블로그의 글 " + posts.length + "개를 학습했어요.<br>아래 버튼을 누르거나 “이 글 요약해줘”, “관련 글 찾아줘”처럼 입력해보세요."
-          : "안녕하세요! 이 블로그의 글 " + posts.length + "개를 학습했어요.<br>궁금한 주제를 검색하거나 “인기 글”, “주제 보기”를 눌러보세요.";
+          ? "안녕하세요! 이 블로그의 글 " + posts.length + "개를 바탕으로 안내해드려요.<br>아래 버튼을 누르거나 “이 글 요약해줘”, “관련 글 찾아줘”처럼 입력해보세요."
+          : "안녕하세요! 이 블로그의 글 " + posts.length + "개를 바탕으로 안내해드려요.<br>궁금한 주제를 검색하거나 “인기 글”, “주제 보기”를 눌러보세요.";
         aiBubble(hello);
       }
       scrollDown();

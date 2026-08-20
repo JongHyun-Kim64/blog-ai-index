@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta property="og:url" content="https://semicon-circuit.tistory.com/121">
+  <title>AI UI Fixture</title>
+  <style>
+    :root { --bg:#fff; --text:#191f28; --accent:#2b2f36; --border:#e5e8eb; }
+    body { margin:40px; font-family:Arial,sans-serif; background:var(--bg); color:var(--text); }
+  </style>
+</head>
+<body>
+  <article class="article-view">
+    <h1>BISR란?</h1>
+    <p>BISR은 결함이 있는 Processing Element를 우회하거나 가중치를 재배치하여 연산을 지속하는 복구 구조입니다.</p>
+    <p>이 문단은 본문 탐색기가 실제 Article 영역으로 인식할 수 있도록 충분한 길이를 제공합니다. 테스트에서는 Summary, Citation, Source Section, Feedback UI를 함께 확인합니다.</p>
+  </article>
+  <script>
+    window.__requests = [];
+    window.fetch = function (url, options) {
+      window.__requests.push({ url:String(url), body:options && options.body });
+      if (String(url).indexOf("index.json") >= 0) {
+        return Promise.resolve({ ok:true, json:function () { return Promise.resolve({
+          count:1,
+          posts:[{
+            id:121,
+            title:"BISR란? Built-In Self-Repair로 결함 복구하기",
+            url:"https://semicon-circuit.tistory.com/121",
+            summary:"BISR은 결함 PE를 우회하거나 가중치를 재배치하여 연산을 지속하는 복구 구조입니다.",
+            keywords:["BISR","Systolic Array"],
+            chunks:[{heading:"PE Bypass",text:"결함 PE를 우회합니다."}],
+            related:[]
+          }]
+        }); }});
+      }
+      if (String(url).endsWith("/log"))
+        return Promise.resolve({ ok:true, json:function () { return Promise.resolve({ok:true}); } });
+      return Promise.resolve({ ok:true, json:function () { return Promise.resolve({
+        answer:"Timing Violation은 Slack을 기준으로 확인합니다. [1]",
+        sources:[{
+          id:121,
+          title:"BISR란? Built-In Self-Repair로 결함 복구하기",
+          url:"https://semicon-circuit.tistory.com/121",
+          headings:["PE Bypass","Weight Swapping"]
+        }]
+      }); }});
+    };
+  </script>
+  <script src="/docs/ai-features.js"></script>
+</body>
+</html>
