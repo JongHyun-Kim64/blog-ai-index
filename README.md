@@ -49,7 +49,8 @@ GitHub Actions (주 2회, 월·목 05시 KST)
 | `docs/index.json` | 스킨이 읽는 인덱스 (GitHub Pages로 서빙) |
 | `docs/index.cache.json` | 임베딩 캐시 — 이게 있어야 증분 인덱싱이 동작 |
 | `skin/ai-features.js` | 티스토리 스킨에 업로드하는 클라이언트 (채팅형 AI 패널) |
-| `worker/worker.js` | Cloudflare Worker — Q&A 프록시 + 익명 사용 로그 |
+| `worker/worker.js` | Cloudflare Worker — Q&A 프록시 + D1 피드백 저장·집계 |
+| `worker/migrations/` | D1 피드백 Table과 Index Migration |
 | `skin-backup/` | 티스토리 원본 스킨 파일 백업 (`common.js`, `slick.js`, `style.css` 등) |
 | `tests/` | Index Chunk/양자화 및 Worker Retrieval 회귀 테스트 |
 
@@ -67,7 +68,8 @@ GitHub Actions (주 2회, 월·목 05시 KST)
 - **현재 글 Context** — 질문한 페이지의 글과 직전 답변의 근거 글에 검색 우선순위를 부여합니다
 - **대화 지속** — 다른 글로 이동해도 sessionStorage로 대화가 복원됩니다
 - **후속 질문 맥락** — 직전 3턴과 근거 글을 함께 넘겨 "그럼 그건 왜?"가 통합니다
-- **답변 Feedback** — 도움됨/부족함을 익명 로그로 남겨 개선할 질문을 찾습니다
+- **답변 Feedback** — 도움됨/부족함과 질문을 D1에 최대 90일 보관해 개선할 질문을 찾습니다
+- **개인정보 최소화** — IP·계정은 앱에서 저장하지 않고, 이메일·전화번호·식별번호는 저장 전에 마스킹합니다
 - **Edge Cache** — 동일한 첫 질문은 6시간 재사용해 지연과 API 사용량을 줄입니다
 
 ### 입력 라우팅 기준
@@ -119,6 +121,7 @@ python scripts/build_index.py --blog https://your-blog.tistory.com --out docs/in
 ```bash
 cd worker
 npx wrangler deploy --dry-run
+npx wrangler d1 migrations apply blog-ai-feedback --remote
 npx wrangler deploy
 ```
 
@@ -129,6 +132,11 @@ npx wrangler deploy
 | `GEMINI_API_KEY` | Secret으로 등록 |
 | `INDEX_URL` | GitHub Pages의 `index.json` 주소 |
 | `ALLOWED_ORIGIN` | 블로그 주소 (다른 사이트의 도용 차단) |
+| `REPORT_TOKEN` | `/feedback-report` 상세 조회용 Secret |
+
+`FEEDBACK_DB` D1 Binding은 `worker/wrangler.toml`에 정의되어 있습니다. 공개 자동 보고는 질문 원문을 제외한 `GET /feedback-summary?days=7`을 사용하고, 질문 원문이 포함된 상세 보고는 `Authorization: Bearer <REPORT_TOKEN>`이 필요한 `POST /feedback-report`만 사용합니다.
+
+피드백을 누르면 질문·평가·글 번호·경로·시각이 저장되며 90일이 지난 기록은 다음 피드백 저장 시 삭제됩니다. AI 입력창에는 저장 목적과 보관기간, 개인정보·기밀정보 입력 금지 안내가 표시됩니다.
 
 무료 티어 보호를 위해 하루 답변 수가 `DAILY_LIMIT`(기본 200)로 제한됩니다.
 

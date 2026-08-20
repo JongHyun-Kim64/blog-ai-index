@@ -133,7 +133,9 @@
 ".aiblog-chips{padding:4px 14px 8px;display:flex;flex-wrap:wrap;gap:6px}" +
 ".aiblog-chip{border:1px solid var(--border,#e5e8eb);background:var(--bg,#fff);color:var(--text,#191f28);border-radius:16px;padding:6px 12px;font-size:12.5px;font-family:inherit;cursor:pointer;transition:border-color .12s}" +
 ".aiblog-chip:hover{border-color:var(--accent,#2b2f36)}" +
-".aiblog-inrow{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid var(--border,#e5e8eb)}" +
+".aiblog-inputarea{border-top:1px solid var(--border,#e5e8eb);padding:8px 12px 10px}" +
+".aiblog-inrow{display:flex;gap:8px;padding:0}" +
+".aiblog-privacy{margin:7px 2px 0;color:var(--aiblog-sub,#6b7684);font-size:9.5px;line-height:1.45;word-break:keep-all}" +
 ".aiblog-in{flex:1;height:40px;border-radius:12px;border:1px solid var(--border,#e5e8eb);background:var(--aiblog-soft,#f7f8fa);color:var(--text,#191f28);padding:0 12px;font-size:13.5px;font-family:inherit;outline:none;box-sizing:border-box}" +
 ".aiblog-in:focus{border-color:var(--accent,#2b2f36);background:var(--bg,#fff)}" +
 ".aiblog-send{width:40px;height:40px;flex:none;border:none;border-radius:12px;background:var(--accent,#2b2f36);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}" +
@@ -406,9 +408,13 @@
     send.type = "button";
     send.setAttribute("aria-label", "보내기");
     inrow.appendChild(input); inrow.appendChild(send);
+    var inputArea = el("div", "aiblog-inputarea");
+    var privacy = el("div", "aiblog-privacy",
+      "질문은 답변 제공·오류 분석에 처리되며, 피드백 선택 시 질문과 평가를 최대 90일 저장합니다. 개인정보·기밀정보는 입력하지 마세요.");
+    inputArea.appendChild(inrow); inputArea.appendChild(privacy);
 
     panel.appendChild(head); panel.appendChild(chat);
-    panel.appendChild(chips); panel.appendChild(inrow);
+    panel.appendChild(chips); panel.appendChild(inputArea);
     wrap.appendChild(panel);
     document.body.appendChild(fab);
     document.body.appendChild(wrap);

@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import {
   default as worker,
+  cleanLogEvent,
   cosineQuantized,
   pickChunks,
   pickPosts,
+  redactFeedbackQuestion,
+  safeTokenEqual,
   tokenize,
 } from "../worker/worker.js";
 
@@ -13,6 +16,26 @@ assert.deepEqual(tokenize("Systolic Array 오류율"), [
 
 assert.ok(cosineQuantized([1, 0], [127, 0]) > 0.999);
 assert.ok(cosineQuantized([1, 0], [0, 127]) < 0.001);
+assert.deepEqual(cleanLogEvent({
+  t: "feedback",
+  q: "q".repeat(250),
+  from: 121,
+  ui: "helpful",
+  path: "/121",
+}), {
+  t: "feedback",
+  q: "q".repeat(200),
+  from: "121",
+  to: "",
+  ui: "helpful",
+  path: "/121",
+});
+assert.equal(safeTokenEqual("report-secret", "report-secret"), true);
+assert.equal(safeTokenEqual("wrong", "report-secret"), false);
+assert.equal(
+  redactFeedbackQuestion("연락처 test@example.com, 010-1234-5678입니다"),
+  "연락처 [이메일], [전화번호]입니다",
+);
 
 const index = {
   posts: [
@@ -114,6 +137,74 @@ const env = {
   INDEX_URL: "https://example.test/index.json",
   GEMINI_API_KEY: "test-key",
 };
+
+const feedbackRows = [];
+const feedbackDb = {
+  prepare(sql) {
+    let args = [];
+    return {
+      bind(...values) { args = values; return this; },
+      async run() {
+        if (/INSERT INTO feedback/.test(sql)) {
+          feedbackRows.push({
+            question: args[0], rating: args[1], post_id: args[2], path: args[3],
+          });
+        }
+        return { success: true };
+      },
+      async first() {
+        assert.match(sql, /COUNT\(\*\)/);
+        return { total: 3, helpful: 2, not_helpful: 1 };
+      },
+      async all() {
+        if (/GROUP BY post_id/.test(sql))
+          return { results: [{ post_id: "121", total: 3, helpful: 2, not_helpful: 1 }] };
+        return { results: [{ created_at: "2026-08-21 01:00:00", question: "보충 설명이 필요해요", post_id: "121", path: "/121" }] };
+      },
+    };
+  },
+  async batch(statements) {
+    return Promise.all(statements.map((statement) => statement.run()));
+  },
+};
+
+const feedbackPending = [];
+const feedbackResponse = await worker.fetch(new Request("https://worker.example/log", {
+  method: "POST",
+  headers: { Origin: env.ALLOWED_ORIGIN },
+  body: JSON.stringify({ t: "feedback", q: "Weight Allocation 설명", from: "121", ui: "helpful", path: "/121" }),
+}), { ...env, FEEDBACK_DB: feedbackDb }, {
+  waitUntil(promise) { feedbackPending.push(promise); },
+});
+await Promise.all(feedbackPending);
+assert.equal(feedbackResponse.status, 200);
+assert.deepEqual(feedbackRows, [{
+  question: "Weight Allocation 설명", rating: "helpful", post_id: "121", path: "/121",
+}]);
+
+const unauthorizedReport = await worker.fetch(new Request("https://worker.example/feedback-report", {
+  method: "POST",
+}), { ...env, FEEDBACK_DB: feedbackDb, REPORT_TOKEN: "report-secret" }, {});
+assert.equal(unauthorizedReport.status, 401);
+assert.equal((await unauthorizedReport.json()).error, "Unauthorized");
+
+const reportResponse = await worker.fetch(new Request("https://worker.example/feedback-report", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Authorization: "Bearer report-secret" },
+  body: JSON.stringify({ days: 7 }),
+}), { ...env, FEEDBACK_DB: feedbackDb, REPORT_TOKEN: "report-secret" }, {});
+const report = await reportResponse.json();
+assert.deepEqual(report.totals, { total: 3, helpful: 2, notHelpful: 1, helpfulRate: 66.7 });
+assert.equal(report.byPost[0].post_id, "121");
+assert.equal(report.notHelpfulQuestions[0].question, "보충 설명이 필요해요");
+
+const publicSummaryResponse = await worker.fetch(new Request("https://worker.example/feedback-summary?days=7"), {
+  ...env, FEEDBACK_DB: feedbackDb,
+}, {});
+const publicSummary = await publicSummaryResponse.json();
+assert.equal(publicSummaryResponse.status, 200);
+assert.deepEqual(publicSummary.totals, { total: 3, helpful: 2, notHelpful: 1, helpfulRate: 66.7 });
+assert.equal("notHelpfulQuestions" in publicSummary, false, "public summary must not expose questions");
 const makeRequest = () => new Request("https://worker.example/", {
   method: "POST",
   headers: {

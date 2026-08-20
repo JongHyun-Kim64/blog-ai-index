@@ -7,3 +7,9 @@ preview_urls = false
 
 [observability]
 enabled = true
+
+[[d1_databases]]
+binding = "FEEDBACK_DB"
+database_name = "blog-ai-feedback"
+database_id = "4245e3b4-9adc-4312-b05f-ddb90b181a7c"
+migrations_dir = "migrations"

@@ -6,7 +6,9 @@
  *
  * 엔드포인트:
  *   POST /      : Q&A — {question, history?, context_ids?} → {answer, sources}
- *   POST /log   : 익명 사용 기록 → Cloudflare 대시보드 Logs에서 열람
+ *   POST /log   : 익명 사용 기록. Feedback은 D1에도 영구 저장
+ *   GET  /feedback-summary : 공개 가능한 익명 집계(질문 원문 제외)
+ *   POST /feedback-report : 인증된 최근 Feedback 집계
  *                 (개인정보·IP는 기록하지 않음)
  *
  * 배포 (무료 플랜, 하루 10만 요청):
@@ -49,6 +51,141 @@ function cors(env) {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
+}
+
+function json(obj, env, extraHeaders = {}, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { "Content-Type": "application/json; charset=utf-8", ...cors(env), ...extraHeaders },
+  });
+}
+
+function cleanLogEvent(evt = {}) {
+  return {
+    t: String(evt.t || "").slice(0, 24),
+    q: String(evt.q || "").slice(0, 200),
+    from: String(evt.from || "").slice(0, 80),
+    to: String(evt.to || "").slice(0, 120),
+    ui: String(evt.ui || "").slice(0, 24),
+    path: String(evt.path || "").slice(0, 120),
+  };
+}
+
+function redactFeedbackQuestion(value) {
+  return String(value || "")
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[이메일]")
+    .replace(/(?:\+?82[-.\s]?)?0?1[016789][-.\s]?\d{3,4}[-.\s]?\d{4}/g, "[전화번호]")
+    .replace(/\b\d{6}[-.\s]?[1-4]\d{6}\b/g, "[식별번호]")
+    .replace(/\b(?:\d[-.\s]?){13,19}\b/g, "[긴 숫자]")
+    .trim()
+    .slice(0, 200);
+}
+
+async function persistFeedback(env, event) {
+  if (!env.FEEDBACK_DB || event.t !== "feedback") return false;
+  if (event.ui !== "helpful" && event.ui !== "not_helpful") return false;
+  const insert = env.FEEDBACK_DB.prepare(
+    `INSERT INTO feedback (question, rating, post_id, path)
+     VALUES (?1, ?2, ?3, ?4)`
+  ).bind(redactFeedbackQuestion(event.q), event.ui, event.from, event.path);
+  const purge = env.FEEDBACK_DB.prepare(
+    `DELETE FROM feedback WHERE created_at < datetime('now', '-90 days')`
+  );
+  if (typeof env.FEEDBACK_DB.batch === "function")
+    await env.FEEDBACK_DB.batch([insert, purge]);
+  else {
+    await insert.run();
+    await purge.run();
+  }
+  return true;
+}
+
+function safeTokenEqual(received, expected) {
+  const a = new TextEncoder().encode(String(received || ""));
+  const b = new TextEncoder().encode(String(expected || ""));
+  if (!b.length || a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) mismatch |= a[i] ^ b[i];
+  return mismatch === 0;
+}
+
+async function feedbackReport(request, env) {
+  if (request.method !== "POST")
+    return json({ error: "POST only" }, env, { "Cache-Control": "no-store" }, 405);
+
+  const auth = request.headers.get("Authorization") || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (!safeTokenEqual(token, env.REPORT_TOKEN))
+    return json({ error: "Unauthorized" }, env, { "Cache-Control": "no-store" }, 401);
+  if (!env.FEEDBACK_DB)
+    return json({ error: "Feedback database is not configured" }, env, { "Cache-Control": "no-store" }, 503);
+
+  let days = 7;
+  try {
+    const body = await request.json();
+    days = Math.max(1, Math.min(31, Number(body.days) || 7));
+  } catch (_) {}
+  const report = await loadFeedbackSummary(env, days, true);
+  return json(report, env, { "Cache-Control": "no-store" });
+}
+
+async function loadFeedbackSummary(env, days, includeQuestions = false) {
+  const safeDays = Math.max(1, Math.min(31, Number(days) || 7));
+  const since = `-${safeDays} days`;
+  const requests = [
+    env.FEEDBACK_DB.prepare(
+      `SELECT COUNT(*) AS total,
+              COALESCE(SUM(rating = 'helpful'), 0) AS helpful,
+              COALESCE(SUM(rating = 'not_helpful'), 0) AS not_helpful
+       FROM feedback
+       WHERE created_at >= datetime('now', ?1)`
+    ).bind(since).first(),
+    env.FEEDBACK_DB.prepare(
+      `SELECT post_id, COUNT(*) AS total,
+              COALESCE(SUM(rating = 'helpful'), 0) AS helpful,
+              COALESCE(SUM(rating = 'not_helpful'), 0) AS not_helpful
+       FROM feedback
+       WHERE created_at >= datetime('now', ?1)
+       GROUP BY post_id
+       ORDER BY not_helpful DESC, total DESC
+       LIMIT 20`
+    ).bind(since).all(),
+  ];
+  if (includeQuestions) requests.push(env.FEEDBACK_DB.prepare(
+      `SELECT created_at, question, post_id, path
+       FROM feedback
+       WHERE rating = 'not_helpful' AND created_at >= datetime('now', ?1)
+       ORDER BY created_at DESC
+       LIMIT 20`
+    ).bind(since).all());
+  const [totals, byPost, negative] = await Promise.all(requests);
+
+  const total = Number(totals?.total) || 0;
+  const helpful = Number(totals?.helpful) || 0;
+  const notHelpful = Number(totals?.not_helpful) || 0;
+  const report = {
+    generatedAt: new Date().toISOString(),
+    days: safeDays,
+    totals: {
+      total,
+      helpful,
+      notHelpful,
+      helpfulRate: total ? Number((helpful / total * 100).toFixed(1)) : null,
+    },
+    byPost: byPost?.results || [],
+  };
+  if (includeQuestions) report.notHelpfulQuestions = negative?.results || [];
+  return report;
+}
+
+async function feedbackSummary(request, env) {
+  if (request.method !== "GET")
+    return json({ error: "GET only" }, env, { "Cache-Control": "no-store" }, 405);
+  if (!env.FEEDBACK_DB)
+    return json({ error: "Feedback database is not configured" }, env, { "Cache-Control": "no-store" }, 503);
+  const url = new URL(request.url);
+  const report = await loadFeedbackSummary(env, url.searchParams.get("days"), false);
+  return json(report, env, { "Cache-Control": "public, max-age=900" });
 }
 
 function tokenize(q) {
@@ -198,6 +335,15 @@ export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS")
       return new Response(null, { headers: cors(env) });
+
+    const url = new URL(request.url);
+    // 예약 보고가 Secret 없이 읽을 수 있는 집계이며 질문 원문은 포함하지 않습니다.
+    if (url.pathname === "/feedback-summary")
+      return feedbackSummary(request, env);
+    // 자동 보고용 Endpoint는 방문자 Origin 대신 Secret Token으로 보호합니다.
+    if (url.pathname === "/feedback-report")
+      return feedbackReport(request, env);
+
     if (request.method !== "POST")
       return new Response("POST only", { status: 405, headers: cors(env) });
 
@@ -213,21 +359,16 @@ export default {
       return new Response("Forbidden", { status: 403, headers: cors(env) });
     }
 
-    const url = new URL(request.url);
-
     // ---------------- 익명 사용 기록 ----------------
     if (url.pathname === "/log") {
       let evt = {};
       try { evt = JSON.parse(await request.text()); } catch (_) {}
-      const clean = {
-        t: String(evt.t || "").slice(0, 24),      // 이벤트 종류
-        q: String(evt.q || "").slice(0, 200),     // 검색어/질문
-        from: String(evt.from || "").slice(0, 80),// 현재 글 id 등
-        to: String(evt.to || "").slice(0, 120),   // 클릭한 글 id 등
-        ui: String(evt.ui || "").slice(0, 24),    // 어느 UI에서(채팅/관련글)
-        path: String(evt.path || "").slice(0, 120),
-      };
+      const clean = cleanLogEvent(evt);
       console.log("AILOG", JSON.stringify(clean));
+      const save = persistFeedback(env, clean).catch((error) => {
+        console.log("AILOG", JSON.stringify({ t: "feedback_store_fail", message: String(error).slice(0, 120) }));
+      });
+      if (ctx?.waitUntil) ctx.waitUntil(save); else await save;
       return json({ ok: true }, env);
     }
 
@@ -404,12 +545,20 @@ export default {
     }
     return response;
 
-    function json(obj, env2, extraHeaders = {}) {
-      return new Response(JSON.stringify(obj), {
-        headers: { "Content-Type": "application/json; charset=utf-8", ...cors(env2), ...extraHeaders },
-      });
-    }
   },
 };
 
-export { tokenize, lexicalPostScore, cosineQuantized, pickPosts, pickChunks };
+export {
+  cleanLogEvent,
+  cosineQuantized,
+  feedbackReport,
+  feedbackSummary,
+  loadFeedbackSummary,
+  lexicalPostScore,
+  persistFeedback,
+  pickChunks,
+  pickPosts,
+  redactFeedbackQuestion,
+  safeTokenEqual,
+  tokenize,
+};
