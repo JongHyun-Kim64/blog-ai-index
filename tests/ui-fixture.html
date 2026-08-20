@@ -3,18 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta property="og:url" content="https://semicon-circuit.tistory.com/121">
+  <meta property="article:published_time" content="2026-08-01T09:00:00+09:00">
+  <meta property="article:modified_time" content="2026-08-20T18:30:00+09:00">
   <title>AI UI Fixture</title>
+  <script>if (location.search.indexOf("dark=1") >= 0) document.documentElement.setAttribute("data-theme", "dark");</script>
   <style>
     :root { --bg:#fff; --text:#191f28; --accent:#2b2f36; --border:#e5e8eb; }
     body { margin:40px; font-family:Arial,sans-serif; background:var(--bg); color:var(--text); }
   </style>
 </head>
 <body>
+  <img id="eager-test" alt="above fold fixture" width="1" height="1">
+  <div class="current-category-name"><a href="/category/Verilog%20%26%20Digital">Verilog &amp; Digital</a></div>
   <article class="article-view">
     <h1>BISR란?</h1>
     <p>BISR은 결함이 있는 Processing Element를 우회하거나 가중치를 재배치하여 연산을 지속하는 복구 구조입니다.</p>
     <p>이 문단은 본문 탐색기가 실제 Article 영역으로 인식할 수 있도록 충분한 길이를 제공합니다. 테스트에서는 Summary, Citation, Source Section, Feedback UI를 함께 확인합니다.</p>
+    <p>[ pe_bypass.v ]</p>
+    <pre data-ke-language="sql"><code>`timescale 1ns / 1ps
+module pe_bypass(
+  input wire clk,
+  input wire faulty,
+  output wire bypass
+);
+assign bypass = faulty;
+endmodule</code></pre>
+    <pre data-ke-language="mermaid"><code>flowchart LR
+  Fault[Fault detected] --> BISR[BISR controller]
+  BISR --> Bypass[PE bypass]</code></pre>
+    <pre data-ke-language="wavedrom"><code>{ signal: [
+  { name: "clk", wave: "p....." },
+  { name: "faulty", wave: "0.1..." },
+  { name: "bypass", wave: "0..1.." }
+]}</code></pre>
   </article>
+  <div style="margin-top:1400px"><img id="lazy-test" alt="below fold fixture" width="1" height="1"></div>
   <script>
     window.__requests = [];
     window.fetch = function (url, options) {
@@ -26,6 +49,8 @@
             id:121,
             title:"BISR란? Built-In Self-Repair로 결함 복구하기",
             url:"https://semicon-circuit.tistory.com/121",
+            date:"2026-08-01",
+            category:"Verilog & Digital",
             summary:"BISR은 결함 PE를 우회하거나 가중치를 재배치하여 연산을 지속하는 복구 구조입니다.",
             keywords:["BISR","Systolic Array"],
             chunks:[{heading:"PE Bypass",text:"결함 PE를 우회합니다."}],

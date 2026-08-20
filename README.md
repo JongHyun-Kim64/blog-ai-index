@@ -71,6 +71,11 @@ GitHub Actions (주 2회, 월·목 05시 KST)
 - **답변 Feedback** — 도움됨/부족함과 질문을 D1에 최대 90일 보관해 개선할 질문을 찾습니다
 - **개인정보 최소화** — IP·계정은 앱에서 저장하지 않고, 이메일·전화번호·식별번호는 저장 전에 마스킹합니다
 - **Edge Cache** — 동일한 첫 질문은 6시간 재사용해 지연과 API 사용량을 줄입니다
+- **기술 코드 도구** — Verilog/SystemVerilog 등 언어를 본문으로 재판별하고 파일명·줄 번호·복사·다운로드·EDA Playground 링크를 표시합니다
+- **문서 메타데이터** — 작성일·최종 수정일·예상 읽기 시간과 Breadcrumb를 본문 상단에 표시하고 `BreadcrumbList` JSON-LD를 생성합니다
+- **Ctrl+K 통합 검색** — 기존 블로그 검색과 AI 질문 패널을 키보드로 즉시 엽니다
+- **Diagram as Code** — Mermaid·WaveDrom 블록이 있는 글에서만 고정 버전 Renderer를 지연 로딩합니다
+- **미디어 성능 보정** — 첫 화면 이미지는 유지하고 화면 아래 이미지·iframe에만 Native Lazy Loading을 적용합니다
 
 ### 입력 라우팅 기준
 

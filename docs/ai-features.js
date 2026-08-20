@@ -20,6 +20,9 @@
     INDEX_URL: "https://jonghyun-kim64.github.io/blog-ai-index/index.json",
     // Q&A 챗봇용 Cloudflare Worker 주소 (비우면 인덱스 기반 응답만)
     WORKER_URL: "https://blog-ai-qa.jong060479.workers.dev",
+    MERMAID_URL: "https://cdn.jsdelivr.net/npm/mermaid@11.17.0/dist/mermaid.esm.min.mjs",
+    WAVEDROM_SKIN_URL: "https://cdn.jsdelivr.net/npm/wavedrom@3.6.2/skins/default.js",
+    WAVEDROM_URL: "https://cdn.jsdelivr.net/npm/wavedrom@3.6.2/wavedrom.min.js",
     RELATED_COUNT: 5,
     // 사이트 왼쪽 아래 구석에 배치 (우하단 "맨 위로" 버튼과 반대편)
     FAB_BOTTOM: 24,
@@ -111,6 +114,7 @@
 ".aiblog-head svg{color:var(--accent,#2b2f36);flex:none}" +
 ".aiblog-head .t{font-weight:800;font-size:15px}" +
 ".aiblog-head .c{font-size:11.5px;color:var(--aiblog-sub,#6b7684);margin-left:auto;margin-right:6px}" +
+".aiblog-kbd{font:700 10px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--aiblog-sub,#6b7684);border:1px solid var(--border,#e5e8eb);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:var(--aiblog-soft,#f7f8fa);white-space:nowrap}" +
 ".aiblog-x{border:none;background:none;color:var(--aiblog-sub,#6b7684);font-size:20px;line-height:1;cursor:pointer;padding:2px 4px;border-radius:8px}" +
 ".aiblog-x:hover{background:var(--aiblog-hover,#eef1f4)}" +
 ".aiblog-chat{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px;display:flex;flex-direction:column;gap:10px}" +
@@ -161,6 +165,7 @@
 ".aiblog-fab{left:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px))}" +
 ".aiblog-wrap{right:12px;left:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:auto}" +
 ".aiblog-in{font-size:16px}" + /* iOS 자동 줌 방지 */
+".aiblog-kbd{display:none}" +
 "}" +
 /* 짧은 화면(가로 모드 폰 등): 패널을 화면에 꽉 채워 채팅 영역 확보 */
 "@media (max-height:520px){" +
@@ -169,6 +174,32 @@
 "@supports (height:100dvh){.aiblog-panel{max-height:calc(100dvh - 70px)}}" +
 "}" +
 "@media (prefers-reduced-motion:reduce){.aiblog-fab,.aiblog-wrap,.aiblog-chip{transition:none}}" +
+/* --- 기술 문서 공통 UI: Breadcrumb, 메타데이터, 코드, 다이어그램 --- */
+".tech-breadcrumb{display:flex;align-items:center;gap:7px;margin:2px 0 10px;font-size:12px;line-height:1.5;color:var(--aiblog-sub,#6b7684);white-space:nowrap;overflow:hidden}" +
+".tech-breadcrumb a{color:inherit;text-decoration:none}" +
+".tech-breadcrumb a:hover{color:var(--text,#191f28);text-decoration:underline;text-underline-offset:3px}" +
+".tech-breadcrumb .sep{opacity:.55}" +
+".tech-breadcrumb .current{overflow:hidden;text-overflow:ellipsis}" +
+".tech-post-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px 9px;margin:0 0 20px;padding-bottom:14px;border-bottom:1px solid var(--border,#e5e8eb);font-size:12px;color:var(--aiblog-sub,#6b7684)}" +
+".tech-post-meta span+span:before{content:'·';margin-right:9px;color:var(--border,#c8cdd3)}" +
+".tech-code-shell{margin:24px 0;border:1px solid var(--border,#dfe3e8);border-radius:14px;overflow:hidden;background:#111318;box-shadow:0 6px 18px rgba(0,0,0,.08)}" +
+".tech-code-head{min-height:40px;padding:7px 9px 7px 14px;display:flex;align-items:center;gap:8px;background:#20232a;border-bottom:1px solid #343943;color:#d7dce3;box-sizing:border-box}" +
+".tech-code-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 11.5px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace}" +
+".tech-code-lang{margin-right:auto;color:#929ba8;font:700 10px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;text-transform:uppercase;letter-spacing:.35px}" +
+".tech-code-actions{display:flex;align-items:center;gap:5px;flex:none}" +
+".tech-code-btn,.tech-code-link{height:27px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #454b56;border-radius:7px;padding:0 8px;background:#292d35;color:#e5e8ec;text-decoration:none;font:700 10.5px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;box-sizing:border-box}" +
+".tech-code-btn:hover,.tech-code-link:hover{background:#353a44;border-color:#68707d;color:#fff}" +
+".tech-code-body{display:grid;grid-template-columns:auto minmax(0,1fr);overflow:auto;background:#111318}" +
+".tech-code-lines{position:sticky;left:0;z-index:1;padding:16px 10px 16px 12px;background:#171a20;border-right:1px solid #2b3039;color:#657080;text-align:right;user-select:none;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}" +
+".tech-code-shell pre{grid-column:2!important;margin:0!important;padding:16px!important;min-width:max-content!important;border:0!important;border-radius:0!important;background:#111318!important;color:#e5e8ec!important;box-shadow:none!important;overflow:visible!important;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace!important;tab-size:2}" +
+".tech-code-shell pre code{font:inherit!important;background:transparent!important;color:inherit!important}" +
+".tech-diagram{margin:24px 0;padding:18px;border:1px solid var(--border,#e5e8eb);border-radius:14px;background:#fff;color:#191f28;overflow:auto;box-sizing:border-box}" +
+".tech-diagram svg{display:block;max-width:100%;height:auto;margin:auto}" +
+".tech-diagram-error{font-size:12px;color:#8b2c2c}" +
+"html[data-theme=dark] .tech-breadcrumb,html[data-theme=dark] .tech-post-meta{--aiblog-sub:#a8b0ba}" +
+"html[data-theme=dark] .article_view img,html[data-theme=dark] .tt_article_useless_p_margin img,html[data-theme=dark] .contents_style img{background:#fff;border-radius:4px}" +
+"@media (max-width:640px){.tech-code-head{align-items:flex-start;flex-wrap:wrap}.tech-code-name{max-width:60%}.tech-code-lang{order:3;width:100%}.tech-code-link{display:none}.tech-code-shell pre{font-size:11px!important}.tech-code-lines{font-size:11px}.tech-post-meta{gap:5px 7px}.tech-post-meta span+span:before{margin-right:7px}}" +
+"@media print{.aiblog-fab,.aiblog-wrap,.tech-code-actions{display:none!important}.tech-code-shell{box-shadow:none}.tech-code-body{overflow:visible}.tech-code-shell pre{white-space:pre-wrap!important;min-width:0!important}}" +
 /* --- 홈 섹션: 주제별 허브 --- */
 /* 폭은 스킨 섹션(콘텐츠 1180px, 내부 패딩 18px)과 정렬 — 실측 기준 */
 /* 상하 리듬은 스킨 섹션과 동일(위 72/모바일 48, 아래 0) — 정확한 값은 alignHomeSections가 스킨에서 복사 */
@@ -261,6 +292,313 @@
     };
     box.appendChild(more);
     article.insertBefore(box, article.firstChild);
+  }
+
+  /* ---------------------------------------------------- 기술 문서 UI */
+
+  function metaContent(property) {
+    var m = document.querySelector('meta[property="' + property + '"]');
+    return m ? (m.getAttribute("content") || "") : "";
+  }
+
+  function compactDate(value) {
+    var m = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m ? m[1] + "." + m[2] + "." + m[3] : "";
+  }
+
+  function articleReadingMinutes(article) {
+    var clone = article.cloneNode(true);
+    clone.querySelectorAll("pre,script,style,.aiblog-box,.tech-breadcrumb,.tech-post-meta,.tech-code-head,.tech-code-lines")
+      .forEach(function (n) { n.remove(); });
+    var text = (clone.textContent || "").replace(/\s+/g, " ").trim();
+    // 한글 기술 문서는 수식·영문 용어가 섞이므로 분당 약 500자를 보수적으로 적용.
+    return Math.max(1, Math.ceil(text.length / 500));
+  }
+
+  function currentCategory(post) {
+    var link = document.querySelector('.current-category-name a[href*="/category/"]');
+    if (!link) {
+      var wanted = String((post && post.category) || "").replace(/\(\d+\)$/, "").trim();
+      var links = document.querySelectorAll('a[href*="/category/"]');
+      for (var i = links.length - 1; i >= 0; i--) {
+        var label = (links[i].textContent || "").replace(/\d+$/, "").trim();
+        if (wanted && label === wanted) { link = links[i]; break; }
+      }
+    }
+    if (link) {
+      return {
+        name: (link.textContent || "").trim().replace(/\d+$/, ""),
+        url: new URL(link.getAttribute("href"), location.origin).href
+      };
+    }
+    var fallback = String((post && post.category) || "").replace(/\(\d+\)$/, "").trim();
+    return fallback ? { name: fallback, url: location.origin + "/category/" + encodeURIComponent(fallback) } : null;
+  }
+
+  function renderArticleMeta(article, post) {
+    var category = currentCategory(post);
+    var breadcrumb = el("nav", "tech-breadcrumb");
+    breadcrumb.setAttribute("aria-label", "Breadcrumb");
+
+    var home = el("a", "", "Home");
+    home.href = location.origin + "/";
+    breadcrumb.appendChild(home);
+    if (category) {
+      breadcrumb.appendChild(el("span", "sep", "›"));
+      var cat = el("a", "", esc(category.name));
+      cat.href = category.url;
+      breadcrumb.appendChild(cat);
+    }
+    breadcrumb.appendChild(el("span", "sep", "›"));
+    var current = el("span", "current", esc(post.title));
+    current.setAttribute("aria-current", "page");
+    breadcrumb.appendChild(current);
+
+    var publishedRaw = metaContent("article:published_time") || post.date;
+    var modifiedRaw = metaContent("article:modified_time");
+    var published = compactDate(publishedRaw);
+    var modified = compactDate(modifiedRaw);
+    var meta = el("div", "tech-post-meta");
+    if (published) {
+      var pub = el("span", "", "작성 " + published);
+      pub.setAttribute("title", publishedRaw);
+      meta.appendChild(pub);
+    }
+    if (modified && modified !== published) {
+      var mod = el("span", "", "최종 수정 " + modified);
+      mod.setAttribute("title", modifiedRaw);
+      meta.appendChild(mod);
+    }
+    meta.appendChild(el("span", "", articleReadingMinutes(article) + "분 읽기"));
+
+    var frag = document.createDocumentFragment();
+    frag.appendChild(breadcrumb);
+    frag.appendChild(meta);
+    article.insertBefore(frag, article.firstChild);
+
+    var items = [{
+      "@type": "ListItem", position: 1, name: "Home", item: location.origin + "/"
+    }];
+    if (category) items.push({
+      "@type": "ListItem", position: 2, name: category.name, item: category.url
+    });
+    items.push({
+      "@type": "ListItem", position: items.length + 1, name: post.title, item: post.url || location.href.split("?")[0]
+    });
+    var json = document.createElement("script");
+    json.id = "tech-breadcrumb-jsonld";
+    json.type = "application/ld+json";
+    json.textContent = JSON.stringify({
+      "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: items
+    });
+    document.head.appendChild(json);
+  }
+
+  function codeText(pre) {
+    var code = pre.querySelector("code");
+    return ((code && code.textContent) || pre.textContent || "").replace(/^\n/, "");
+  }
+
+  function blockLanguage(pre) {
+    var code = pre.querySelector("code");
+    return [pre.getAttribute("data-ke-language"), pre.className,
+      code && code.className].filter(Boolean).join(" ").toLowerCase();
+  }
+
+  function detectCodeLanguage(source, pre) {
+    var s = source || "";
+    var hint = blockLanguage(pre);
+    if (/\b(always_ff|always_comb|always_latch|logic|typedef\s+enum|interface)\b/.test(s))
+      return { key: "systemverilog", label: "SystemVerilog", ext: ".sv" };
+    if (/`timescale|\bmodule\s+[a-zA-Z_]\w*|\bendmodule\b|\balways\s*@|\bassign\s+/.test(s))
+      return { key: "verilog", label: "Verilog", ext: ".v" };
+    if (/\b(entity\s+\w+\s+is|architecture\s+\w+\s+of|std_logic)\b/i.test(s))
+      return { key: "vhdl", label: "VHDL", ext: ".vhd" };
+    if (/\b(set_property|create_clock|get_ports|get_pins|set_input_delay|set_output_delay)\b/.test(s))
+      return { key: "xdc", label: "Tcl / XDC", ext: ".xdc" };
+    if (/^\s*(#include\s*[<"]|int\s+main\s*\(|void\s+\w+\s*\()/m.test(s))
+      return { key: /\b(std::|cout\s*<<|class\s+\w+)/.test(s) ? "cpp" : "c", label: /\b(std::|cout\s*<<|class\s+\w+)/.test(s) ? "C++" : "C", ext: /\b(std::|cout\s*<<|class\s+\w+)/.test(s) ? ".cpp" : ".c" };
+    if (/^\s*(def\s+\w+\s*\(|from\s+\w+\s+import|import\s+\w+)/m.test(s))
+      return { key: "python", label: "Python", ext: ".py" };
+    if (/^\s*(#!.*\b(?:sh|bash)|(?:npm|pnpm|yarn|git|curl|wget)\s+)/m.test(s))
+      return { key: "shell", label: "Shell", ext: ".sh" };
+    if (/\b(SELECT|INSERT\s+INTO|CREATE\s+TABLE|UPDATE\s+\w+\s+SET)\b/i.test(s))
+      return { key: "sql", label: "SQL", ext: ".sql" };
+    if (/(^|\s)(json|javascript|js)(\s|$)/.test(hint))
+      return { key: hint.indexOf("json") >= 0 ? "json" : "javascript", label: hint.indexOf("json") >= 0 ? "JSON" : "JavaScript", ext: hint.indexOf("json") >= 0 ? ".json" : ".js" };
+    return { key: "text", label: "Code", ext: ".txt" };
+  }
+
+  function inferredFilename(pre, source, lang, index) {
+    var fileRe = /(?:\[\s*)?([\w.-]+\.(?:sv|v|vhd|vhdl|c|cpp|h|hpp|py|tcl|xdc|sdc|sh|json|js))(?:\s*\])?/i;
+    var node = pre, nearby = "";
+    for (var depth = 0; depth < 3 && node; depth++, node = node.parentElement) {
+      var prev = node.previousElementSibling, count = 0;
+      while (prev && count < 3) {
+        nearby = (prev.textContent || "") + "\n" + nearby;
+        prev = prev.previousElementSibling; count++;
+      }
+      var match = nearby.match(fileRe);
+      if (match) return match[1];
+    }
+    var named = source.match(/(?:Module\s+Name\s*:\s*|\bmodule\s+)([a-zA-Z_]\w*)/i);
+    if (named && /^(?:verilog|systemverilog)$/.test(lang.key)) return named[1] + lang.ext;
+    return "snippet-" + (index + 1) + lang.ext;
+  }
+
+  function copyPlainText(value, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(value).then(done).catch(function () { copyFallback(value, done); });
+    } else copyFallback(value, done);
+  }
+
+  function copyFallback(value, done) {
+    var area = document.createElement("textarea");
+    area.value = value; area.setAttribute("readonly", "");
+    area.style.cssText = "position:fixed;opacity:0;pointer-events:none";
+    document.body.appendChild(area); area.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    area.remove(); done();
+  }
+
+  function enhanceCodeBlocks(article) {
+    var blocks = article.querySelectorAll("pre");
+    blocks.forEach(function (pre, index) {
+      if (pre.closest(".tech-code-shell,.tech-diagram") || /\b(?:mermaid|wavedrom)\b/.test(blockLanguage(pre))) return;
+      var source = codeText(pre);
+      if (!source.trim()) return;
+      var lang = detectCodeLanguage(source, pre);
+      var filename = inferredFilename(pre, source, lang, index);
+
+      var shell = el("div", "tech-code-shell");
+      var head = el("div", "tech-code-head");
+      var name = el("span", "tech-code-name"); name.textContent = filename;
+      var label = el("span", "tech-code-lang"); label.textContent = lang.label;
+      var actions = el("span", "tech-code-actions");
+      var copy = el("button", "tech-code-btn", "복사"); copy.type = "button";
+      copy.setAttribute("aria-label", filename + " 코드 복사");
+      copy.onclick = function () {
+        copyPlainText(source, function () {
+          copy.textContent = "복사됨";
+          setTimeout(function () { copy.textContent = "복사"; }, 1400);
+        });
+      };
+      var download = el("button", "tech-code-btn", "다운로드"); download.type = "button";
+      download.setAttribute("aria-label", filename + " 다운로드");
+      download.onclick = function () {
+        var blob = new Blob([source], { type: "text/plain;charset=utf-8" });
+        var url = URL.createObjectURL(blob), a = document.createElement("a");
+        a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      };
+      actions.appendChild(copy); actions.appendChild(download);
+      if (/^(?:verilog|systemverilog|vhdl)$/.test(lang.key)) {
+        var eda = el("a", "tech-code-link", "EDA Playground ↗");
+        eda.href = "https://www.edaplayground.com/"; eda.target = "_blank"; eda.rel = "noopener noreferrer";
+        eda.setAttribute("aria-label", "EDA Playground에서 코드 실행하기");
+        actions.appendChild(eda);
+      }
+      head.appendChild(name); head.appendChild(label); head.appendChild(actions);
+
+      var body = el("div", "tech-code-body");
+      var lines = el("span", "tech-code-lines");
+      lines.setAttribute("aria-hidden", "true");
+      var count = source.replace(/\n$/, "").split("\n").length;
+      var nums = []; for (var i = 1; i <= count; i++) nums.push(i);
+      lines.textContent = nums.join("\n");
+      pre.parentNode.insertBefore(shell, pre);
+      body.appendChild(lines); body.appendChild(pre);
+      shell.appendChild(head); shell.appendChild(body);
+    });
+  }
+
+  function loadClassicScript(src, id) {
+    return new Promise(function (resolve, reject) {
+      var old = document.getElementById(id);
+      if (old) {
+        if (old.getAttribute("data-loaded") === "1") return resolve();
+        old.addEventListener("load", resolve, { once: true });
+        old.addEventListener("error", reject, { once: true });
+        return;
+      }
+      var s = document.createElement("script");
+      s.id = id; s.src = src; s.async = true;
+      s.onload = function () { s.setAttribute("data-loaded", "1"); resolve(); };
+      s.onerror = reject; document.head.appendChild(s);
+    });
+  }
+
+  function renderDiagrams(article) {
+    var pres = Array.prototype.slice.call(article.querySelectorAll("pre"));
+    var mermaidNodes = [], waveHosts = [];
+    pres.forEach(function (pre) {
+      var hint = blockLanguage(pre), source = codeText(pre);
+      if (/\bmermaid\b/.test(hint)) {
+        var host = el("div", "tech-diagram tech-mermaid");
+        var diagram = el("div", "mermaid"); diagram.textContent = source;
+        host.__techSource = source; host.__techLanguage = "mermaid";
+        host.appendChild(diagram); pre.replaceWith(host); mermaidNodes.push(diagram);
+      } else if (/\bwavedrom\b/.test(hint)) {
+        var waveHost = el("div", "tech-diagram tech-wavedrom");
+        var wave = document.createElement("script"); wave.type = "WaveDrom"; wave.textContent = source;
+        waveHost.__techSource = source; waveHost.__techLanguage = "wavedrom";
+        waveHost.appendChild(wave); pre.replaceWith(waveHost); waveHosts.push(waveHost);
+      }
+    });
+
+    if (mermaidNodes.length) {
+      import(CONFIG.MERMAID_URL).then(function (mod) {
+        var mermaid = mod.default || mod;
+        mermaid.initialize({ startOnLoad: false, securityLevel: "strict", theme: "neutral" });
+        return mermaid.run({ nodes: mermaidNodes, suppressErrors: true });
+      }).catch(function () {
+        mermaidNodes.forEach(function (node) {
+          var host = node.parentElement, fallback = el("pre", "tech-diagram-error");
+          fallback.textContent = host.__techSource || "Mermaid diagram";
+          host.replaceChildren(el("div", "tech-diagram-error", "다이어그램을 불러오지 못했습니다."), fallback);
+        });
+      });
+    }
+    if (waveHosts.length) {
+      loadClassicScript(CONFIG.WAVEDROM_SKIN_URL, "tech-wavedrom-skin")
+        .then(function () { return loadClassicScript(CONFIG.WAVEDROM_URL, "tech-wavedrom-lib"); })
+        .then(function () {
+        if (window.WaveDrom && window.WaveDrom.ProcessAll) window.WaveDrom.ProcessAll();
+      }).catch(function () {
+        waveHosts.forEach(function (host) {
+          var fallback = el("pre", "tech-diagram-error"); fallback.textContent = host.__techSource || "WaveDrom diagram";
+          host.replaceChildren(el("div", "tech-diagram-error", "타이밍 다이어그램을 불러오지 못했습니다."), fallback);
+        });
+      });
+    }
+  }
+
+  function optimizeMedia(root) {
+    function apply(scope) {
+      var nodes = [];
+      if (scope.matches && scope.matches("img,iframe")) nodes.push(scope);
+      if (scope.querySelectorAll) nodes = nodes.concat(Array.prototype.slice.call(scope.querySelectorAll("img,iframe")));
+      nodes.forEach(function (node) {
+        if (node.closest(".aiblog-wrap,.tech-diagram") || node.hasAttribute("loading")) return;
+        var rect = node.getBoundingClientRect();
+        if (rect.top > Math.max(window.innerHeight * 1.25, 900)) {
+          node.setAttribute("loading", "lazy");
+          if (node.tagName === "IMG") node.setAttribute("decoding", "async");
+        }
+      });
+    }
+    apply(root || document);
+    if (window.MutationObserver) {
+      if (window.__aiblogMediaObserver) window.__aiblogMediaObserver.disconnect();
+      var observer = new MutationObserver(function (records) {
+        records.forEach(function (record) {
+          record.addedNodes.forEach(function (node) { if (node.nodeType === 1) apply(node); });
+        });
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      window.__aiblogMediaObserver = observer;
+      setTimeout(function () { observer.disconnect(); }, 15000);
+    }
   }
 
   /* ---------------------------------------------------- 홈 화면 주제 허브 */
@@ -393,6 +731,9 @@
     panel.setAttribute("aria-label", "AI 어시스턴트");
     var head = el("div", "aiblog-head",
       SPARK + '<span class="t">AI 어시스턴트</span><span class="c">글 ' + posts.length + '개 검색</span>');
+    var shortcut = el("kbd", "aiblog-kbd", "Ctrl K");
+    shortcut.setAttribute("aria-label", "Ctrl K로 검색 열기");
+    head.appendChild(shortcut);
     var xBtn = el("button", "aiblog-x", "&times;");
     xBtn.type = "button";
     xBtn.setAttribute("aria-label", "닫기");
@@ -933,7 +1274,7 @@
     /* ---- 이벤트 ---- */
 
     var greeted = restoreChat();
-    function openPanel() {
+    function openPanel(forceFocus) {
       wrap.classList.add("open");
       fab.setAttribute("aria-expanded", "true");
       logEvt("open", {});
@@ -948,25 +1289,35 @@
       // 모바일에서는 자동 포커스 생략 — 열자마자 키보드가 올라오는 것 방지
       var touch = ("ontouchstart" in window) ||
         (window.matchMedia && matchMedia("(max-width:768px)").matches);
-      if (!touch) setTimeout(function () { input.focus(); }, 120);
+      if (forceFocus || !touch) setTimeout(function () { input.focus(); }, 120);
     }
     function closePanel() {
       wrap.classList.remove("open");
       fab.setAttribute("aria-expanded", "false");
     }
-    openAssistant = openPanel;
+    openAssistant = function (query) {
+      openPanel(typeof query === "string");
+      if (typeof query === "string") input.value = query;
+    };
 
     fab.onclick = function () {
       if (wrap.classList.contains("open")) closePanel(); else openPanel();
     };
     xBtn.onclick = function () { closePanel(); fab.focus(); };
-    document.addEventListener("keydown", function (e) {
+    if (window.__aiblogKeydown) document.removeEventListener("keydown", window.__aiblogKeydown);
+    window.__aiblogKeydown = function (e) {
+      if ((e.ctrlKey || e.metaKey) && String(e.key).toLowerCase() === "k") {
+        e.preventDefault();
+        openPanel(true);
+        return;
+      }
       // 키보드로 닫으면 포커스를 버튼으로 되돌림 (접근성)
       if (e.key === "Escape" && wrap.classList.contains("open")) {
         closePanel();
         fab.focus();
       }
-    });
+    };
+    document.addEventListener("keydown", window.__aiblogKeydown);
     document.addEventListener("click", function (e) {
       if (wrap.classList.contains("open") &&
           !wrap.contains(e.target) && !fab.contains(e.target)) closePanel();
@@ -983,7 +1334,26 @@
   /* ---------------------------------------------------- 초기화 */
 
   function cleanup() {
-    ["#aiblog-style", ".aiblog-fab", ".aiblog-wrap", ".aiblog-box", ".aiblog-modal", ".aihome-sec"]
+    if (window.__aiblogKeydown) {
+      document.removeEventListener("keydown", window.__aiblogKeydown);
+      window.__aiblogKeydown = null;
+    }
+    if (window.__aiblogMediaObserver) {
+      window.__aiblogMediaObserver.disconnect();
+      window.__aiblogMediaObserver = null;
+    }
+    document.querySelectorAll(".tech-code-shell").forEach(function (shell) {
+      var pre = shell.querySelector("pre");
+      if (pre) shell.replaceWith(pre); else shell.remove();
+    });
+    document.querySelectorAll(".tech-diagram").forEach(function (host) {
+      if (!host.__techSource) { host.remove(); return; }
+      var pre = document.createElement("pre");
+      pre.setAttribute("data-ke-language", host.__techLanguage || "text");
+      pre.textContent = host.__techSource;
+      host.replaceWith(pre);
+    });
+    ["#aiblog-style", "#tech-breadcrumb-jsonld", ".aiblog-fab", ".aiblog-wrap", ".aiblog-box", ".aiblog-modal", ".aihome-sec", ".tech-breadcrumb", ".tech-post-meta"]
       .forEach(function (sel) {
         document.querySelectorAll(sel).forEach(function (n) { n.remove(); });
       });
@@ -992,6 +1362,7 @@
   function init() {
     cleanup();
     injectCss();
+    optimizeMedia(document);
     fetch(CONFIG.INDEX_URL, { cache: "default" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (index) {
@@ -1005,7 +1376,12 @@
 
         if (curPost) {
           var article = findArticleEl();
-          if (article) renderSummary(article, curPost);
+          if (article) {
+            renderSummary(article, curPost);
+            renderArticleMeta(article, curPost);
+            renderDiagrams(article);
+            enhanceCodeBlocks(article);
+          }
         }
 
         // 홈 커버에 주제 허브·시리즈 선반 삽입 (실패해도 어시스턴트에 영향 없게)
