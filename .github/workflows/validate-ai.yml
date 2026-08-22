@@ -3,6 +3,7 @@ name: 블로그 AI 변경 검증
 on:
   push:
     branches:
+      - main
       - codex/ai-optimization-wip
   pull_request:
   workflow_dispatch:

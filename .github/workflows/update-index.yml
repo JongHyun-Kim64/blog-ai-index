@@ -1,6 +1,13 @@
 name: 블로그 AI 인덱스 업데이트
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - scripts/build_index.py
+      - scripts/requirements.txt
+      - .github/workflows/update-index.yml
   schedule:
     - cron: "17 */6 * * *"   # 6시간마다 자동 확인 (KST 03:17/09:17/15:17/21:17)
   workflow_dispatch:          # 수동 실행 버튼
