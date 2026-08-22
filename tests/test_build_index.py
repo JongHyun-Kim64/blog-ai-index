@@ -2,6 +2,7 @@ import importlib.util
 import math
 import pathlib
 import unittest
+from unittest.mock import Mock, patch
 
 from bs4 import BeautifulSoup
 
@@ -13,6 +14,44 @@ SPEC.loader.exec_module(build_index)
 
 
 class BuildIndexTests(unittest.TestCase):
+    def test_get_post_entries_reads_lastmod_and_filters_non_posts(self):
+        response = Mock()
+        response.text = """<?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+          <url><loc>https://semicon-circuit.tistory.com/122</loc><lastmod>2026-08-22T23:06:09+09:00</lastmod></url>
+          <url><loc>https://semicon-circuit.tistory.com/m/121</loc><lastmod>2026-08-21T00:00:00+09:00</lastmod></url>
+          <url><loc>https://semicon-circuit.tistory.com/category/Test</loc></url>
+          <url><loc>https://example.com/999</loc></url>
+        </urlset>"""
+        response.raise_for_status.return_value = None
+
+        with patch.object(build_index.requests, "get", return_value=response):
+            entries = build_index.get_post_entries("https://semicon-circuit.tistory.com")
+
+        self.assertEqual(entries, [{
+            "id": 122,
+            "url": "https://semicon-circuit.tistory.com/122",
+            "lastmod": "2026-08-22T23:06:09+09:00",
+        }])
+
+    def test_cached_post_is_stale_compares_lastmod(self):
+        cached = {"_lastmod": "2026-08-20T10:00:00+09:00"}
+        self.assertFalse(build_index.cached_post_is_stale(
+            cached, "2026-08-20T10:00:00+09:00"
+        ))
+        self.assertTrue(build_index.cached_post_is_stale(
+            cached, "2026-08-21T10:00:00+09:00"
+        ))
+
+    def test_legacy_cache_only_refreshes_changes_after_index_generation(self):
+        generated = "2026-08-20T16:31:33+00:00"
+        self.assertFalse(build_index.cached_post_is_stale(
+            {"title": "기존 글"}, "2026-08-20T20:00:00+09:00", generated
+        ))
+        self.assertTrue(build_index.cached_post_is_stale(
+            {"title": "수정 글"}, "2026-08-22T20:00:00+09:00", generated
+        ))
+
     def test_quantized_embedding_preserves_direction(self):
         quantized = build_index.quantize_embedding([3.0, 4.0, 0.0])
         self.assertEqual(len(quantized), 3)

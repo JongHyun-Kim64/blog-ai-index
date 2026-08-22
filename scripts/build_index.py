@@ -9,7 +9,7 @@
 - GEMINI_API_KEY 환경변수가 있으면: Gemini 무료 티어로 요약 + 임베딩 생성 (권장, 품질 높음)
 - 없으면: 추출식 요약 + TF-IDF 유사도로 동작 (완전 오프라인, 품질 보통)
 
-이미 인덱싱된 글은 건너뛰므로(증분 업데이트) 재실행 비용이 거의 없습니다.
+사이트맵의 lastmod를 비교해 새 글과 수정 글만 처리하므로 재실행 비용이 거의 없습니다.
 
 사용법:
     export GEMINI_API_KEY=...   # 선택사항
@@ -25,6 +25,7 @@ import sys
 import time
 import unicodedata
 from collections import Counter
+from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
@@ -52,23 +53,68 @@ MAX_CHUNKS_PER_POST = int(os.environ.get("MAX_CHUNKS_PER_POST", "12"))
 
 # ---------------------------------------------------------------- 수집
 
-def get_post_urls(blog_url):
-    """사이트맵에서 글 URL(숫자 ID) 목록을 수집. 모바일/카테고리/태그 페이지는 제외."""
+def get_post_entries(blog_url):
+    """사이트맵에서 글 URL과 최종 수정 시각을 수집."""
     sm_url = blog_url.rstrip("/") + "/sitemap.xml"
     r = requests.get(sm_url, headers=UA, timeout=20)
     r.raise_for_status()
     soup = BeautifulSoup(r.text, "xml")
-    urls = set()
+    entries = {}
     host = urlparse(blog_url).netloc
-    for loc in soup.find_all("loc"):
+    for item in soup.find_all("url"):
+        loc = item.find("loc")
+        if not loc:
+            continue
         u = loc.get_text(strip=True)
         p = urlparse(u)
         if p.netloc != host:
             continue
         m = re.fullmatch(r"/(\d+)", p.path)
         if m:
-            urls.add((int(m.group(1)), f"https://{host}/{m.group(1)}"))
-    return [u for _, u in sorted(urls, reverse=True)]
+            pid = int(m.group(1))
+            lastmod = item.find("lastmod")
+            entries[pid] = {
+                "id": pid,
+                "url": f"https://{host}/{pid}",
+                "lastmod": lastmod.get_text(strip=True) if lastmod else "",
+            }
+    return [entries[pid] for pid in sorted(entries, reverse=True)]
+
+
+def get_post_urls(blog_url):
+    """기존 호출부 호환용 URL 목록."""
+    return [entry["url"] for entry in get_post_entries(blog_url)]
+
+
+def parse_iso_datetime(value):
+    """사이트맵과 Index의 ISO 8601 시각을 비교 가능한 datetime으로 변환."""
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
+
+
+def cached_post_is_stale(cached, sitemap_lastmod, index_generated=""):
+    """사이트맵 기준으로 기존 글의 재수집 필요 여부를 판정."""
+    if not cached or not sitemap_lastmod:
+        return False
+
+    cached_lastmod = cached.get("_lastmod", "")
+    if cached_lastmod:
+        cached_dt = parse_iso_datetime(cached_lastmod)
+        sitemap_dt = parse_iso_datetime(sitemap_lastmod)
+        if cached_dt and sitemap_dt:
+            return sitemap_dt > cached_dt
+        return cached_lastmod != sitemap_lastmod
+
+    # 최초 도입 시에는 공개 Index가 만들어진 뒤 수정된 글만 재수집합니다.
+    sitemap_dt = parse_iso_datetime(sitemap_lastmod)
+    generated_dt = parse_iso_datetime(index_generated)
+    if sitemap_dt and generated_dt:
+        return sitemap_dt > generated_dt
+    return not index_generated
 
 
 CONTENT_SELECTORS = [
@@ -381,23 +427,38 @@ def main():
 
     # 기존 인덱스 로드 (증분 업데이트) — 임베딩이 포함된 캐시 파일 우선
     old = {}
+    previous_generated = ""
     cache_src = args.out.replace(".json", ".cache.json")
     src = cache_src if os.path.exists(cache_src) else args.out
+    if os.path.exists(args.out):
+        try:
+            with open(args.out, encoding="utf-8") as f:
+                previous_generated = json.load(f).get("generated", "")
+        except (OSError, ValueError):
+            pass
     if os.path.exists(src) and not args.force:
         with open(src, encoding="utf-8") as f:
             old = {p["id"]: p for p in json.load(f).get("posts", [])}
         print(f"[기존 인덱스] {len(old)}개 글")
 
-    urls = get_post_urls(args.blog)
+    entries = get_post_entries(args.blog)
     if args.limit:
-        urls = urls[: args.limit]
-    print(f"[사이트맵] 글 {len(urls)}개 발견")
+        entries = entries[: args.limit]
+    print(f"[사이트맵] 글 {len(entries)}개 발견")
 
     posts, texts, embeds = [], [], []
-    for k, url in enumerate(urls, 1):
-        pid = int(url.rstrip("/").rsplit("/", 1)[-1])
+    current_ids = {entry["id"] for entry in entries}
+    content_changed = args.force or (not args.limit and bool(set(old) - current_ids))
+    cache_metadata_changed = False
+
+    for k, entry in enumerate(entries, 1):
+        url = entry["url"]
+        pid = entry["id"]
+        sitemap_lastmod = entry["lastmod"]
         cached = old.get(pid)
-        if cached and cached.get("summary") and (not GEMINI_KEY or cached.get("_emb")):
+        stale = cached_post_is_stale(cached, sitemap_lastmod, previous_generated)
+        complete = cached and cached.get("summary") and (not GEMINI_KEY or cached.get("_emb"))
+        if complete and not stale:
             # 구형 Cache에는 Chunk가 없으므로 글만 다시 읽고 기존 요약/Embedding은 보존.
             if not cached.get("chunks"):
                 try:
@@ -410,24 +471,41 @@ def main():
                     for key in ("url", "title", "date", "category", "tags", "chunks"):
                         cached[key] = fresh.get(key, cached.get(key))
                     cached["excerpt"] = fresh.get("_text", "")[:500]
-                    print(f"[{k}/{len(urls)}] {url} — Chunk {len(cached['chunks'])}개 보강", flush=True)
+                    content_changed = True
+                    print(f"[{k}/{len(entries)}] {url} — Chunk {len(cached['chunks'])}개 보강", flush=True)
                     time.sleep(0.35)
             if not cached.get("chunks"):
                 fallback = cached.get("summary", "") + " " + cached.get("excerpt", "")
                 cached["chunks"] = [{"heading": "본문", "text": fallback[:900]}]
+                content_changed = True
+            if sitemap_lastmod and cached.get("_lastmod") != sitemap_lastmod:
+                cached = dict(cached)
+                cached["_lastmod"] = sitemap_lastmod
+                cache_metadata_changed = True
             posts.append(cached)
             texts.append(cached["title"] + " " + cached.get("summary", "") + " " +
                          " ".join(cached.get("keywords", [])) + " " + cached.get("excerpt", ""))
             embeds.append(cached.get("_emb"))
             continue
 
-        print(f"[{k}/{len(urls)}] {url}", flush=True)
+        action = "수정 글 갱신" if stale else "새 글 추가"
+        print(f"[{k}/{len(entries)}] {url} — {action}", flush=True)
         try:
             p = fetch_post(url)
         except Exception as e:
             print(f"    [수집 실패] {e}", flush=True)
+            if cached:
+                posts.append(cached)
+                texts.append(cached["title"] + " " + cached.get("summary", "") + " " +
+                             " ".join(cached.get("keywords", [])) + " " + cached.get("excerpt", ""))
+                embeds.append(cached.get("_emb"))
             continue
         if not p or len(p["_text"]) < 50:
+            if cached:
+                posts.append(cached)
+                texts.append(cached["title"] + " " + cached.get("summary", "") + " " +
+                             " ".join(cached.get("keywords", [])) + " " + cached.get("excerpt", ""))
+                embeds.append(cached.get("_emb"))
             continue
 
         # 요약
@@ -443,12 +521,26 @@ def main():
         p["excerpt"] = p["_text"][:500]
         emb = gemini_embed(p["title"] + "\n" + p["summary"] + "\n" + p["_text"][:3000]) if GEMINI_KEY else None
         p["_emb"] = emb
+        p["_lastmod"] = sitemap_lastmod
 
         texts.append(p["title"] + " " + p["summary"] + " " + " ".join(p["keywords"]) + " " + p["excerpt"])
         embeds.append(emb)
         p.pop("_text", None)
         posts.append(p)
+        content_changed = True
         time.sleep(0.8)  # 블로그 서버 배려
+
+    cache_path = args.out.replace(".json", ".cache.json")
+    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+
+    if not content_changed:
+        if cache_metadata_changed:
+            with open(cache_path, "w", encoding="utf-8") as f:
+                json.dump({"posts": posts}, f, ensure_ascii=False)
+            print("\n[변경 없음] 수정 시각 Cache만 갱신했습니다.")
+        else:
+            print("\n[변경 없음] 새 글이나 수정된 글이 없습니다.")
+        return
 
     # 관련 글 계산
     use_dense = GEMINI_KEY and all(e for e in embeds)
@@ -456,14 +548,12 @@ def main():
     compute_related(posts, dense_vecs=embeds if use_dense else None, sparse_vecs=sparse)
 
     # 원본 float Embedding은 Cache에만 유지하고, 공개 Index에는 int8 양자화본만 포함.
-    cache_path = args.out.replace(".json", ".cache.json")
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump({"posts": posts}, f, ensure_ascii=False)
 
     slim = []
     for p in posts:
-        q = {k: v for k, v in p.items() if k != "_emb"}
+        q = {k: v for k, v in p.items() if not k.startswith("_")}
         embq = quantize_embedding(p.get("_emb"))
         if embq:
             q["embq"] = embq

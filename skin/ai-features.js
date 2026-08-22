@@ -991,7 +991,7 @@
         return;
       }
       if (!target.summary) {
-        aiBubble("이 글은 아직 인덱싱 전이에요. 새 글은 다음 자동 업데이트(월·목 새벽) 후 반영됩니다.");
+        aiBubble("이 글의 AI 요약은 자동으로 준비 중이에요. 별도 작업 없이 최대 몇 시간 내 반영됩니다.");
         return;
       }
       var b = aiBubble(prefix + esc(target.summary));
@@ -1073,7 +1073,7 @@
     function replyHelp() {
       var b = aiBubble(
         "저는 이 블로그 주인장이 만든 <b>AI 어시스턴트</b>예요. " +
-        "블로그 글 " + posts.length + "개를 검색할 수 있도록 인덱싱해두었고, 자유로운 질문은 " +
+        "블로그 글 " + posts.length + "개에서 필요한 내용을 찾을 수 있고, 자유로운 질문은 " +
         "구글 Gemini AI가 글 내용을 근거로 실시간 답변해요.<br><br>" +
         "<b>할 수 있는 일</b><br>" +
         "· <b>이 글 요약해줘</b> — 지금 보는 글 3줄 요약<br>" +
@@ -1090,7 +1090,7 @@
     }
 
     function replyCount() {
-      aiBubble("현재 글 " + posts.length + "개가 검색 Index에 포함되어 있어요. 새 글은 매주 자동으로 추가됩니다.");
+      aiBubble("현재 블로그 글 " + posts.length + "개에서 내용을 찾을 수 있어요. 새 글과 수정 내용은 자동으로 반영됩니다.");
     }
 
     function replyPopular() {
@@ -1365,7 +1365,7 @@
     cleanup();
     injectCss();
     optimizeMedia(document);
-    fetch(CONFIG.INDEX_URL, { cache: "default" })
+    fetch(CONFIG.INDEX_URL, { cache: "no-cache" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (index) {
         var byId = {};

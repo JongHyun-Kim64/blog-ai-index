@@ -14,8 +14,10 @@
 
 그래서 **사이트맵을 크롤링해 외부에서 인덱스를 만들어두고, 스킨 JS는 그 JSON만 읽는** 구조로 우회했습니다.
 
+발행 후 별도의 학습 버튼을 누를 필요는 없습니다. 자동 실행이 사이트맵의 `lastmod`를 비교해 새 글과 수정된 글만 갱신하며, 내용 변화가 없으면 Gemini API를 호출하거나 공개 Index를 다시 쓰지 않습니다. GitHub Actions의 예약 실행은 지연될 수 있어 반영까지는 통상 최대 몇 시간이 걸립니다.
+
 ```
-GitHub Actions (주 2회, 월·목 05시 KST)
+GitHub Actions (6시간마다 자동 확인)
    │
    ├─ sitemap.xml 크롤링 → 본문 추출 (requests + BeautifulSoup)
    ├─ Heading 기준 본문 Chunk 생성
@@ -45,7 +47,7 @@ GitHub Actions (주 2회, 월·목 05시 KST)
 | 경로 | 역할 |
 |---|---|
 | `scripts/build_index.py` | 사이트맵 크롤링 → 요약·임베딩 → `index.json` 생성 (증분 처리) |
-| `.github/workflows/update-index.yml` | 주 2회 자동 실행 + 수동 트리거 |
+| `.github/workflows/update-index.yml` | 6시간마다 자동 실행 + 수동 트리거 |
 | `docs/index.json` | 스킨이 읽는 인덱스 (GitHub Pages로 서빙) |
 | `docs/index.cache.json` | 임베딩 캐시 — 이게 있어야 증분 인덱싱이 동작 |
 | `skin/ai-features.js` | 티스토리 스킨에 업로드하는 클라이언트 (채팅형 AI 패널) |
