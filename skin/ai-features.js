@@ -797,6 +797,8 @@
           var d = document.createElement("div");
           d.className = it.c;
           d.innerHTML = it.h; // 우리가 직접 만들어 저장한 마크업(동일 출처)만 복원
+          // 구버전의 글 개수 안내는 검색 DB처럼 보이므로 기존 대화에서도 제거.
+          if (/글\s*\d+\s*(개|편)|\d+\s*개의?\s*글|개를\s*바탕으로|개\s*검색/.test(d.textContent || "")) return;
           chat.appendChild(d);
         });
         return chat.children.length > 0;
