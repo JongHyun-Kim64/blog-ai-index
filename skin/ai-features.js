@@ -732,7 +732,7 @@
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-label", "AI 어시스턴트");
     var head = el("div", "aiblog-head",
-      SPARK + '<span class="t">AI 어시스턴트</span><span class="c">글 ' + posts.length + '개 검색</span>');
+      SPARK + '<span class="t">AI 어시스턴트</span><span class="c">Semiconductor Q&amp;A</span>');
     var shortcut = el("kbd", "aiblog-kbd", "Ctrl K");
     shortcut.setAttribute("aria-label", "Ctrl K로 검색 열기");
     head.appendChild(shortcut);
@@ -745,7 +745,9 @@
     var chips = el("div", "aiblog-chips");
     var inrow = el("div", "aiblog-inrow");
     var input = el("input", "aiblog-in");
-    input.placeholder = "요약, 관련 글, 검색어를 입력해보세요";
+    input.placeholder = curPost
+      ? "이 글에서 궁금한 점을 물어보세요"
+      : "반도체·회로 설계에 대해 물어보세요";
     input.setAttribute("aria-label", "AI에게 질문 입력");
     var send = el("button", "aiblog-send", SEND);
     send.type = "button";
@@ -1072,9 +1074,8 @@
 
     function replyHelp() {
       var b = aiBubble(
-        "저는 이 블로그 주인장이 만든 <b>AI 어시스턴트</b>예요. " +
-        "블로그 글 " + posts.length + "개에서 필요한 내용을 찾을 수 있고, 자유로운 질문은 " +
-        "구글 Gemini AI가 글 내용을 근거로 실시간 답변해요.<br><br>" +
+        "저는 이 블로그의 기술 글을 이해하고 탐색하도록 돕는 <b>AI 어시스턴트</b>예요. " +
+        "자유로운 질문은 Google Gemini AI가 관련 글을 근거로 실시간 답변해요.<br><br>" +
         "<b>할 수 있는 일</b><br>" +
         "· <b>이 글 요약해줘</b> — 지금 보는 글 3줄 요약<br>" +
         "· <b>BIST 글 요약해줘</b> — 특정 주제 글 요약<br>" +
@@ -1090,7 +1091,7 @@
     }
 
     function replyCount() {
-      aiBubble("현재 블로그 글 " + posts.length + "개에서 내용을 찾을 수 있어요. 새 글과 수정 내용은 자동으로 반영됩니다.");
+      aiBubble("필요한 글은 질문에 맞춰 바로 찾아드릴게요. 궁금한 내용을 자연스럽게 물어보세요.");
     }
 
     function replyPopular() {
@@ -1113,10 +1114,10 @@
       var cats = Object.keys(catCnt)
         .sort(function (a, b) { return catCnt[b] - catCnt[a]; })
         .slice(0, 6);
-      var html = "이 블로그(글 " + posts.length + "개)는 이런 주제를 다뤄요.";
+      var html = "이 블로그에서는 이런 주제를 다뤄요.";
       if (cats.length) {
         html += "<br><br><b>카테고리</b><br>" + cats.map(function (c) {
-          return "· " + esc(c) + " (" + catCnt[c] + ")";
+          return "· " + esc(c);
         }).join("<br>");
       }
       var b = aiBubble(html);
@@ -1283,8 +1284,8 @@
       if (!greeted) {
         greeted = true;
         var hello = curPost
-          ? "안녕하세요! 이 블로그의 글 " + posts.length + "개를 바탕으로 안내해드려요.<br>아래 버튼을 누르거나 “이 글 요약해줘”, “관련 글 찾아줘”처럼 입력해보세요."
-          : "안녕하세요! 이 블로그의 글 " + posts.length + "개를 바탕으로 안내해드려요.<br>궁금한 주제를 검색하거나 “인기 글”, “주제 보기”를 눌러보세요.";
+          ? "안녕하세요! 지금 보고 있는 글에서 궁금한 점을 자유롭게 물어보세요.<br>“핵심만 요약해줘”, “이 구조가 필요한 이유는 뭐야?”처럼 대화할 수 있어요."
+          : "안녕하세요! 반도체·회로 설계와 블로그 내용에 관해 자유롭게 물어보세요.<br>개념 설명부터 관련 글 탐색까지 함께 살펴볼게요.";
         aiBubble(hello);
       }
       scrollDown();
