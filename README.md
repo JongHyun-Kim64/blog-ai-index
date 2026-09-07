@@ -2,7 +2,7 @@
 
 티스토리 블로그 **[Semiconductor Design Lab](https://semicon-circuit.tistory.com)** 에 AI 요약·관련 글 추천·Q&A 챗봇을 붙이는 파이프라인입니다.
 
-반도체 회로 설계, DFT(BIST/BISR/Scan Chain), AI 가속기 아키텍처, Verilog/FPGA 실습을 다루는 블로그로, 글 97편이 인덱싱되어 있습니다.
+반도체 회로 설계, DFT(BIST/BISR/Scan Chain), AI 가속기 아키텍처, Verilog/FPGA 실습을 다루는 블로그입니다. 공개 글 목록은 자동 갱신됩니다.
 
 글 요약·관련 글·검색은 미리 계산한 JSON만 사용하므로 방문자가 글을 읽을 때 API 호출이 없습니다. 자유 질문 Q&A만 Gemini API를 사용하며, 동일한 첫 질문은 Cloudflare Edge Cache에서 6시간 재사용합니다.
 
@@ -51,6 +51,9 @@ GitHub Actions (6시간마다 자동 확인)
 | `docs/index.json` | 스킨이 읽는 인덱스 (GitHub Pages로 서빙) |
 | `docs/index.cache.json` | 임베딩 캐시 — 이게 있어야 증분 인덱싱이 동작 |
 | `skin/ai-features.js` | 티스토리 스킨에 업로드하는 클라이언트 (채팅형 AI 패널) |
+| `skin/blog-navigation.js`, `skin/blog-navigation.css` | 서버가 렌더링한 카테고리 트리, 읽기 순서, 글 하단 추천 카드 |
+| `scripts/build_catalog.py`, `docs/catalog.json` | 공개 글 제목·카테고리·읽기 시간·설명 목록; AI API 호출 없음 |
+| `scripts/sync_catalog_metadata.py` | 기존 AI 요약·Embedding을 보존하며 글 제목·카테고리·태그 동기화 |
 | `worker/worker.js` | Cloudflare Worker — Q&A 프록시 + D1 피드백 저장·집계 |
 | `worker/migrations/` | D1 피드백 Table과 Index Migration |
 | `skin-backup/` | 티스토리 원본 스킨 파일 백업 (`common.js`, `slick.js`, `style.css` 등) |
@@ -160,6 +163,10 @@ Embedding API가 일시적으로 실패하거나 구형 Index에 `embq`가 없�
 ---
 
 ## 검증
+
+사이드바는 `skin/navigation-template.html`의 `[##_category_list_##]`를 사용합니다. 글 수를 직접 적거나 AI 인덱스의 글 수로 대체하지 않습니다. JavaScript가 실패해도 티스토리의 원래 링크와 글 수가 남습니다. 하위 카테고리 및 새 카테고리도 자동 반영됩니다.
+
+글 하단 추천은 본문이 공개된 글만 사용하는 `catalog.json`을 읽습니다. 현재 글과 중복 글을 제외하고, 읽기 순서상 다음 글과 관련 주제 3편을 안내합니다. 목록 갱신은 기존 6시간 예약 실행에 포함되며 GitHub 예약 실행은 지연될 수 있습니다. 추천 클릭은 이미 설치된 Google Analytics의 `internal_article_click` 이벤트로 기록합니다(`placement`, `from_post`, `to_post`). 새로운 분석 서비스나 유료 API는 추가하지 않습니다.
 
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v

@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - scripts/build_index.py
+      - scripts/build_catalog.py
+      - scripts/sync_catalog_metadata.py
       - scripts/requirements.txt
       - .github/workflows/update-index.yml
   schedule:
@@ -32,6 +34,9 @@ jobs:
       - name: 의존성 설치
         run: pip install -r scripts/requirements.txt
 
+      - name: 공개 글 탐색 목록 갱신 (AI 호출 없음)
+        run: python scripts/build_catalog.py --out docs/catalog.json
+
       - name: 인덱스 생성 (증분)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -39,6 +44,9 @@ jobs:
           python scripts/build_index.py \
             --blog https://semicon-circuit.tistory.com \
             --out docs/index.json
+
+      - name: 공개 글 기준 카테고리 및 제목 동기화
+        run: python scripts/sync_catalog_metadata.py
 
       - name: 변경사항 커밋
         run: |

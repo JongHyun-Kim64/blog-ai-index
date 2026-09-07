@@ -33,6 +33,8 @@ jobs:
           node --check docs/ai-features.js
           node --check skin/ai-features.js
           node --check worker/worker.js
+          node --check skin/blog-navigation.js
+          node tests/navigation.test.cjs
           node tests/worker.test.mjs
 
       - name: 실제 블로그 2개 글 Index Smoke Test

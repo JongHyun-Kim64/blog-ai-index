@@ -1,0 +1,25 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>Navigation regression fixture</title>
+<nav class="custom_cat_tree"><div class="cat_live_source"><ul class="tt_category"><li>
+<a class="link_tit" href="/category">전체보기 <span class="c_cnt">(15)</span></a>
+<ul class="category_list"><li><a class="link_item" href="/category/News">News <span class="c_cnt">(13)</span></a></li>
+<li><a class="link_item" href="/category/RTL">RTL <span class="c_cnt">(2)</span></a><ul class="sub_category_list"><li><a class="link_sub_item" href="/category/RTL/UART">UART <span class="c_cnt">(2)</span></a></li></ul></li></ul>
+</li></ul></div></nav><pre id="results">running</pre>
+<script>var module={exports:{}};</script><script src="/skin/blog-navigation.js"></script>
+<script>
+const api=module.exports, results=[];
+function check(value,message){if(!value)throw Error(message);results.push('PASS '+message);}
+try {
+  api.syncCategories(document);
+  check(document.querySelector('.cat_root a[href="/category/News"] .cat_cnt').textContent==='13','server-rendered category count');
+  check(document.querySelectorAll('.cat_root .cat_children a').length===1,'subcategory hierarchy');
+  document.querySelector('.cat_live_source .link_item .c_cnt').textContent='(14)';
+  const fresh=document.createElement('li');fresh.innerHTML='<a class="link_item" href="/category/New">New <span class="c_cnt">(1)</span></a>';
+  document.querySelector('.cat_live_source .category_list').appendChild(fresh);
+  api.syncCategories(document);
+  check(document.querySelector('.cat_root a[href="/category/News"] .cat_cnt').textContent==='14','newly published article automatically updates');
+  check(document.querySelector('.cat_root a[href="/category/New"] .cat_cnt').textContent==='1','new category automatically appears');
+  check(document.querySelectorAll('.cat_root').length===1,'repeat initialization does not duplicate menus');
+  document.querySelector('#results').textContent=results.join('\n');
+  document.body.dataset.tests='passed';
+}catch(e){document.querySelector('#results').textContent=e.stack;document.body.dataset.tests='failed';}
+</script></html>

@@ -228,8 +228,10 @@ def fetch_post(url):
     chunks = extract_chunks(body, text)
 
     # 카테고리/태그 (스킨별 편차가 커서 실패해도 무방)
-    cat_el = soup.select_one(".category, .link_cate, .txt_category, .category_label, a[href*='/category/']")
-    category = cat_el.get_text(strip=True) if cat_el else ""
+    # Prefer the article's category. The first global category link is a menu,
+    # which previously assigned almost every article to the first category.
+    cat_el = soup.select_one(".current-category-name a, .category a, a.category, .link_cate, .txt_category, .category_label")
+    category = re.sub(r"\s*\(\d+\)\s*$", "", cat_el.get_text(strip=True)).strip() if cat_el else ""
     tags = list(dict.fromkeys(
         a.get_text(strip=True) for a in soup.select(".tags a, .area_tag a, .list_tag a, a[href*='/tag/']")
     ))[:10]

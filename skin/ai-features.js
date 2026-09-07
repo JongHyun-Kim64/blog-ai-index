@@ -621,10 +621,10 @@
       !!document.querySelector(".type_featured");
   }
 
-  // 주제 카드는 사이드바 카테고리에서 런타임에 읽음 — 글 수가 항상 최신
+  // Read Tistory's server-rendered category tree, not custom/hard-coded badges.
   function topicsFromSidebar() {
     var seen = {}, out = [];
-    var links = document.querySelectorAll('a[href^="/category/"]');
+    var links = document.querySelectorAll('.header_category a[href^="/category/"], .cat_live_source a[href^="/category/"]');
     for (var i = 0; i < links.length; i++) {
       var href = links[i].getAttribute("href");
       if (seen[href]) continue;
