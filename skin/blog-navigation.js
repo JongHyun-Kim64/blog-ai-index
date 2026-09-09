@@ -87,6 +87,48 @@
       if(typeof window.gtag==="function")window.gtag("event","internal_article_click",{placement:placement,from_post:String(from),to_post:String(to)});
     });
   }
+  function readingCard(post, label, placement, from) {
+    var a=node('a','reading-next-card');a.href=post.url;a.title=post.title;
+    a.appendChild(node('span','reading-next-label',label));a.appendChild(node('strong','',post.title));
+    a.appendChild(node('span','reading-next-desc',post.excerpt || ''));
+    var meta=node('span','reading-next-meta');meta.appendChild(node('span','','읽어보기 →'));a.appendChild(meta);
+    track(a,placement,from,post.id);return a;
+  }
+  function popularPosts(entries, currentId, posts) {
+    var byId={},seen=new Set();posts.forEach(function(p){if(p && p.url===BASE+'/'+p.id)byId[p.id]=p;});
+    return entries.map(function(entry){
+      var url;try{url=new URL(entry.url,BASE);}catch(e){return null;}
+      if(url.origin!==BASE || !/^\/[1-9]\d*$/.test(url.pathname))return null;
+      var id=Number(url.pathname.slice(1));if(id===currentId || seen.has(id))return null;
+      var known=byId[id],title=known?known.title:entry.title;
+      if(!String(title || '').trim())return null;
+      seen.add(id);return {id:id,url:BASE+'/'+id,title:title,excerpt:known && known.excerpt || '',category:known && known.category || ''};
+    }).filter(Boolean);
+  }
+  function renderPopular(doc, current, posts) {
+    var panel=doc.querySelector('#tab-popular'),list=panel && panel.querySelector('.related-list');
+    if(!list || list.hasAttribute('data-reading-popular'))return;
+    list.setAttribute('data-reading-popular','true');
+    function update(){
+      var entries=Array.from(list.querySelectorAll('li a[href]')).map(function(a){
+        var title=a.querySelector('.title');return {url:a.getAttribute('href'),title:(title || a).textContent.trim()};
+      });
+      var picks=popularPosts(entries,current.id,posts),old=panel.querySelector('.reading-popular');
+      if(!picks.length){if(old)old.remove();list.hidden=false;return;}
+      var section=node('section','reading-navigation reading-popular');section.setAttribute('aria-label','인기 글');
+      var head=node('div','reading-next-head');head.appendChild(node('h3','','많이 읽은 글'));
+      var more=node('a','','전체 글 보기 →');more.href=BASE+'/category';head.appendChild(more);section.appendChild(head);
+      var grid=node('div','reading-next-grid');
+      picks.forEach(function(p){grid.appendChild(readingCard(p,p.category || '인기 글','article_popular',current.id));});
+      section.appendChild(grid);if(old)old.replaceWith(section);else panel.appendChild(section);
+      list.hidden=true;var empty=panel.querySelector('.empty-notice');if(empty)empty.hidden=true;
+    }
+    update();
+    // Tistory may populate or refresh its native ranking after the catalog loads.
+    new MutationObserver(update).observe(list,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['href']});
+    var wrap=panel.closest('.post-recommend-wrap'),tab=wrap && wrap.querySelector('[data-tab="popular"]');
+    if(tab)tab.textContent='인기 글';
+  }
   function render(doc, catalog) {
     var posts=(catalog.posts || []).filter(function(p){return p && Number.isInteger(p.id) && p.title && p.url===BASE+"/"+p.id;});
     var byId={};posts.forEach(function(p){byId[p.id]=p;});
@@ -109,18 +151,14 @@
         li.appendChild(a);ol.appendChild(li);
       });details.appendChild(ol);nav.appendChild(details);article.parentNode.insertBefore(nav,article);
     }
+    renderPopular(doc,current,posts);
     var panel=doc.querySelector('#tab-related');var picks=recommend(current,posts,3);
     if(!panel || !picks.length || panel.querySelector('.reading-next'))return;
     var section=node('section','reading-navigation reading-next');section.setAttribute('aria-label','이어서 읽기');
     var head=node('div','reading-next-head');head.appendChild(node('h3','','이어서 읽기'));
     if(current.categoryPath && current.categoryPath.indexOf('/category/')===0){var more=node('a','','주제 전체 보기 →');more.href=BASE+current.categoryPath;head.appendChild(more);}
     section.appendChild(head);var grid=node('div','reading-next-grid');
-    picks.forEach(function(r){var p=r.post,a=node('a','reading-next-card');a.href=p.url;a.title=p.title;
-      a.appendChild(node('span','reading-next-label',r.label));a.appendChild(node('strong','',p.title));
-      a.appendChild(node('span','reading-next-desc',p.excerpt));
-      var meta=node('span','reading-next-meta');meta.appendChild(node('span','','읽어보기 →'));a.appendChild(meta);
-      track(a,'article_end',id,p.id);grid.appendChild(a);
-    });section.appendChild(grid);
+    picks.forEach(function(r){grid.appendChild(readingCard(r.post,r.label,'article_end',id));});section.appendChild(grid);
     var original=panel.querySelector('.related-list');if(original)original.hidden=true;
     var category=panel.querySelector('.current-category-name');if(category)category.hidden=true;
     var empty=panel.querySelector('.empty-notice');if(empty)empty.hidden=true;
@@ -131,7 +169,6 @@
       wrap.querySelectorAll('.tab-btn,.tab-panel').forEach(function(e){e.classList.remove('active');});
       tab.classList.add('active');panel.classList.add('active');
     }
-    doc.querySelectorAll('#tab-popular .related-list li').forEach(function(li){var a=li.querySelector('a');if(a && pathKey(a.href)==='/'+id)li.remove();});
   }
   function start(doc) {
     function init(){
@@ -145,10 +182,10 @@
           if(isArticle)render(doc,data);
           if(!doc.getElementById('sd-editorial-loader')){
             var css=doc.getElementById('sd-editorial-css'), existingCss=!!css;
-            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-4';}
+            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-6-featured';}
             var cssReady=new Promise(function(resolve,reject){if(css.sheet){resolve();return;}css.addEventListener('load',resolve,{once:true});css.addEventListener('error',reject,{once:true});});
             if(!existingCss)doc.head.appendChild(css);
-            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-4';
+            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-6-featured';
             var jsReady=new Promise(function(resolve,reject){script.onload=resolve;script.onerror=reject;});
             doc.body.appendChild(script);
             Promise.all([cssReady,jsReady]).then(function(){if(window.SemiconductorEditorial)window.SemiconductorEditorial.start(doc,data);}).catch(function(){doc.documentElement.classList.remove('sd-home-loading');doc.documentElement.classList.add('sd-home-fallback');});
@@ -157,5 +194,5 @@
     }
     if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init);else init();
   }
-  return {start:start,render:render,syncCategories:syncCategories,recommend:recommend,seriesFor:seriesFor,pathKey:pathKey};
+  return {start:start,render:render,syncCategories:syncCategories,recommend:recommend,popularPosts:popularPosts,seriesFor:seriesFor,pathKey:pathKey};
 });

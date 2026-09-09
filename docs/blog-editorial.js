@@ -37,6 +37,13 @@
       return String(b.date || "").localeCompare(String(a.date || "")) || b.id - a.id;
     });
   }
+  function featuredPosts(catalogPosts) {
+    // Editorial picks across three topics, not a traffic ranking.
+    // Only include entries that are still present in the public catalog.
+    var posts = publicPosts({ posts: catalogPosts }), byId = {};
+    posts.forEach(function (p) { byId[p.id] = p; });
+    return [98, 101, 80].map(function (id) { return byId[id]; }).filter(Boolean);
+  }
   function progressRatio(top, height, scroll, viewport) {
     var distance = Math.max(1, height - viewport);
     return Math.max(0, Math.min(1, (scroll - top) / distance));
@@ -134,8 +141,7 @@
     var cover = doc.querySelector(".area_cover"), posts = publicPosts(catalog);
     if (doc.body.id !== "tt-body-index" || location.pathname !== "/" || new URLSearchParams(location.search).has("page") || doc.documentElement.classList.contains("sd-home-fallback") || !cover ||
         !cover.querySelector(".type_featured") || !posts.length || doc.querySelector(".sd-home")) return;
-    var latest = selectPosts(posts, "", "", "latest"), lead = latest[0], byId = {};
-    posts.forEach(function (p) { byId[p.id] = p; });
+    var latest = selectPosts(posts, "", "", "latest"), lead = latest[0];
     var image = pictureFromHome(doc, lead.id), root = create(doc, "div", "sd-home");
     var hero = articleLink(doc, lead, "sd-lead", undefined, "home_lead");
     var info = create(doc, "div", "sd-lead-info");
@@ -151,19 +157,16 @@
       img.decoding = "async"; visual.appendChild(img); hero.appendChild(visual);
     } else hero.classList.add("sd-lead-text-only");
     root.appendChild(hero);
-    var start = create(doc, "section", "sd-start"); start.setAttribute("aria-label", "처음 읽는 분을 위한 대표 글");
+    var start = create(doc, "section", "sd-start"); start.setAttribute("aria-label", "주제별 대표 글");
     var startLabel = create(doc, "div", "sd-start-label");
-    startLabel.appendChild(create(doc, "h2", "", "Start here"));
-    startLabel.appendChild(create(doc, "p", "", "처음이라면 이 글부터"));
+    startLabel.appendChild(create(doc, "h2", "", "FEATURED"));
+    startLabel.appendChild(create(doc, "p", "", "주제별 대표 글"));
     start.appendChild(startLabel);
-    [[113, "01", "AI 가속기 이해", "Systolic Array의 구조와 연산"],
-     [98, "02", "RTL 구현 시작", "UART 통신부터 TX·RX 설계까지"],
-     [80, "03", "설계 포트폴리오", "Cadence Virtuoso Full Custom IC"]].forEach(function (entry) {
-      if (!byId[entry[0]]) return;
-      var a = articleLink(doc, byId[entry[0]], "sd-start-link", undefined, "home_start");
-      a.appendChild(create(doc, "span", "sd-index", entry[1]));
-      var body = create(doc, "span"); body.appendChild(create(doc, "strong", "", entry[2]));
-      body.appendChild(create(doc, "small", "", entry[3])); a.appendChild(body);
+    featuredPosts(posts).forEach(function (post, index) {
+      var a = articleLink(doc, post, "sd-start-link", undefined, "home_featured");
+      a.appendChild(create(doc, "span", "sd-index", String(index + 1).padStart(2, "0")));
+      var body = create(doc, "span"); body.appendChild(create(doc, "strong", "", LABELS[topic(post)] || topic(post)));
+      body.appendChild(create(doc, "small", "", post.title)); a.appendChild(body);
       a.appendChild(create(doc, "span", "sd-arrow", "↗")); start.appendChild(a);
     });
     root.appendChild(start);
@@ -321,5 +324,5 @@
     var current = posts.find(function (p) { return canonical && p.url === canonical.href; });
     if (current) { articleLayout(doc, current); readingTools(doc, current); }
   }
-  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio };
+  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, featuredPosts: featuredPosts, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio };
 });

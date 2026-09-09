@@ -28,7 +28,18 @@ assert.equal(api.categoryUrl('javascript:alert(1)'),'');
 assert.equal(api.categoryUrl('/manage/posts/'),'');
 assert.equal(api.categoryUrl('//evil.example/category/test'),'');
 assert.ok(posts.every(p=>api.categoryUrl(p.categoryPath)));
+// FEATURED is an editorial selection, not an unverified popularity ranking.
+const featured = api.featuredPosts(posts);
+assert.deepEqual(featured.map(p=>p.id), [98,101,80]);
+assert.equal(new Set(featured.map(api.topic)).size, 3);
+assert.ok(featured.every(p=>posts.includes(p)));
+assert.deepEqual(api.featuredPosts(posts.filter(p=>p.id!==101)).map(p=>p.id), [98,80]);
+assert.deepEqual(api.featuredPosts([]), []);
+assert.deepEqual(api.featuredPosts([{...featured[0],url:"javascript:alert(1)"}]), []);
+const renamed = posts.map(p=>p.id===98?{...p,title:"Updated UART title"}:p);
+assert.equal(api.featuredPosts(renamed)[0].title, "Updated UART title");
 const fs = require('node:fs');
+assert.equal(fs.readFileSync(require('node:path').join(__dirname,'../skin/blog-editorial.js'),'utf8'),fs.readFileSync(require('node:path').join(__dirname,'../docs/blog-editorial.js'),'utf8'));
 const vm = require('node:vm');
 const early = fs.readFileSync(require('node:path').join(__dirname,'../skin/editorial-head.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];
 function earlyState(pathname,search='') {
@@ -48,6 +59,9 @@ assert.equal(css,fs.readFileSync(require('node:path').join(__dirname,'../docs/bl
 assert.ok(css.includes('color:#dedede!important;-webkit-text-fill-color:#dedede!important'));
 assert.ok(css.includes('figure[data-ke-type=opengraph]>span'));
 assert.ok(css.includes('.hljs-comment,.hljs-quote'));
+assert.ok(css.includes('background-size:cover!important'));
+assert.ok(css.includes('.sd-lead-visual img{display:block;width:100%;height:100%;max-height:320px;object-fit:contain}'));
+assert.ok(css.includes(':is(#tab-related,#tab-popular) .reading-next-card'));
 function luminance(hex){return hex.match(/\w\w/g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((n,x,i)=>n+x*[.2126,.7152,.0722][i],0);}
 function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
 for(const c of ['a1a7b0','afc8dd','b8c49c','dfb6a7','d3c1dc','e5e8ec'])assert.ok(contrast(c,'111318')>=4.5,c);

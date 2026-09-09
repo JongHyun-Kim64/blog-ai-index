@@ -24,4 +24,12 @@ for (const [from,to] of [[112,123],[123,124],[124,113],[95,96],[96,97],[118,119]
 const malicious = {id:900,title:'LLM Inference',url:'javascript:alert(1)',categoryPath:byId[124].categoryPath};
 assert(!nav.recommend(byId[124],[...posts,malicious]).some(r=>r.post.id===900));
 assert(!nav.seriesFor(121,Object.fromEntries(posts.filter(p=>p.id!==122).map(p=>[p.id,p]))).entries.some(e=>e.post.id===122));
+const nativePopular=[{url:'/103',title:'old title'},{url:'/119?category=1',title:'old'},{url:'/80',title:'self'},{url:'/103',title:'duplicate'},{url:'https://evil.example/27',title:'external'},{url:'javascript:alert(1)',title:'script'},{url:'/manage/80',title:'private'}];
+assert.deepEqual(nav.popularPosts(nativePopular,80,posts).map(p=>p.id),[103,119]);
+assert.equal(nav.popularPosts(nativePopular,80,posts)[0].title,byId[103].title);
+assert.deepEqual(nav.popularPosts([],80,posts),[]);
+assert.equal(nav.popularPosts([{url:'/999',title:'New public post'}],80,posts)[0].title,'New public post');
+assert.deepEqual(nav.popularPosts([{url:'/999',title:''}],80,posts),[]);
+assert.equal(fs.readFileSync('skin/blog-navigation.js','utf8'),fs.readFileSync('docs/blog-navigation.js','utf8'));
+assert.equal(fs.readFileSync('skin/blog-navigation.css','utf8'),fs.readFileSync('docs/blog-navigation.css','utf8'));
 console.log(`PASS: ${posts.length} public articles: unique non-self recommendations, series order, safe URLs`);
