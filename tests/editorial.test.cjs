@@ -43,4 +43,14 @@ assert.ok(!earlyState('/','?page=2').classes.has('sd-home-loading'));
 assert.ok(earlyState('/124').classes.has('sd-article-active'));
 assert.ok(earlyState('/category/RTL').classes.has('sd-archive-active'));
 assert.ok(!earlyState('/manage/posts/').classes.has('sd-article-active'));
-console.log("PASS: editorial public-only catalog, all category filters, search, sorting, future posts, scroll bounds");
+const css=fs.readFileSync(require('node:path').join(__dirname,'../skin/blog-editorial.css'),'utf8');
+assert.equal(css,fs.readFileSync(require('node:path').join(__dirname,'../docs/blog-editorial.css'),'utf8'));
+assert.ok(css.includes('color:#dedede!important;-webkit-text-fill-color:#dedede!important'));
+assert.ok(css.includes('figure[data-ke-type=opengraph]>span'));
+assert.ok(css.includes('.hljs-comment,.hljs-quote'));
+function luminance(hex){return hex.match(/\w\w/g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((n,x,i)=>n+x*[.2126,.7152,.0722][i],0);}
+function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
+for(const c of ['a1a7b0','afc8dd','b8c49c','dfb6a7','d3c1dc','e5e8ec'])assert.ok(contrast(c,'111318')>=4.5,c);
+assert.ok(contrast('dedede','303030')>=4.5);
+assert.ok(contrast('666666','f6f6f4')>=4.5);
+console.log("PASS: editorial catalog, navigation, initial layout, mirrored CSS, prose and code palette contrast");

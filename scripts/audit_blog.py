@@ -1,5 +1,6 @@
 """Read-only public-page audit, with reusable snapshots for UI regression checks."""
 import concurrent.futures
+import argparse
 import json
 import re
 from collections import Counter
@@ -57,6 +58,11 @@ def inspect(url):
         return {"id": pid, "url": url, "error": str(e)}
 
 def main():
+    global OUT
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output', type=Path, default=OUT)
+    args = parser.parse_args()
+    OUT = args.output.resolve()
     OUT.mkdir(parents=True, exist_ok=True)
     homepage = fetch("/")
     (OUT / "home.html").write_text(homepage, encoding="utf-8")
