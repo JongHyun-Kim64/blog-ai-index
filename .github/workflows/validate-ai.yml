@@ -37,6 +37,7 @@ jobs:
           node tests/navigation.test.cjs
           node --check docs/blog-editorial.js
           node tests/editorial.test.cjs
+          node tests/assistant.test.cjs
           node tests/worker.test.mjs
 
       - name: 실제 블로그 2개 글 Index Smoke Test

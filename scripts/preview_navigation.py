@@ -10,6 +10,9 @@ SNAPSHOTS=ROOT/'tmp'/'navigation-audit-20260907'
 
 def preview(html, request_path=''):
     soup=BeautifulSoup(html,'html.parser')
+    if 'assistantTest=1' in request_path:
+        fixture=soup.new_tag('script',src='/scripts/assistant-preview.js')
+        soup.head.insert(0,fixture)
     if 'catalogFailure=1' in request_path:
         failure=soup.new_tag('script')
         failure.string="var realFetch=window.fetch;window.fetch=function(u,o){if(String(u).indexOf('catalog.json')>=0)return Promise.reject(new Error('Simulated catalog outage'));return realFetch.call(this,u,o);};"
@@ -60,7 +63,7 @@ class Handler(SimpleHTTPRequestHandler):
             data=preview(src.read_text(encoding='utf-8'), self.path).encode('utf-8')
             self.send_response(200);self.send_header('Content-Type','text/html;charset=utf-8');self.end_headers();self.wfile.write(data)
         elif path in ('/docs/blog-navigation.js','/docs/ai-features.js'):
-            data=(ROOT/path.lstrip('/')).read_text(encoding='utf-8').replace('https://jonghyun-kim64.github.io/blog-ai-index/','/docs/').encode('utf-8')
+            data=(ROOT/path.lstrip('/')).read_text(encoding='utf-8').replace('https://jonghyun-kim64.github.io/blog-ai-index/','/docs/').replace('https://blog-ai-qa.jong060479.workers.dev','/__ai-disabled').encode('utf-8')
             self.send_response(200);self.send_header('Content-Type','application/javascript;charset=utf-8');self.end_headers();self.wfile.write(data)
         else:super().do_GET()
     def log_message(self,*args):pass

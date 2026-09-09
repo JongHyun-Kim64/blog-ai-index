@@ -1,0 +1,52 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const api = require('../skin/ai-features.js');
+const {parseIntent: intent, residualTopic: topic, safePostUrl: url, answerHtml: render} = api;
+for (const q of ['PE가 몇 개 필요해?', 'KV Cache 구조 정리해줘', 'HBM의 한계 전압 설명해줘', '어떤 구조를 추천해?', 'AI가 어떻게 만들어졌어?'])
+  assert.equal(intent(q).kind, 'search', q);
+for (const q of ['이 글 요약해줘', '핵심만 요약해줘', 'BIST 글 요약해줘']) assert.equal(intent(q).kind, 'summary', q);
+assert.equal(intent('BIST 글 요약해줘').topic, 'BIST');
+assert.equal(intent('관련 글 찾아줘').kind, 'related');
+assert.equal(intent('BIST 관련 글 찾아줘').topic, 'BIST');
+assert.equal(intent('BIST 글 찾아줘').kind, 'search');
+assert.equal(intent('최근 글 보여줘').kind, 'recent');
+assert.equal(intent('핵심 글 보여줘').kind, 'popular');
+assert.equal(intent('주제 알려줘').kind, 'topics');
+assert.equal(intent('블로그 글 몇 개야?').kind, 'count');
+assert.equal(topic('한계 전압'), '한계 전압');
+assert.equal(topic('의존성 분석 검색'), '의존성 분석');
+assert.equal(topic('한계 전압 찾아줘'), '한계 전압');
+for (const s of ['javascript:alert(1)', '//evil.com/124', 'https://semicon-circuit.tistory.com.evil.com/124', 'https://semicon-circuit.tistory.com/manage', 'https://user@semicon-circuit.tistory.com/124', 'http://semicon-circuit.tistory.com/124', null]) assert.equal(url(s), '', String(s));
+assert.equal(url('https://semicon-circuit.tistory.com/124/?x=1'), 'https://semicon-circuit.tistory.com/124');
+const p = {id:124,title:'현재 제목',url:'https://semicon-circuit.tistory.com/124'};
+const sources = api.cleanSources([{id:124,url:'https://evil.com/124'}, {...p,title:'오래된 제목'}, {...p,id:123}], {124:p});
+assert.deepEqual(sources.map(s=>s && s.title), [null, '현재 제목', null]);
+assert.equal(api.cleanSources(null, {}).length, 0);
+const html = render('**핵심** [2]\n\n- MAC 연산\n- `a < b`\n\n```verilog\na < b; // [2]\n```\n<img src=x onerror=alert(1)> [1]', sources);
+assert.ok(html.includes('<b>핵심</b>'));
+assert.ok(html.includes('<ul><li>MAC 연산</li>'));
+assert.ok(html.includes('<code>a &lt; b</code>'));
+assert.ok(html.includes('<pre><code>a &lt; b; // [2]'));
+assert.ok(html.includes('출처 2: 현재 제목'));
+assert.ok(!html.includes('<img'));
+assert.ok(!html.includes('출처 1:'));
+assert.deepEqual(api.cleanHistory({q:'bad'}), []);
+assert.deepEqual(api.cleanHistory([null, {q:1,a:'x'}]), []);
+const history = api.cleanHistory(Array(5).fill({q:'q'.repeat(400),a:'a'.repeat(500),ids:[-1,'124','NaN',{},3.3],postId:'124'}));
+assert.equal(history.length, 3); assert.equal(history[0].q.length,300); assert.equal(history[0].a.length,400);
+assert.deepEqual(history[0].ids,[124]); assert.equal(history[0].postId,124);
+assert.match(api.failureMessage(429), /한도/); assert.match(api.failureMessage(403), /연결 설정/);
+const src = fs.readFileSync(path.join(__dirname,'../skin/ai-features.js'),'utf8');
+assert.equal(src, fs.readFileSync(path.join(__dirname,'../docs/ai-features.js'),'utf8'));
+assert.ok(src.includes('e.isComposing || e.keyCode === 229'));
+assert.ok(!src.includes('setTimeout(function () { route(q); }'));
+assert.ok(!src.includes('d.innerHTML = it.h'));
+assert.ok(src.includes('wrap.setAttribute("inert", "")'));
+assert.ok(src.includes('input.maxLength = 300'));
+assert.ok(src.includes('path.indexOf(wrap) < 0'));
+function lum(hex){return hex.match(/\w\w/g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((n,x,i)=>n+x*[.2126,.7152,.0722][i],0);}
+for (const [fg,bg] of [['636363','f0f0ee'],['b5b5b5','2b2b2b'],['e8e8e8','202020'],['202020','fafaf9']]) {
+  const a=lum(fg),b=lum(bg); assert.ok((Math.max(a,b)+.05)/(Math.min(a,b)+.05)>=4.5);
+}
+console.log('PASS: assistant intent, Korean terms, source numbering/URLs, safe rendering, history bounds, mirrors');
