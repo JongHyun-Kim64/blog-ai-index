@@ -21,4 +21,26 @@ assert.equal(api.progressRatio(100,1000,400,400),0.5);
 assert.equal(api.progressRatio(100,1000,2000,400),1);
 assert.equal(api.progressRatio(100,100,0,400),0);
 assert.equal(api.progressRatio(100,100,300,400),1);
+assert.equal(api.categoryUrl('/category/반도체 시사'),'https://semicon-circuit.tistory.com/category/%EB%B0%98%EB%8F%84%EC%B2%B4%20%EC%8B%9C%EC%82%AC');
+assert.equal(api.categoryUrl('/category'),'https://semicon-circuit.tistory.com/category');
+assert.equal(api.categoryUrl('https://evil.example/category/test'),'');
+assert.equal(api.categoryUrl('javascript:alert(1)'),'');
+assert.equal(api.categoryUrl('/manage/posts/'),'');
+assert.equal(api.categoryUrl('//evil.example/category/test'),'');
+assert.ok(posts.every(p=>api.categoryUrl(p.categoryPath)));
+const fs = require('node:fs');
+const vm = require('node:vm');
+const early = fs.readFileSync(require('node:path').join(__dirname,'../skin/editorial-head.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];
+function earlyState(pathname,search='') {
+  const classes = new Set(); let timeout;
+  vm.runInNewContext(early,{document:{documentElement:{classList:{add:(...n)=>n.forEach(x=>classes.add(x)),remove:n=>classes.delete(n),contains:n=>classes.has(n)}}},location:{pathname,search},URLSearchParams,setTimeout:f=>{timeout=f;}});
+  return {classes,timeout};
+}
+let initial=earlyState('/'); assert.ok(initial.classes.has('sd-home-loading')); initial.timeout();
+assert.ok(initial.classes.has('sd-home-fallback')); assert.ok(!initial.classes.has('sd-home-loading'));
+initial=earlyState('/'); initial.classes.add('sd-home-active'); initial.timeout(); assert.ok(!initial.classes.has('sd-home-fallback'));
+assert.ok(!earlyState('/','?page=2').classes.has('sd-home-loading'));
+assert.ok(earlyState('/124').classes.has('sd-article-active'));
+assert.ok(earlyState('/category/RTL').classes.has('sd-archive-active'));
+assert.ok(!earlyState('/manage/posts/').classes.has('sd-article-active'));
 console.log("PASS: editorial public-only catalog, all category filters, search, sorting, future posts, scroll bounds");

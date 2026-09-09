@@ -2,6 +2,7 @@
 import re
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import unquote
 from bs4 import BeautifulSoup
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -29,9 +30,15 @@ def preview(html):
             s.decompose()
         elif 'blog-ai-index/ai-features.js' in src:
             s['src']='/docs/ai-features.js'
+        elif 'blog-ai-index/blog-navigation.js' in src:
+            s.decompose()
+    for link in soup.select('link[href]'):
+        if 'blog-ai-index/blog-navigation.css' in link.get('href',''):link.decompose()
     for s in soup.select('script:not([src])'):
         if any(t in s.get_text() for t in ('adsbygoogle','gtag(', 'window.tiara')):s.decompose()
     css=soup.new_tag('link',rel='stylesheet',href='/docs/blog-navigation.css');soup.head.append(css)
+    early=(ROOT/'skin'/'editorial-head.html').read_text(encoding='utf-8').replace('https://jonghyun-kim64.github.io/blog-ai-index/','/docs/')
+    for element in list(BeautifulSoup(early,'html.parser').contents):soup.head.append(element)
     js=soup.new_tag('script',src='/docs/blog-navigation.js');soup.body.append(js)
     if 'dark=1' in CURRENT_PATH[0]:
         dark=soup.new_tag('script');dark.string="document.documentElement.setAttribute('data-theme','dark');"
@@ -43,9 +50,11 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self,*args,**kwargs):super().__init__(*args,directory=str(ROOT),**kwargs)
     def do_GET(self):
         path=self.path.split('?')[0]
-        if path in ('/','/124','/123','/122','/96','/113','/103','/12','/2','/71','/119'):
+        categories={'/category/반도체 시사':'category-news.html','/category/Verilog & 디지털 설계':'category-rtl.html'}
+        if unquote(path) in categories or path in ('/','/124','/123','/122','/96','/113','/103','/12','/2','/71','/119'):
             CURRENT_PATH[0]=self.path
-            src=SNAPSHOTS/('home.html' if path=='/' else f'post-{path[1:]}.html')
+            src=SNAPSHOTS/(categories.get(unquote(path)) or ('home.html' if path=='/' else f'post-{path[1:]}.html'))
+            if path=='/122' and (SNAPSHOTS/'post-122-editorial.html').exists():src=SNAPSHOTS/'post-122-editorial.html'
             data=preview(src.read_text(encoding='utf-8')).encode('utf-8')
             self.send_response(200);self.send_header('Content-Type','text/html;charset=utf-8');self.end_headers();self.wfile.write(data)
         elif path in ('/docs/blog-navigation.js','/docs/ai-features.js'):

@@ -54,6 +54,70 @@
     return a;
   }
   function minutes(post) { return Math.max(1, Number(post.minutes) || 1) + "분 읽기"; }
+  function categoryUrl(value) {
+    try {
+      var url = new URL(value, BASE);
+      if (url.origin !== BASE || !/^\/category(?:\/|$)/.test(url.pathname)) return "";
+      return url.origin + url.pathname;
+    } catch (e) { return ""; }
+  }
+  function path(value) { try { return decodeURIComponent(new URL(value, BASE).pathname).replace(/\/$/, ""); } catch (e) { return ""; } }
+  function contextNav(doc, label, href) {
+    var nav = create(doc, "nav", "sd-context"); nav.setAttribute("aria-label", "현재 위치");
+    var home = create(doc, "a", "", "Home"); home.href = "/"; nav.appendChild(home);
+    nav.appendChild(create(doc, "span", "sd-separator", "/"));
+    var item = create(doc, href ? "a" : "span", "", label);
+    if (href) item.href = href; else item.setAttribute("aria-current", "page");
+    nav.appendChild(item); return nav;
+  }
+  function archiveLayout(doc, posts) {
+    var area = doc.querySelector(".area_category"), title = area && area.querySelector(".title_section");
+    if (!/^tt-body-(category|search|tag|archive)$/.test(doc.body.id) || !title || area.classList.contains("sd-archive-page")) return;
+    var context = contextNav(doc, "Archive"); area.insertBefore(context, title);
+    var topics = create(doc, "nav", "sd-topic-links"); topics.setAttribute("aria-label", "다른 주제 탐색");
+    var all = create(doc, "a", "", "전체"); all.href = "/category";
+    if (path(location.href) === "/category") all.setAttribute("aria-current", "page"); topics.appendChild(all);
+    doc.querySelectorAll(".header_category .category_list > li > a").forEach(function (source) {
+      var href = categoryUrl(source.href); if (!href) return;
+      var name = path(href).replace(/^\/category\//, "").split("/")[0];
+      var a = create(doc, "a", "", LABELS[name] || name); a.href = href; a.title = name;
+      if (path(location.href) === path(href) || path(location.href).indexOf(path(href) + "/") === 0) a.setAttribute("aria-current", "page");
+      topics.appendChild(a);
+    });
+    if (topics.children.length === 1) {
+      Array.from(new Set(posts.map(topic))).sort(function (a, b) { return Object.keys(LABELS).indexOf(a) - Object.keys(LABELS).indexOf(b); }).forEach(function (name) {
+        var href = categoryUrl("/category/" + encodeURIComponent(name)); if (!href) return;
+        var a = create(doc, "a", "", LABELS[name] || name); a.href = href; a.title = name;
+        if (path(location.href) === path(href) || path(location.href).indexOf(path(href) + "/") === 0) a.setAttribute("aria-current", "page");
+        topics.appendChild(a);
+      });
+    }
+    title.insertAdjacentElement("afterend", topics);
+    var searchLink = create(doc, "a", "sd-archive-search", "전체 글 검색 ↗"); searchLink.href = "/#sd-explore"; topics.appendChild(searchLink);
+    var byId = {}; posts.forEach(function (p) { byId[p.id] = p; });
+    area.querySelectorAll(".list_category .link_category").forEach(function (a) {
+      var match = path(a.href).match(/^\/(\d+)$/), p = match && byId[Number(match[1])];
+      if (!p) return; // Keep newly published or uncatalogued native entries intact.
+      var desc = a.querySelector(".summary"), date = a.querySelector(".date");
+      if (desc && text(p.excerpt)) desc.textContent = text(p.excerpt);
+      if (date) date.appendChild(create(doc, "span", "sd-list-time", " · " + minutes(p)));
+      var info = a.querySelector(".info"); if (info) info.appendChild(create(doc, "span", "sd-list-read", "글 읽기 ↗"));
+    });
+    area.classList.add("sd-archive-page"); doc.documentElement.classList.add("sd-editorial", "sd-archive-active");
+  }
+  function articleLayout(doc, current) {
+    var header = doc.querySelector(".article_header .info_text");
+    if (!header || header.querySelector(".sd-context")) return;
+    var href = categoryUrl(current.categoryPath);
+    header.insertBefore(contextNav(doc, current.category || "Article", href), header.firstChild);
+    doc.documentElement.classList.add("sd-editorial", "sd-article-active");
+    function headerHeight() {
+      var siteHeader = doc.querySelector(".box_header");
+      var height = siteHeader ? Math.min(120, Math.ceil(siteHeader.getBoundingClientRect().height)) : 64;
+      doc.documentElement.style.setProperty("--sd-header-height", height + "px");
+    }
+    headerHeight(); window.addEventListener("resize", headerHeight, { passive: true });
+  }
   function pictureFromHome(doc, id) {
     var anchors = doc.querySelectorAll(".area_cover a[href]");
     for (var i = 0; i < anchors.length; i++) {
@@ -70,20 +134,15 @@
   }
   function buildHome(doc, catalog) {
     var cover = doc.querySelector(".area_cover"), posts = publicPosts(catalog);
-    if (doc.body.id !== "tt-body-index" || location.pathname !== "/" || new URLSearchParams(location.search).has("page") || !cover ||
+    if (doc.body.id !== "tt-body-index" || location.pathname !== "/" || new URLSearchParams(location.search).has("page") || doc.documentElement.classList.contains("sd-home-fallback") || !cover ||
         !cover.querySelector(".type_featured") || !posts.length || doc.querySelector(".sd-home")) return;
     var latest = selectPosts(posts, "", "", "latest"), lead = latest[0], byId = {};
     posts.forEach(function (p) { byId[p.id] = p; });
     var image = pictureFromHome(doc, lead.id), root = create(doc, "div", "sd-home");
-    var mast = create(doc, "header", "sd-mast");
-    mast.appendChild(create(doc, "p", "sd-eyebrow", "SEMICONDUCTOR DESIGN LAB"));
-    mast.appendChild(create(doc, "h1", "", "회로에서 아키텍처까지."));
-    mast.appendChild(create(doc, "p", "sd-intro", "반도체의 동작 원리와 RTL 구현, AI 가속기 설계를 연결하는 기술 노트."));
-    root.appendChild(mast);
     var hero = articleLink(doc, lead, "sd-lead", undefined, "home_lead");
     var info = create(doc, "div", "sd-lead-info");
     info.appendChild(create(doc, "p", "sd-eyebrow", "LATEST  /  " + (LABELS[topic(lead)] || topic(lead))));
-    info.appendChild(create(doc, "h2", "", lead.title));
+    info.appendChild(create(doc, "h1", "", lead.title));
     info.appendChild(create(doc, "p", "sd-lead-desc", text(lead.excerpt)));
     info.appendChild(create(doc, "p", "sd-meta", text(lead.date).replace(/-/g, ".") + " · " + minutes(lead)));
     info.appendChild(create(doc, "span", "sd-read", "글 읽기 ↗"));
@@ -180,7 +239,8 @@
     footer.appendChild(create(doc, "p", "", "새 글은 RSS로 받아볼 수 있습니다."));
     var rss = create(doc, "a", "", "RSS 피드 ↗"); rss.href = "/rss"; footer.appendChild(rss); root.appendChild(footer);
     // Keep the server-rendered homepage intact as a fallback. Reveal only after a complete build.
-    cover.insertBefore(root, cover.firstChild); doc.documentElement.classList.add("sd-home-active");
+    cover.insertBefore(root, cover.firstChild); doc.documentElement.classList.add("sd-home-active", "sd-editorial");
+    doc.documentElement.classList.remove("sd-home-loading");
     try {
       var slider = cover.querySelector(".slide_zone.slick-initialized");
       if (slider && window.jQuery && window.jQuery.fn.slick) window.jQuery(slider).slick("slickPause");
@@ -191,11 +251,26 @@
     if (!body || doc.body.id !== "tt-body-page" || doc.querySelector(".sd-reader-tools")) return;
     var canonical = doc.querySelector('link[rel="canonical"]'), url = canonical && canonical.href;
     if (!/^https:\/\/semicon-circuit\.tistory\.com\/\d+$/.test(url || "")) return;
-    var first = Array.from(body.children).find(function (e) { return !e.matches("script,style,.aiblog-box,.tech-breadcrumb,.tech-post-meta"); });
+    var first = Array.from(body.children).find(function (e) { return !e.matches("script,style,.aiblog-box,.tech-breadcrumb,.tech-post-meta") && (text(e.textContent) || e.querySelector("img,video,iframe")); });
     if (!first) return;
     if (!first.id) first.id = "sd-article-start";
     var tools = create(doc, "div", "sd-reader-tools");
     var jump = create(doc, "a", "", "본문 바로 읽기 ↓"); jump.href = "#" + first.id; tools.appendChild(jump);
+    var category = current && categoryUrl(current.categoryPath);
+    if (category) { var back = create(doc, "a", "sd-back-to-topic", "주제 목록"); back.href = category; tools.appendChild(back); }
+    var tocButton = create(doc, "button", "", "목차"); tocButton.type = "button";
+    tocButton.addEventListener("click", function () {
+      var toc = doc.querySelector(".toc-container"); if (!toc) return;
+      var detail = toc.querySelector("details"); if (detail) detail.open = true;
+      toc.scrollIntoView({ block: "start", behavior: "auto" });
+      var firstLink = toc.querySelector("a"); if (firstLink) firstLink.focus({ preventScroll: true });
+    });
+    if (doc.querySelector(".toc-container")) tools.appendChild(tocButton);
+    var next = doc.querySelector(".reading-next");
+    if (next) {
+      if (!next.id) next.id = "sd-read-next";
+      var nextLink = create(doc, "a", "sd-next-jump", "이어서 읽기 ↓"); nextLink.href = "#" + next.id; tools.appendChild(nextLink);
+    }
     var copy = create(doc, "button", "", "링크 복사"); copy.type = "button"; tools.appendChild(copy);
     var status = create(doc, "span", "sd-copy-status"); status.setAttribute("role", "status"); tools.appendChild(status);
     copy.addEventListener("click", function () {
@@ -205,6 +280,17 @@
       }).catch(function () { status.textContent = "주소창의 링크를 복사해 주세요."; });
     });
     body.parentNode.insertBefore(tools, body.parentNode.firstChild);
+    var seriesCurrent = doc.querySelector(".reading-path .reading-current");
+    if (seriesCurrent) {
+      var item = seriesCurrent.closest("li"), neighbors = [[item.previousElementSibling, "이전 단계"], [item.nextElementSibling, "다음 단계"]];
+      var steps = create(doc, "nav", "sd-step-links"); steps.setAttribute("aria-label", "시리즈 앞뒤 글");
+      neighbors.forEach(function (entry) {
+        var original = entry[0] && entry[0].querySelector("a[href]"); if (!original) return;
+        var a = create(doc, "a"); a.href = original.href;
+        a.appendChild(create(doc, "span", "", entry[1])); a.appendChild(create(doc, "strong", "", original.title || original.textContent)); steps.appendChild(a);
+      });
+      if (steps.children.length) body.insertAdjacentElement("beforebegin", steps);
+    }
     function compactToc() {
       var toc = doc.querySelector(".toc-container"), list = toc && toc.querySelector(".toc-list");
       if (toc && list && !toc.querySelector("details")) {
@@ -231,10 +317,17 @@
     updateProgress();
   }
   function start(doc, catalog) {
+    var toggle = doc.querySelector(".box_header .btn_theme");
+    if (toggle && !toggle.hasAttribute("data-sd-toggle")) {
+      toggle.setAttribute("data-sd-toggle", "true"); toggle.setAttribute("aria-label", "다크/라이트 모드 전환");
+      function syncToggle() { toggle.setAttribute("aria-pressed", String(doc.documentElement.getAttribute("data-theme") === "dark")); }
+      syncToggle(); new MutationObserver(syncToggle).observe(doc.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    }
     try { buildHome(doc, catalog); } catch (e) { console.warn("[editorial] Home fallback retained", e); }
     var canonical = doc.querySelector('link[rel="canonical"]'), posts = publicPosts(catalog);
+    try { archiveLayout(doc, posts); } catch (e) { console.warn("[editorial] Native archive retained", e); }
     var current = posts.find(function (p) { return canonical && p.url === canonical.href; });
-    if (current) readingTools(doc, current);
+    if (current) { articleLayout(doc, current); readingTools(doc, current); }
   }
-  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, topic: topic, progressRatio: progressRatio };
+  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio };
 });

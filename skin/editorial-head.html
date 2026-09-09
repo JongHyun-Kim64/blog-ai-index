@@ -1,0 +1,18 @@
+<!-- sd-editorial-head: load visual rules before the first paint. -->
+<link id="sd-editorial-css" rel="stylesheet" href="https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-2" />
+<script>
+(function () {
+  var root = document.documentElement, p = location.pathname;
+  root.classList.add('sd-editorial');
+  if (/^\/[0-9]+\/?$/.test(p)) root.classList.add('sd-article-active');
+  if (/^\/(category|search|tag|archive)(\/|$)/.test(p)) root.classList.add('sd-archive-active');
+  if (p === '/' && !new URLSearchParams(location.search).has('page')) {
+    root.classList.add('sd-home-loading');
+    setTimeout(function () {
+      if (!root.classList.contains('sd-home-active')) {
+        root.classList.remove('sd-home-loading'); root.classList.add('sd-home-fallback');
+      }
+    }, 6000);
+  }
+})();
+</script>

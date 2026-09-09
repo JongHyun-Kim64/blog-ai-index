@@ -138,20 +138,22 @@
       syncCategories(doc);
       var isArticle=!!doc.querySelector('.tt_article_useless_p_margin, .contents_style');
       var isHome=doc.body.id==='tt-body-index' && location.pathname==='/' && !new URLSearchParams(location.search).has('page');
-      if(!isArticle && !isHome)return;
+      var isArchive=/^tt-body-(category|search|tag|archive)$/.test(doc.body.id) && !!doc.querySelector('.area_category');
+      if(!isArticle && !isHome && !isArchive)return;
       fetch(CATALOG,{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
         .then(function(data){
           if(isArticle)render(doc,data);
           if(!doc.getElementById('sd-editorial-loader')){
-            var css=doc.createElement('link');css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-1';
-            var cssReady=new Promise(function(resolve,reject){css.onload=resolve;css.onerror=reject;});
-            doc.head.appendChild(css);
-            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-1';
+            var css=doc.getElementById('sd-editorial-css'), existingCss=!!css;
+            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-2';}
+            var cssReady=new Promise(function(resolve,reject){if(css.sheet){resolve();return;}css.addEventListener('load',resolve,{once:true});css.addEventListener('error',reject,{once:true});});
+            if(!existingCss)doc.head.appendChild(css);
+            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-2';
             var jsReady=new Promise(function(resolve,reject){script.onload=resolve;script.onerror=reject;});
             doc.body.appendChild(script);
-            Promise.all([cssReady,jsReady]).then(function(){if(window.SemiconductorEditorial)window.SemiconductorEditorial.start(doc,data);}).catch(function(){/* Preserve the original homepage if either asset fails. */});
+            Promise.all([cssReady,jsReady]).then(function(){if(window.SemiconductorEditorial)window.SemiconductorEditorial.start(doc,data);}).catch(function(){doc.documentElement.classList.remove('sd-home-loading');doc.documentElement.classList.add('sd-home-fallback');});
           }
-        }).catch(function(){/* Native related links remain available. */});
+        }).catch(function(){doc.documentElement.classList.remove('sd-home-loading');doc.documentElement.classList.add('sd-home-fallback');/* Native links remain available. */});
     }
     if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init);else init();
   }
