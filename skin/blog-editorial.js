@@ -110,18 +110,40 @@
     });
     area.classList.add("sd-archive-page"); doc.documentElement.classList.add("sd-editorial", "sd-archive-active");
   }
+  function syncHeaderHeight(doc, view) {
+    var siteHeader = doc.querySelector(".box_header"), previous;
+    if (!siteHeader) return;
+    function measure() {
+      var height = Math.max(0, siteHeader.getBoundingClientRect().height);
+      if (!Number.isFinite(height) || height === previous) return;
+      previous = height;
+      doc.documentElement.style.setProperty("--sd-header-height", height + "px");
+    }
+    measure();
+    // The native skin shrinks its header on scroll. Observe the actual size,
+    // including transitions and late font/layout changes, not just window resize.
+    if (typeof view.ResizeObserver === "function") {
+      var observer = new view.ResizeObserver(measure);
+      observer.observe(siteHeader);
+    } else {
+      var queued = false;
+      function queue() {
+        if (queued) return;
+        queued = true;
+        view.requestAnimationFrame(function () { queued = false; measure(); });
+      }
+      view.addEventListener("scroll", queue, { passive: true });
+      view.addEventListener("resize", queue, { passive: true });
+      siteHeader.addEventListener("transitionend", queue);
+    }
+  }
   function articleLayout(doc, current) {
     var header = doc.querySelector(".article_header .info_text");
     if (!header || header.querySelector(".sd-context")) return;
     var href = categoryUrl(current.categoryPath);
     header.insertBefore(contextNav(doc, current.category || "Article", href), header.firstChild);
     doc.documentElement.classList.add("sd-editorial", "sd-article-active");
-    function headerHeight() {
-      var siteHeader = doc.querySelector(".box_header");
-      var height = siteHeader ? Math.min(120, Math.ceil(siteHeader.getBoundingClientRect().height)) : 64;
-      doc.documentElement.style.setProperty("--sd-header-height", height + "px");
-    }
-    headerHeight(); window.addEventListener("resize", headerHeight, { passive: true });
+    syncHeaderHeight(doc, window);
   }
   function pictureFromHome(doc, id) {
     var anchors = doc.querySelectorAll(".area_cover a[href]");
@@ -324,5 +346,5 @@
     var current = posts.find(function (p) { return canonical && p.url === canonical.href; });
     if (current) { articleLayout(doc, current); readingTools(doc, current); }
   }
-  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, featuredPosts: featuredPosts, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio };
+  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, featuredPosts: featuredPosts, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio, syncHeaderHeight: syncHeaderHeight };
 });

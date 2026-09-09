@@ -62,6 +62,31 @@ assert.ok(css.includes('.hljs-comment,.hljs-quote'));
 assert.ok(css.includes('background-size:cover!important'));
 assert.ok(css.includes('.sd-lead-visual img{display:block;width:100%;height:100%;max-height:320px;object-fit:contain}'));
 assert.ok(css.includes(':is(#tab-related,#tab-popular) .reading-next-card'));
+assert.ok(css.includes('position:sticky;top:var(--sd-header-height,64px);'));
+function headerFixture(useObserver=true) {
+  let height=64, observerCallback, observed, writes=[];
+  const events={},frames=[];
+  const header={getBoundingClientRect:()=>({height}),addEventListener:(name,fn)=>{events[name]=fn;}};
+  const doc={querySelector:()=>header,documentElement:{style:{setProperty:(name,value)=>writes.push({name,value})}}};
+  const view={addEventListener:(name,fn)=>{events[name]=fn;},requestAnimationFrame:fn=>frames.push(fn)};
+  if(useObserver)view.ResizeObserver=class {constructor(fn){observerCallback=fn;}observe(target){observed=target;}};
+  api.syncHeaderHeight(doc,view);
+  return {header,writes,events,frames,get observed(){return observed;},height:value=>{height=value;},notify:()=>observerCallback()};
+}
+const dock=headerFixture();
+assert.equal(dock.observed,dock.header);
+assert.deepEqual(dock.writes,[{name:'--sd-header-height',value:'64px'}]);
+for(const height of [56,64,63.375]){dock.height(height);dock.notify();assert.equal(dock.writes.at(-1).value,height+'px');}
+const writeCount=dock.writes.length;dock.notify();assert.equal(dock.writes.length,writeCount);
+const fallbackDock=headerFixture(false);
+fallbackDock.height(56);fallbackDock.events.scroll();fallbackDock.events.scroll();
+assert.equal(fallbackDock.frames.length,1);fallbackDock.frames.shift()();
+assert.equal(fallbackDock.writes.at(-1).value,'56px');
+fallbackDock.height(64);fallbackDock.events.transitionend();fallbackDock.frames.shift()();
+assert.equal(fallbackDock.writes.at(-1).value,'64px');
+fallbackDock.height(60);fallbackDock.events.resize();fallbackDock.frames.shift()();
+assert.equal(fallbackDock.writes.at(-1).value,'60px');
+assert.doesNotThrow(()=>api.syncHeaderHeight({querySelector:()=>null},{}));
 function luminance(hex){return hex.match(/\w\w/g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((n,x,i)=>n+x*[.2126,.7152,.0722][i],0);}
 function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
 for(const c of ['a1a7b0','afc8dd','b8c49c','dfb6a7','d3c1dc','e5e8ec'])assert.ok(contrast(c,'111318')>=4.5,c);

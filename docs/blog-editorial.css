@@ -170,7 +170,7 @@ html[data-theme=dark] #article-view .contents_style figure[data-ke-type=opengrap
 html[data-theme=dark] #article-view .contents_style figcaption,html[data-theme=dark] #article-view .contents_style figcaption *{color:#b5b5b5!important;-webkit-text-fill-color:#b5b5b5!important}
 html[data-theme=light] #article-view .contents_style :is(figcaption,figcaption *,.btn-toggle-moreless,.og-desc,.og-host){color:#666!important;-webkit-text-fill-color:#666!important}
 html[data-theme] #article-view .contents_style :is(p,li) a:not(:where(figure *,pre *,code *)){text-decoration:underline;text-underline-offset:3px}
-html.sd-article-active .sd-reader-tools{position:sticky;top:calc(var(--sd-header-height,64px) + 1px);z-index:100;gap:16px;background:var(--sd-canvas);border-bottom:1px solid var(--sd-line);padding:9px 0;margin:0 0 16px;color:var(--sd-ink)}
+html.sd-article-active .sd-reader-tools{position:sticky;top:var(--sd-header-height,64px);z-index:100;gap:16px;background:var(--sd-canvas);border-bottom:1px solid var(--sd-line);padding:9px 0;margin:0 0 16px;color:var(--sd-ink)}
 html.sd-article-active #article-view .sd-reader-tools :is(a,button){color:var(--sd-muted)!important;min-height:28px;display:inline-flex;align-items:center}
 html.sd-article-active .sd-copy-status:empty{display:none}
 html.sd-article-active #article-view :is(h2,h3,figure,.toc-container,.reading-next,#sd-article-start){scroll-margin-top:calc(var(--sd-header-height,64px) + 78px)}
