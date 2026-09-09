@@ -182,7 +182,7 @@
           if(isArticle)render(doc,data);
           if(!doc.getElementById('sd-editorial-loader')){
             var css=doc.getElementById('sd-editorial-css'), existingCss=!!css;
-            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-7-header';}
+            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-8-softedge';}
             var cssReady=new Promise(function(resolve,reject){if(css.sheet){resolve();return;}css.addEventListener('load',resolve,{once:true});css.addEventListener('error',reject,{once:true});});
             if(!existingCss)doc.head.appendChild(css);
             var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-7-header';

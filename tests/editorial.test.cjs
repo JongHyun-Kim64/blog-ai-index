@@ -63,6 +63,15 @@ assert.ok(css.includes('background-size:cover!important'));
 assert.ok(css.includes('.sd-lead-visual img{display:block;width:100%;height:100%;max-height:320px;object-fit:contain}'));
 assert.ok(css.includes(':is(#tab-related,#tab-popular) .reading-next-card'));
 assert.ok(css.includes('position:sticky;top:var(--sd-header-height,64px);'));
+const readerSurface=css.match(/html\.sd-article-active \.sd-reader-tools\{([^}]+)\}/)[1];
+assert.ok(readerSurface.includes('border-bottom:1px solid transparent'));
+assert.ok(readerSurface.includes('background:var(--sd-canvas)'));
+const readerEdge=css.match(/html\.sd-article-active \.sd-reader-tools::after\{([^}]+)\}/)[1];
+assert.ok(readerEdge.includes('position:absolute'));
+assert.ok(readerEdge.includes('height:14px'));
+assert.ok(readerEdge.includes('background:linear-gradient(180deg,var(--sd-canvas),transparent)'));
+assert.ok(readerEdge.includes('pointer-events:none'));
+assert.ok(css.includes('@media(forced-colors:active)'));
 function headerFixture(useObserver=true) {
   let height=64, observerCallback, observed, writes=[];
   const events={},frames=[];
