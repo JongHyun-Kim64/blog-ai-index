@@ -361,26 +361,9 @@
     current.setAttribute("aria-current", "page");
     breadcrumb.appendChild(current);
 
-    var publishedRaw = metaContent("article:published_time") || post.date;
-    var modifiedRaw = metaContent("article:modified_time");
-    var published = compactDate(publishedRaw);
-    var modified = compactDate(modifiedRaw);
-    var meta = el("div", "tech-post-meta");
-    if (published) {
-      var pub = el("span", "", "작성 " + published);
-      pub.setAttribute("title", publishedRaw);
-      meta.appendChild(pub);
-    }
-    if (modified && modified !== published) {
-      var mod = el("span", "", "최종 수정 " + modified);
-      mod.setAttribute("title", modifiedRaw);
-      meta.appendChild(mod);
-    }
-    meta.appendChild(el("span", "", articleReadingMinutes(article) + "분 읽기"));
-
+    // Keep navigation/structured data, but no redundant dates or reading-time row.
     var frag = document.createDocumentFragment();
     frag.appendChild(breadcrumb);
-    frag.appendChild(meta);
     article.insertBefore(frag, article.firstChild);
 
     var items = [{

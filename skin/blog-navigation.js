@@ -118,7 +118,7 @@
     picks.forEach(function(r){var p=r.post,a=node('a','reading-next-card');a.href=p.url;a.title=p.title;
       a.appendChild(node('span','reading-next-label',r.label));a.appendChild(node('strong','',p.title));
       a.appendChild(node('span','reading-next-desc',p.excerpt));
-      var meta=node('span','reading-next-meta');meta.appendChild(node('span','',p.minutes+'분 읽기'));meta.appendChild(node('span','','읽어보기 →'));a.appendChild(meta);
+      var meta=node('span','reading-next-meta');meta.appendChild(node('span','','읽어보기 →'));a.appendChild(meta);
       track(a,'article_end',id,p.id);grid.appendChild(a);
     });section.appendChild(grid);
     var original=panel.querySelector('.related-list');if(original)original.hidden=true;
@@ -145,10 +145,10 @@
           if(isArticle)render(doc,data);
           if(!doc.getElementById('sd-editorial-loader')){
             var css=doc.getElementById('sd-editorial-css'), existingCss=!!css;
-            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-2';}
+            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-3';}
             var cssReady=new Promise(function(resolve,reject){if(css.sheet){resolve();return;}css.addEventListener('load',resolve,{once:true});css.addEventListener('error',reject,{once:true});});
             if(!existingCss)doc.head.appendChild(css);
-            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-2';
+            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-3';
             var jsReady=new Promise(function(resolve,reject){script.onload=resolve;script.onerror=reject;});
             doc.body.appendChild(script);
             Promise.all([cssReady,jsReady]).then(function(){if(window.SemiconductorEditorial)window.SemiconductorEditorial.start(doc,data);}).catch(function(){doc.documentElement.classList.remove('sd-home-loading');doc.documentElement.classList.add('sd-home-fallback');});

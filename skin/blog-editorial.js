@@ -53,7 +53,6 @@
     a.addEventListener("click", function () { emit("internal_article_click", { placement: placement, from_post: "home", to_post: String(post.id) }); });
     return a;
   }
-  function minutes(post) { return Math.max(1, Number(post.minutes) || 1) + "분 읽기"; }
   function categoryUrl(value) {
     try {
       var url = new URL(value, BASE);
@@ -98,9 +97,8 @@
     area.querySelectorAll(".list_category .link_category").forEach(function (a) {
       var match = path(a.href).match(/^\/(\d+)$/), p = match && byId[Number(match[1])];
       if (!p) return; // Keep newly published or uncatalogued native entries intact.
-      var desc = a.querySelector(".summary"), date = a.querySelector(".date");
+      var desc = a.querySelector(".summary");
       if (desc && text(p.excerpt)) desc.textContent = text(p.excerpt);
-      if (date) date.appendChild(create(doc, "span", "sd-list-time", " · " + minutes(p)));
       var info = a.querySelector(".info"); if (info) info.appendChild(create(doc, "span", "sd-list-read", "글 읽기 ↗"));
     });
     area.classList.add("sd-archive-page"); doc.documentElement.classList.add("sd-editorial", "sd-archive-active");
@@ -144,7 +142,7 @@
     info.appendChild(create(doc, "p", "sd-eyebrow", "LATEST  /  " + (LABELS[topic(lead)] || topic(lead))));
     info.appendChild(create(doc, "h1", "", lead.title));
     info.appendChild(create(doc, "p", "sd-lead-desc", text(lead.excerpt)));
-    info.appendChild(create(doc, "p", "sd-meta", text(lead.date).replace(/-/g, ".") + " · " + minutes(lead)));
+    info.appendChild(create(doc, "p", "sd-meta", text(lead.date).replace(/-/g, ".")));
     info.appendChild(create(doc, "span", "sd-read", "글 읽기 ↗"));
     hero.appendChild(info);
     if (image) {
@@ -219,7 +217,7 @@
         a.appendChild(create(doc, "h3", "", p.title));
         a.appendChild(create(doc, "p", "sd-post-desc", text(p.excerpt)));
         var meta = create(doc, "div", "sd-card-meta");
-        meta.appendChild(create(doc, "span", "", text(p.date).replace(/-/g, ".") + " · " + minutes(p)));
+        meta.appendChild(create(doc, "span", "", text(p.date).replace(/-/g, ".")));
         meta.appendChild(create(doc, "span", "", "↗")); a.appendChild(meta); grid.appendChild(a);
       });
       status.textContent = (selected ? LABELS[selected] || selected : "전체") + " · " + results.length + "편" + (results.length ? " / " + visible.length + "편 표시" : "");
@@ -296,12 +294,6 @@
       if (toc && list && !toc.querySelector("details")) {
         var details = create(doc, "details", "sd-toc"), label = create(doc, "summary", "", "목차 · " + list.querySelectorAll("a").length + "개 섹션");
         details.appendChild(label); details.appendChild(list); toc.replaceChildren(details); toc.classList.add("sd-compact-toc");
-      }
-      if (current) {
-        var meta = doc.querySelector(".tech-post-meta");
-        if (meta) Array.from(meta.children).forEach(function (e) {
-          if (/^\s*\d+분 읽기\s*$/.test(e.textContent)) e.textContent = minutes(current);
-        });
       }
     }
     compactToc(); [400, 1500, 3500].forEach(function (delay) { setTimeout(compactToc, delay); });
