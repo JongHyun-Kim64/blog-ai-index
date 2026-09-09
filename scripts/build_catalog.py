@@ -11,6 +11,7 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 
 BLOG = "https://semicon-circuit.tistory.com"
+CATALOG_VERSION = 3
 
 def download(url):
     with urlopen(Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; blog-navigation/1.0)"}), timeout=30) as r:
@@ -28,9 +29,23 @@ def parse_post(html, pid, lastmod=""):
     for node in body.select("script, style, .revenue_unit_wrap, .container_postbtn, .another_category, pre, figure"):
         node.decompose()
     text = re.sub(r"\s+", " ", body.get_text(" ", strip=True))
-    paragraphs = [p.get_text(" ", strip=True) for p in body.select("p")
-                  if len(p.get_text(" ", strip=True)) > 45 and not p.select_one("a")]
-    excerpt = re.sub(r"\s+", " ", paragraphs[0] if paragraphs else text)[:120]
+    paragraphs = []
+    for paragraph in body.select("p"):
+        # An introductory paragraph may also contain an adjacent "previous post" link.
+        # Removing that link must not discard the entire introduction.
+        clean = BeautifulSoup(str(paragraph), "html.parser")
+        for link in clean.select("a"):
+            link.decompose()
+        candidate = re.sub(r"[\u200b-\u200d\ufeff]", "", clean.get_text(" ", strip=True))
+        candidate = re.split(r"(?:이전 글|다음 글|관련 글)\s*[:：]", candidate)[0].strip()
+        if candidate.startswith("이전 글에서는") and "이번 글에서는" in candidate:
+            candidate = candidate[candidate.index("이번 글에서는"):]
+        if len(candidate) > 45:
+            paragraphs.append(candidate)
+    excerpt = re.sub(r"\s+", " ", paragraphs[0] if paragraphs else text)
+    if len(excerpt) > 160:
+        head = excerpt[:160]
+        excerpt = (head.rsplit(" ", 1)[0] if " " in head else head).rstrip(" ,;:") + "…"
     return {"id": int(pid), "url": BLOG + "/" + str(pid), "title": meta("og:title"),
             "category": category.get_text(" ", strip=True) if category else "",
             "categoryPath": unquote(urlparse(category.get("href", "")).path) if category else "",
@@ -60,7 +75,7 @@ def main():
         raise RuntimeError("No public article URLs in sitemap; previous catalog retained")
     def get(entry):
         pid, modified = entry
-        if not args.snapshots and modified and cached.get(pid, {}).get("lastmod") == modified:
+        if old.get("version") == CATALOG_VERSION and not args.snapshots and modified and cached.get(pid, {}).get("lastmod") == modified:
             return cached[pid]
         snapshot = args.snapshots / f"post-{pid}.html" if args.snapshots else None
         html = snapshot.read_text(encoding="utf-8") if snapshot and snapshot.exists() else download(BLOG + "/" + str(pid))
@@ -69,11 +84,11 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         posts = [p for p in pool.map(get, entries) if p]
     posts.sort(key=lambda p: p["id"], reverse=True)
-    if posts == old.get("posts"):
+    if old.get("version") == CATALOG_VERSION and posts == old.get("posts"):
         print(f"Navigation catalog unchanged ({len(posts)} public articles)")
         return
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps({"generated": datetime.now(timezone.utc).isoformat(), "posts": posts},
+    target.write_text(json.dumps({"version": CATALOG_VERSION, "generated": datetime.now(timezone.utc).isoformat(), "posts": posts},
                                  ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"Navigation catalog: {len(posts)} public articles")
 

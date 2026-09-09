@@ -164,6 +164,12 @@ Embedding API가 일시적으로 실패하거나 구형 Index에 `embq`가 없�
 
 ## 검증
 
+홈은 공개 글 목록을 읽은 뒤 최신 글·대표 글·주제별 Explore로 구성합니다. 제목·분류·태그·발췌에서 검색하며 검색어를 서버나 Analytics로 전송하지 않습니다. 새 카테고리와 새 글은 공개 목록에 따라 반영됩니다. 목록/스크립트 로딩에 실패하면 원래 티스토리 홈을 유지합니다. 원본 스킨·본문·이미지를 삭제하지 않습니다. 대표 글은 편집상 선별한 시작점이며 트래픽 순위가 아닙니다.
+
+글의 목차와 시리즈 순서는 접어서 표시하며, 직접 작성한 핵심 요약이 있으면 AI 요약을 중복 생성하지 않습니다. 본문 바로 읽기·추적 매개변수 없는 링크 복사·본문 스크롤 진행률을 제공합니다. 수집형 북마크나 이메일 구독 서비스를 추가하지 않으며, RSS는 티스토리 기본 피드로 연결합니다.
+
+비교 근거와 적용/미적용 범위: [2026-09-09 개선 검토](reports/editorial-review-2026-09-09.md).
+
 사이드바는 `skin/navigation-template.html`의 `[##_category_list_##]`를 사용합니다. 글 수를 직접 적거나 AI 인덱스의 글 수로 대체하지 않습니다. JavaScript가 실패해도 티스토리의 원래 링크와 글 수가 남습니다. 하위 카테고리 및 새 카테고리도 자동 반영됩니다.
 
 글 하단 추천은 본문이 공개된 글만 사용하는 `catalog.json`을 읽습니다. 현재 글과 중복 글을 제외하고, 읽기 순서상 다음 글과 관련 주제 3편을 안내합니다. 목록 갱신은 기존 6시간 예약 실행에 포함되며 GitHub 예약 실행은 지연될 수 있습니다. 추천 클릭은 이미 설치된 Google Analytics의 `internal_article_click` 이벤트로 기록합니다(`placement`, `from_post`, `to_post`). 새로운 분석 서비스나 유료 API는 추가하지 않습니다.
@@ -173,6 +179,8 @@ python -m unittest discover -s tests -p "test_*.py" -v
 node --check docs/ai-features.js
 node --check skin/ai-features.js
 node --check worker/worker.js
+node tests/editorial.test.cjs
+node tests/navigation.test.cjs
 node tests/worker.test.mjs
 ```
 

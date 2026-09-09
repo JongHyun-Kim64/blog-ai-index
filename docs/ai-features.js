@@ -278,8 +278,13 @@
 
   function renderSummary(article, post) {
     if (!post.summary) return;
-    var box = el("div", "aiblog-box aiblog-summary");
-    box.appendChild(el("h4", "", SPARK + ' AI 세 줄 요약 <span class="aiblog-badge">AI</span>'));
+    // Do not repeat a summary already written by the author.
+    var hasSummary = Array.from(article.querySelectorAll("h2,h3,blockquote>b:first-child,blockquote>strong:first-child")).some(function (h) {
+      return /^(핵심 요약|요약)$/.test(h.textContent.replace(/[\u200b-\u200d\ufeff]/g, "").trim());
+    });
+    if (hasSummary) return;
+    var box = el("details", "aiblog-box aiblog-summary");
+    box.appendChild(el("summary", "", '요약 보기 <span class="aiblog-badge">AI</span>'));
     box.appendChild(el("div", "", esc(post.summary)));
     if (post.keywords && post.keywords.length) {
       var kws = el("div", "aiblog-keywords");

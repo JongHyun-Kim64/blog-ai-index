@@ -9,6 +9,10 @@ SNAPSHOTS=ROOT/'tmp'/'navigation-audit-20260907'
 
 def preview(html):
     soup=BeautifulSoup(html,'html.parser')
+    if 'catalogFailure=1' in CURRENT_PATH[0]:
+        failure=soup.new_tag('script')
+        failure.string="var realFetch=window.fetch;window.fetch=function(u,o){if(String(u).indexOf('catalog.json')>=0)return Promise.reject(new Error('Simulated catalog outage'));return realFetch.call(this,u,o);};"
+        soup.head.insert(0,failure)
     nav=soup.select_one('.custom_cat_tree')
     native=soup.select_one('.header_category .tt_category')
     if nav and native:
