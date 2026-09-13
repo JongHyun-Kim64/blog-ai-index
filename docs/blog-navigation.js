@@ -192,9 +192,12 @@
       plugins.tooltip=tooltip;
       Object.assign(tooltip,{enabled:true,mode:'index',intersect:false,position:'nearest',
         displayColors:false,backgroundColor:'transparent',
-        titleColor:function(){return win.getComputedStyle(canvas).color;},
+        titleColor:function(){return win.getComputedStyle(doc.getElementById('chart-time') || canvas).color;},
         borderWidth:0,cornerRadius:0,padding:0,caretSize:0,caretPadding:20,
-        titleFont:{size:10,weight:'500'},bodyFont:{size:10},titleMarginBottom:0,titleAlign:'center',xAlign:'center',
+        titleFont:function(){
+          var style=win.getComputedStyle(doc.getElementById('chart-time') || canvas);
+          return {size:parseFloat(style.fontSize) || 11,weight:style.fontWeight || '400',family:style.fontFamily,lineHeight:style.lineHeight};
+        },bodyFont:{size:10},titleMarginBottom:0,titleAlign:'center',xAlign:'center',
         yAlign:function(context){
           var items=context.tooltip && context.tooltip.dataPoints,point=items && items[0] && items[0].element;
           return point && point.y<52 ? 'top' : 'bottom';

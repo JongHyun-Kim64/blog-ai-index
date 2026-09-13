@@ -12,10 +12,10 @@ for(const [input,expected] of [
 const rows=[{timestamp:'2026-09-12T00:00:00+09:00',count:31},{timestamp:'2026-09-13T00:00:00+09:00',count:0}];
 function fixture(delayed=false){
  const listeners={},attributes={},ticks=[];
- const canvas={addEventListener:(name,fn)=>listeners[name]=fn,setAttribute:(name,value)=>attributes[name]=value};
+ const canvas={addEventListener:(name,fn)=>listeners[name]=fn,setAttribute:(name,value)=>attributes[name]=value},clock={};
  const chart={config:{options:{plugins:{tooltip:{enabled:false,callbacks:{footer:()=>''}},legend:{display:false}},scales:{x:{display:false}},interaction:{mode:'index',intersect:false}},data:{datasets:[{data:[31,0],pointHoverRadius:5}]}},update:mode=>ticks.push(mode)};
- const win={chartData:rows,Chart:{getChart:()=>delayed?null:chart},getComputedStyle:()=>({color:win.ink || '#292929'}),setInterval:fn=>{win.tick=fn;return 7;},clearInterval:id=>{win.cleared=id;}};
- return {canvas,chart,win,listeners,attributes,ticks,doc:{defaultView:win,getElementById:()=>canvas},ready:()=>{delayed=false;}};
+ const win={chartData:rows,Chart:{getChart:()=>delayed?null:chart},getComputedStyle:element=>element===clock?{color:win.ink || '#999999',fontSize:'11px',fontWeight:'600',fontFamily:'Pretendard',lineHeight:'12.65px'}:{color:'#292929',fontSize:'14px',fontWeight:'400'},setInterval:fn=>{win.tick=fn;return 7;},clearInterval:id=>{win.cleared=id;}};
+ return {canvas,chart,win,listeners,attributes,ticks,doc:{defaultView:win,getElementById:id=>id==='chart-time'?clock:canvas},ready:()=>{delayed=false;}};
 }
 const f=fixture();
 const original=JSON.stringify(f.chart.config.data),scales=JSON.stringify(f.chart.config.options.scales);
@@ -27,11 +27,11 @@ assert.equal(tip.callbacks.title([{dataIndex:1}]),'09.13');
 assert.equal(tip.callbacks.title([{dataIndex:99}]),'');
 assert.equal(tip.callbacks.label({formattedValue:'0'}),'');
 assert.equal(tip.callbacks.label({formattedValue:'1,234'}),'');
-assert.equal(tip.titleFont.size,10);assert.equal(tip.titleMarginBottom,0);
+assert.deepEqual(tip.titleFont(),{size:11,weight:'600',family:'Pretendard',lineHeight:'12.65px'});assert.equal(tip.titleMarginBottom,0);
 assert.equal(tip.borderWidth,0);
 assert.equal(tip.backgroundColor,'transparent');assert.equal(tip.caretSize,0);
 assert.equal(tip.padding,0);assert.equal(tip.cornerRadius,0);
-assert.equal(tip.titleColor(),'#292929');f.win.ink='#eeeeee';assert.equal(tip.titleColor(),'#eeeeee');
+assert.equal(tip.titleColor(),'#999999');f.win.ink='#aaaaaa';assert.equal(tip.titleColor(),'#aaaaaa');
 assert.equal(tip.xAlign,'center');
 assert.equal(tip.yAlign({tooltip:{dataPoints:[{element:{y:40}}]}}),'top');
 assert.equal(tip.yAlign({tooltip:{dataPoints:[{element:{y:90}}]}}),'bottom');
