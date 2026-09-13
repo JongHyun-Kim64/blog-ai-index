@@ -241,10 +241,13 @@
           if(isArticle)render(doc,data);
           if(!doc.getElementById('sd-editorial-loader')){
             var css=doc.getElementById('sd-editorial-css'), existingCss=!!css;
-            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';css.href='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260909-8-softedge';}
-            var cssReady=new Promise(function(resolve,reject){if(css.sheet){resolve();return;}css.addEventListener('load',resolve,{once:true});css.addEventListener('error',reject,{once:true});});
+            var cssUrl='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.css?v=20260913-1-carousel';
+            if(!css){css=doc.createElement('link');css.id='sd-editorial-css';css.rel='stylesheet';}
+            var cssChanged=css.getAttribute('href')!==cssUrl;
+            var cssReady=new Promise(function(resolve,reject){if(!cssChanged && css.sheet){resolve();return;}css.addEventListener('load',resolve,{once:true});css.addEventListener('error',reject,{once:true});});
+            if(cssChanged)css.href=cssUrl;
             if(!existingCss)doc.head.appendChild(css);
-            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260909-7-header';
+            var script=doc.createElement('script');script.id='sd-editorial-loader';script.src='https://jonghyun-kim64.github.io/blog-ai-index/blog-editorial.js?v=20260913-1-carousel';
             var jsReady=new Promise(function(resolve,reject){script.onload=resolve;script.onerror=reject;});
             doc.body.appendChild(script);
             Promise.all([cssReady,jsReady]).then(function(){if(window.SemiconductorEditorial)window.SemiconductorEditorial.start(doc,data);}).catch(function(){doc.documentElement.classList.remove('sd-home-loading');doc.documentElement.classList.add('sd-home-fallback');});

@@ -38,6 +38,7 @@ jobs:
           node tests/visitor-chart.test.cjs
           node --check docs/blog-editorial.js
           node tests/editorial.test.cjs
+          node tests/latest-carousel.test.cjs
           node tests/assistant.test.cjs
           node tests/worker.test.mjs
 

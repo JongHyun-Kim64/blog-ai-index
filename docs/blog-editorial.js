@@ -44,6 +44,8 @@
     posts.forEach(function (p) { byId[p.id] = p; });
     return [98, 101, 80].map(function (id) { return byId[id]; }).filter(Boolean);
   }
+  function latestPosts(catalog) { return selectPosts(publicPosts(catalog), "", "", "latest").slice(0, 5); }
+  function slideIndex(index, count) { return count > 0 ? ((index % count) + count) % count : 0; }
   function progressRatio(top, height, scroll, viewport) {
     var distance = Math.max(1, height - viewport);
     return Math.max(0, Math.min(1, (scroll - top) / distance));
@@ -159,26 +161,98 @@
     }
     return "";
   }
+  function buildLatest(doc, posts) {
+    if (!posts.length) return null;
+    var section = create(doc, "section", "sd-latest"), view = doc.defaultView;
+    section.setAttribute("aria-label", "최신 글"); section.setAttribute("aria-roledescription", "캐러셀");
+    var track = create(doc, "div", "sd-latest-track"); track.id = "sd-latest-track";
+    var slides = [], links = [], pages = [], active = 0;
+    posts.forEach(function (post, index) {
+      var slide = create(doc, "div", "sd-latest-slide");
+      slide.setAttribute("role", "group"); slide.setAttribute("aria-roledescription", "슬라이드");
+      slide.setAttribute("aria-label", (index + 1) + " / " + posts.length);
+      var hero = articleLink(doc, post, "sd-lead", undefined, "home_lead");
+      var info = create(doc, "div", "sd-lead-info");
+      info.appendChild(create(doc, "p", "sd-eyebrow", "LATEST  /  " + (LABELS[topic(post)] || topic(post))));
+      info.appendChild(create(doc, index === 0 ? "h1" : "h2", "", post.title));
+      info.appendChild(create(doc, "p", "sd-lead-desc", text(post.excerpt)));
+      info.appendChild(create(doc, "p", "sd-meta", text(post.date).replace(/-/g, ".")));
+      info.appendChild(create(doc, "span", "sd-read", "글 읽기 ↗")); hero.appendChild(info);
+      var image = pictureFromHome(doc, post.id);
+      if (image) {
+        var visual = create(doc, "div", "sd-lead-visual"), img = create(doc, "img");
+        img.src = image; img.alt = ""; img.width = 800; img.height = 500;
+        img.decoding = "async"; img.loading = index === 0 ? "eager" : "lazy";
+        if (index === 0) img.setAttribute("fetchpriority", "high");
+        img.addEventListener("error", function () { visual.hidden = true; hero.classList.add("sd-lead-text-only"); });
+        visual.appendChild(img); hero.appendChild(visual);
+      } else hero.classList.add("sd-lead-text-only");
+      slide.appendChild(hero); track.appendChild(slide); slides.push(slide); links.push(hero);
+    });
+    section.appendChild(track);
+    var controls = create(doc, "div", "sd-latest-controls");
+    controls.setAttribute("role", "group"); controls.setAttribute("aria-label", "최신 글 넘기기"); controls.hidden = posts.length < 2;
+    function button(label, cls, value) {
+      var b = create(doc, "button", cls, value); b.type = "button";
+      b.setAttribute("aria-label", label); b.setAttribute("aria-controls", track.id); return b;
+    }
+    var previous = button("이전 최신 글", "sd-latest-arrow", "←"); controls.appendChild(previous);
+    var positions = create(doc, "div", "sd-latest-pages");
+    posts.forEach(function (post, index) {
+      var b = button((index + 1) + "번째 최신 글: " + post.title, "sd-latest-page");
+      b.addEventListener("click", function () { go(index); }); pages.push(b); positions.appendChild(b);
+    }); controls.appendChild(positions);
+    var counter = create(doc, "span", "sd-latest-count"); counter.setAttribute("aria-hidden", "true"); controls.appendChild(counter);
+    var next = button("다음 최신 글", "sd-latest-arrow", "→"); controls.appendChild(next); section.appendChild(controls);
+    var status = create(doc, "span", "sd-latest-status"); status.setAttribute("role", "status"); status.setAttribute("aria-live", "polite");
+    status.setAttribute("aria-atomic", "true"); section.appendChild(status);
+    function update(index, announce) {
+      active = slideIndex(index, posts.length);
+      slides.forEach(function (slide, i) {
+        slide.inert = i !== active; slide.setAttribute("aria-hidden", String(i !== active));
+        links[i].tabIndex = i === active ? 0 : -1;
+        if (i === active) pages[i].setAttribute("aria-current", "true"); else pages[i].removeAttribute("aria-current");
+      });
+      counter.textContent = String(active + 1).padStart(2, "0") + " / " + String(posts.length).padStart(2, "0");
+      if (announce && posts[active]) status.textContent = (active + 1) + " / " + posts.length + ": " + posts[active].title;
+    }
+    function go(index, instant) {
+      var target = slideIndex(index, posts.length), focusLink = slides[active] && slides[active].contains(doc.activeElement);
+      var reduce = view.matchMedia && view.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      update(target, !instant);
+      if (focusLink && links[target]) links[target].focus({ preventScroll: true });
+      track.scrollTo({ left: target * track.clientWidth, behavior: instant || reduce ? "auto" : "smooth" });
+    }
+    previous.addEventListener("click", function () { go(active - 1); });
+    next.addEventListener("click", function () { go(active + 1); });
+    section.addEventListener("keydown", function (e) {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      var target = e.key === "ArrowLeft" ? active - 1 : e.key === "ArrowRight" ? active + 1 : e.key === "Home" ? 0 : e.key === "End" ? posts.length - 1 : null;
+      if (target !== null) { e.preventDefault(); go(target); }
+    });
+    var scrollTimer;
+    track.addEventListener("scroll", function () {
+      view.clearTimeout(scrollTimer);
+      scrollTimer = view.setTimeout(function () {
+        var index = Math.max(0, Math.min(posts.length - 1, Math.round(track.scrollLeft / Math.max(1, track.clientWidth))));
+        if (index !== active) update(index, true);
+      }, 120);
+    }, { passive: true });
+    // Scroll snapping handles touch/trackpad gestures; no autoplay or extra library.
+    if (view.ResizeObserver) {
+      var width = 0;
+      new view.ResizeObserver(function () {
+        if (track.clientWidth && track.clientWidth !== width) { width = track.clientWidth; go(active, true); }
+      }).observe(track);
+    } else view.addEventListener("resize", function () { go(active, true); });
+    update(0, false); return section;
+  }
   function buildHome(doc, catalog) {
     var cover = doc.querySelector(".area_cover"), posts = publicPosts(catalog);
     if (doc.body.id !== "tt-body-index" || location.pathname !== "/" || new URLSearchParams(location.search).has("page") || doc.documentElement.classList.contains("sd-home-fallback") || !cover ||
         !cover.querySelector(".type_featured") || !posts.length || doc.querySelector(".sd-home")) return;
-    var latest = selectPosts(posts, "", "", "latest"), lead = latest[0];
-    var image = pictureFromHome(doc, lead.id), root = create(doc, "div", "sd-home");
-    var hero = articleLink(doc, lead, "sd-lead", undefined, "home_lead");
-    var info = create(doc, "div", "sd-lead-info");
-    info.appendChild(create(doc, "p", "sd-eyebrow", "LATEST  /  " + (LABELS[topic(lead)] || topic(lead))));
-    info.appendChild(create(doc, "h1", "", lead.title));
-    info.appendChild(create(doc, "p", "sd-lead-desc", text(lead.excerpt)));
-    info.appendChild(create(doc, "p", "sd-meta", text(lead.date).replace(/-/g, ".")));
-    info.appendChild(create(doc, "span", "sd-read", "글 읽기 ↗"));
-    hero.appendChild(info);
-    if (image) {
-      var visual = create(doc, "div", "sd-lead-visual"), img = create(doc, "img");
-      img.src = image; img.alt = ""; img.width = 800; img.height = 500;
-      img.decoding = "async"; visual.appendChild(img); hero.appendChild(visual);
-    } else hero.classList.add("sd-lead-text-only");
-    root.appendChild(hero);
+    var root = create(doc, "div", "sd-home");
+    root.appendChild(buildLatest(doc, latestPosts(catalog)));
     var start = create(doc, "section", "sd-start"); start.setAttribute("aria-label", "주제별 대표 글");
     var startLabel = create(doc, "div", "sd-start-label");
     startLabel.appendChild(create(doc, "h2", "", "FEATURED"));
@@ -346,5 +420,5 @@
     var current = posts.find(function (p) { return canonical && p.url === canonical.href; });
     if (current) { articleLayout(doc, current); readingTools(doc, current); }
   }
-  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, featuredPosts: featuredPosts, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio, syncHeaderHeight: syncHeaderHeight };
+  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, featuredPosts: featuredPosts, latestPosts: latestPosts, slideIndex: slideIndex, buildLatest: buildLatest, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio, syncHeaderHeight: syncHeaderHeight };
 });
