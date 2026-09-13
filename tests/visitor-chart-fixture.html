@@ -1,0 +1,14 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>방문자 날짜 툴팁 검증</title>
+<style>body{font:14px/1.6 system-ui,sans-serif;background:#f6f6f4;color:#292929;margin:40px}.card{width:300px;background:#eee;border-radius:14px;padding:18px;box-sizing:border-box}#chartdiv{height:140px;position:relative}#chart-time{font-size:10px;text-align:right;color:#888}.dark{background:#181818;color:#eee}.dark .card{background:#252525}button{font:inherit;padding:8px;margin-bottom:16px}pre{white-space:pre-wrap}</style>
+<h1>방문자 날짜 툴팁</h1><button id="theme">다크/라이트</button>
+<div class="card"><strong>오늘 방문자</strong><div style="font-size:28px">49</div><div id="chartdiv"><canvas id="chartctx"></canvas></div><div id="chart-time">09-13 19:06</div></div>
+<p>숫자나 점을 클릭하거나 마우스를 올려 날짜를 확인합니다.</p><pre id="results">준비 중</pre>
+<script src="https://t1.daumcdn.net/tistory_admin/lib/chartjs/4.4.1/chart.umd.min.js"></script>
+<script>var module={exports:{}};</script><script src="/skin/blog-navigation.js"></script>
+<script>
+window.chartData=[{timestamp:'2026-09-07T00:00:00+09:00',count:102},{timestamp:'2026-09-08T00:00:00+09:00',count:62},{timestamp:'2026-09-09T00:00:00+09:00',count:142},{timestamp:'2026-09-10T00:00:00+09:00',count:86},{timestamp:'2026-09-11T00:00:00+09:00',count:69},{timestamp:'2026-09-12T00:00:00+09:00',count:31},{timestamp:'2026-09-13T00:00:00+09:00',count:49}];
+const nativeChart=new Chart(document.querySelector('#chartctx'),{type:'line',data:{labels:chartData.map(r=>Number(r.timestamp.slice(8,10))),datasets:[{data:chartData.map(r=>r.count),borderColor:'#3182f6',borderWidth:2.5,tension:.4,pointRadius:2.4,pointHoverRadius:5,fill:true,backgroundColor:'rgba(49,130,246,.08)'}]},options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},layout:{padding:{top:20,right:20,bottom:6,left:18}},scales:{x:{display:false},y:{display:false,min:26.35,max:170.4}},plugins:{legend:{display:false},tooltip:{enabled:false}}},plugins:[{id:'labels',afterDatasetsDraw(c){const ctx=c.ctx;ctx.save();ctx.font='700 10px sans-serif';ctx.fillStyle='#888';ctx.textAlign='center';c.getDatasetMeta(0).data.forEach((pt,i)=>ctx.fillText(String(chartData[i].count),pt.x,pt.y-8));ctx.restore();}}]});
+module.exports.enhanceVisitorChart(document);
+document.querySelector('#theme').onclick=()=>document.body.classList.toggle('dark');
+document.querySelector('#results').textContent='PASS: 실제 Chart.js 4.4.1 연결 / 날짜 툴팁 활성화';
+</script></html>

@@ -170,9 +170,59 @@
       tab.classList.add('active');panel.classList.add('active');
     }
   }
+  function visitorDate(timestamp) {
+    // Use the calendar date supplied by Tistory, not the reader's local timezone.
+    var m=String(timestamp || '').match(/^(\d{4})-(\d{2})-(\d{2})(?:T|$)/);
+    if(!m)return '';
+    var year=Number(m[1]),month=Number(m[2]),day=Number(m[3]);
+    var date=new Date(Date.UTC(year,month-1,day));
+    if(date.getUTCFullYear()!==year || date.getUTCMonth()!==month-1 || date.getUTCDate()!==day)return '';
+    return month+'월 '+day+'일 ('+'일월화수목금토'.charAt(date.getUTCDay())+')';
+  }
+  function enhanceVisitorChart(doc) {
+    var win=doc.defaultView,canvas=doc.getElementById('chartctx');
+    if(!canvas || !win || canvas.__sdVisitorDatesBound)return;
+    canvas.__sdVisitorDatesBound=true;
+    function attach(){
+      var chart=win.Chart && win.Chart.getChart && win.Chart.getChart(canvas);
+      if(!chart)return false;
+      if(chart.__sdVisitorDates)return true;
+      var options=chart.config.options,plugins=options.plugins || (options.plugins={});
+      var tooltip=plugins.tooltip && typeof plugins.tooltip==='object' ? plugins.tooltip : {};
+      plugins.tooltip=tooltip;
+      Object.assign(tooltip,{enabled:true,mode:'index',intersect:false,position:'nearest',
+        displayColors:false,backgroundColor:'#292929',titleColor:'#fafafa',bodyColor:'#eeeeee',
+        borderColor:'#777777',borderWidth:1,cornerRadius:6,padding:9,caretPadding:8,
+        titleFont:{size:11,weight:'600'},bodyFont:{size:11},titleMarginBottom:4});
+      tooltip.callbacks=Object.assign({},tooltip.callbacks,{
+        title:function(items){
+          var item=items && items[0],row=item && (win.chartData || [])[item.dataIndex];
+          return visitorDate(row && row.timestamp) || '날짜 정보 없음';
+        },
+        label:function(item){return '방문자 '+item.formattedValue;}
+      });
+      // Preserve the existing points, highlight effect, axis settings and visit counts.
+      chart.__sdVisitorDates=true;
+      chart.update('none');
+      var rows=win.chartData || [];
+      var description=rows.map(function(row){
+        var date=visitorDate(row.timestamp);
+        return date ? date+' 방문자 '+row.count : '';
+      }).filter(Boolean).join(', ');
+      if(description){canvas.setAttribute('role','img');canvas.setAttribute('aria-label','최근 방문자 추이. '+description);}
+      return true;
+    }
+    // Tistory creates the chart on DOMContentLoaded; also handle delayed initialization.
+    canvas.addEventListener('pointerenter',attach,{passive:true});
+    canvas.addEventListener('touchstart',attach,{passive:true});
+    if(!attach()){
+      var tries=0,timer=win.setInterval(function(){if(attach() || ++tries>=40)win.clearInterval(timer);},250);
+    }
+  }
   function start(doc) {
     function init(){
       syncCategories(doc);
+      enhanceVisitorChart(doc);
       var isArticle=!!doc.querySelector('.tt_article_useless_p_margin, .contents_style');
       var isHome=doc.body.id==='tt-body-index' && location.pathname==='/' && !new URLSearchParams(location.search).has('page');
       var isArchive=/^tt-body-(category|search|tag|archive)$/.test(doc.body.id) && !!doc.querySelector('.area_category');
@@ -194,5 +244,5 @@
     }
     if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init);else init();
   }
-  return {start:start,render:render,syncCategories:syncCategories,recommend:recommend,popularPosts:popularPosts,seriesFor:seriesFor,pathKey:pathKey};
+  return {start:start,render:render,syncCategories:syncCategories,recommend:recommend,popularPosts:popularPosts,seriesFor:seriesFor,pathKey:pathKey,visitorDate:visitorDate,enhanceVisitorChart:enhanceVisitorChart};
 });
