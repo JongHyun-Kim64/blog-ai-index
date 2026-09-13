@@ -28,6 +28,7 @@ assert.equal(tip.callbacks.title([{dataIndex:99}]),'날짜 정보 없음');
 assert.equal(tip.callbacks.label({formattedValue:'0'}),'');
 assert.equal(tip.callbacks.label({formattedValue:'1,234'}),'');
 assert.equal(tip.titleFont.size,10);assert.equal(tip.titleMarginBottom,0);
+assert.equal(tip.borderWidth,0);
 assert.equal(tip.xAlign,'center');
 assert.equal(tip.yAlign({tooltip:{dataPoints:[{element:{y:40}}]}}),'top');
 assert.equal(tip.yAlign({tooltip:{dataPoints:[{element:{y:90}}]}}),'bottom');

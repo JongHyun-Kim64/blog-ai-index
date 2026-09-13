@@ -192,7 +192,7 @@
       plugins.tooltip=tooltip;
       Object.assign(tooltip,{enabled:true,mode:'index',intersect:false,position:'nearest',
         displayColors:false,backgroundColor:'#292929',titleColor:'#fafafa',bodyColor:'#eeeeee',
-        borderColor:'#777777',borderWidth:1,cornerRadius:4,padding:5,caretSize:3,caretPadding:20,
+        borderWidth:0,cornerRadius:4,padding:5,caretSize:3,caretPadding:20,
         titleFont:{size:10,weight:'500'},bodyFont:{size:10},titleMarginBottom:0,xAlign:'center',
         yAlign:function(context){
           var items=context.tooltip && context.tooltip.dataPoints,point=items && items[0] && items[0].element;
