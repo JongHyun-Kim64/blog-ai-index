@@ -192,14 +192,18 @@
       plugins.tooltip=tooltip;
       Object.assign(tooltip,{enabled:true,mode:'index',intersect:false,position:'nearest',
         displayColors:false,backgroundColor:'#292929',titleColor:'#fafafa',bodyColor:'#eeeeee',
-        borderColor:'#777777',borderWidth:1,cornerRadius:6,padding:9,caretPadding:8,
-        titleFont:{size:11,weight:'600'},bodyFont:{size:11},titleMarginBottom:4});
+        borderColor:'#777777',borderWidth:1,cornerRadius:4,padding:5,caretSize:3,caretPadding:20,
+        titleFont:{size:10,weight:'500'},bodyFont:{size:10},titleMarginBottom:0,xAlign:'center',
+        yAlign:function(context){
+          var items=context.tooltip && context.tooltip.dataPoints,point=items && items[0] && items[0].element;
+          return point && point.y<52 ? 'top' : 'bottom';
+        }});
       tooltip.callbacks=Object.assign({},tooltip.callbacks,{
         title:function(items){
           var item=items && items[0],row=item && (win.chartData || [])[item.dataIndex];
-          return visitorDate(row && row.timestamp) || '날짜 정보 없음';
+          return visitorDate(row && row.timestamp).split(' (')[0] || '날짜 정보 없음';
         },
-        label:function(item){return '방문자 '+item.formattedValue;}
+        label:function(){return '';}
       });
       // Preserve the existing points, highlight effect, axis settings and visit counts.
       chart.__sdVisitorDates=true;
