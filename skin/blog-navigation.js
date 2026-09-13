@@ -191,9 +191,10 @@
       var tooltip=plugins.tooltip && typeof plugins.tooltip==='object' ? plugins.tooltip : {};
       plugins.tooltip=tooltip;
       Object.assign(tooltip,{enabled:true,mode:'index',intersect:false,position:'nearest',
-        displayColors:false,backgroundColor:'#292929',titleColor:'#fafafa',bodyColor:'#eeeeee',
-        borderWidth:0,cornerRadius:4,padding:5,caretSize:3,caretPadding:20,
-        titleFont:{size:10,weight:'500'},bodyFont:{size:10},titleMarginBottom:0,xAlign:'center',
+        displayColors:false,backgroundColor:'transparent',
+        titleColor:function(){return win.getComputedStyle(canvas).color;},
+        borderWidth:0,cornerRadius:0,padding:0,caretSize:0,caretPadding:20,
+        titleFont:{size:10,weight:'500'},bodyFont:{size:10},titleMarginBottom:0,titleAlign:'center',xAlign:'center',
         yAlign:function(context){
           var items=context.tooltip && context.tooltip.dataPoints,point=items && items[0] && items[0].element;
           return point && point.y<52 ? 'top' : 'bottom';
@@ -201,7 +202,8 @@
       tooltip.callbacks=Object.assign({},tooltip.callbacks,{
         title:function(items){
           var item=items && items[0],row=item && (win.chartData || [])[item.dataIndex];
-          return visitorDate(row && row.timestamp).split(' (')[0] || '날짜 정보 없음';
+          var timestamp=String(row && row.timestamp || '');
+          return visitorDate(timestamp) ? timestamp.slice(5,7)+'.'+timestamp.slice(8,10) : '';
         },
         label:function(){return '';}
       });
