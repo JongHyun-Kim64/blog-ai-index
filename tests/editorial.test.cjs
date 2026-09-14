@@ -28,6 +28,19 @@ assert.equal(api.categoryUrl('javascript:alert(1)'),'');
 assert.equal(api.categoryUrl('/manage/posts/'),'');
 assert.equal(api.categoryUrl('//evil.example/category/test'),'');
 assert.ok(posts.every(p=>api.categoryUrl(p.categoryPath)));
+// A native category can exist before its first public article; never fabricate a post.
+const nativeTopics = ['/category/Physical%20Design', '/category/Physical%20Design', '/category', '/manage/posts', 'https://evil.example/category/Hidden', 'javascript:alert(1)', '/category/%ZZ'];
+const withNewTopic = api.categoryNames(posts, nativeTopics);
+assert.equal(withNewTopic.filter(name=>name==='Physical Design').length, 1);
+assert.equal(withNewTopic.length, groups.size + 1);
+assert.deepEqual(new Set(api.categoryNames(posts)), groups);
+assert.deepEqual(api.categoryNames([], nativeTopics), ['Physical Design']);
+assert.deepEqual(api.categoryNames([], []), []);
+assert.deepEqual(api.selectPosts(posts,'Physical Design','','latest'), []);
+const physicalPost = {...future,category:'Physical Design',categoryPath:'/category/Physical%20Design'};
+assert.equal(api.categoryNames([...posts,physicalPost],nativeTopics).length,withNewTopic.length);
+assert.deepEqual(api.selectPosts([...posts,physicalPost],'Physical Design','','latest'),[physicalPost]);
+assert.deepEqual(api.categoryNames([],['/category/Verilog%20%26%20%EB%94%94%EC%A7%80%ED%84%B8%20%EC%84%A4%EA%B3%84/FPGA']),['Verilog & 디지털 설계']);
 // FEATURED is an editorial selection, not an unverified popularity ranking.
 const featured = api.featuredPosts(posts);
 assert.deepEqual(featured.map(p=>p.id), [98,101,80]);

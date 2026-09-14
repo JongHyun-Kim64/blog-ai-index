@@ -7,6 +7,9 @@ const base = 'https://jonghyun-kim64.github.io/blog-ai-index/';
 const rewrite = source => source.split(base).join('/docs/').replaceAll('https://blog-ai-qa.jong060479.workers.dev', '/__ai-disabled');
 function home(url) {
   let html = fs.readFileSync(path.join(root, 'tmp/navigation-audit-20260907/home.html'), 'utf8');
+  if (url.searchParams.has('physical')) {
+    html = html.replaceAll('<ul class="category_list">', '<ul class="category_list"><li><a class="link_item" href="https://semicon-circuit.tistory.com/category/Physical%20Design">Physical Design <span class="c_cnt">(0)</span></a></li>');
+  }
   html = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, tag => /googletagmanager|googlesyndication|tistory_admin\/userblog|tiara|adsbygoogle|adsense|analytics|gtag\(|blog-navigation\.js|ai-features\.js|root\.classList\.add\('sd-home-loading'\)/i.test(tag) ? '' : tag);
   html = html.replace(/<link\b[^>]*(?:blog-editorial\.css|blog-navigation\.css)[^>]*>/gi, '');
   const head = rewrite(fs.readFileSync(path.join(root, 'skin/editorial-head.html'), 'utf8'));

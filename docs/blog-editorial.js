@@ -10,7 +10,7 @@
   var LABELS = {
     "반도체 시사": "AI · 반도체", "Verilog & 디지털 설계": "RTL · FPGA",
     "전자회로 & 아날로그": "아날로그", "임베디드 SW & MCU": "임베디드",
-    "Full Custom IC 설계": "Full Custom", "ARM & RTOS": "ARM · RTOS",
+    "Full Custom IC 설계": "Full Custom", "Physical Design": "Physical Design", "ARM & RTOS": "ARM · RTOS",
     "SoC & Peripheral 설계": "SoC", "취업준비": "취업준비"
   };
   function text(value) { return String(value || "").replace(/[\u200b-\u200d\ufeff]/g, "").replace(/\s+/g, " ").trim(); }
@@ -70,6 +70,19 @@
     } catch (e) { return ""; }
   }
   function path(value) { try { return decodeURIComponent(new URL(value, BASE).pathname).replace(/\/$/, ""); } catch (e) { return ""; } }
+  function categoryNames(posts, nativeLinks) {
+    var names = posts.map(topic);
+    (nativeLinks || []).forEach(function (value) {
+      var href = categoryUrl(value);
+      if (!href) return;
+      var name = path(href).replace(/^\/category(?:\/|$)/, "").split("/")[0];
+      if (name) names.push(name);
+    });
+    return Array.from(new Set(names.filter(Boolean))).sort(function (a, b) {
+      var keys = Object.keys(LABELS), ai = keys.indexOf(a), bi = keys.indexOf(b);
+      return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi) || a.localeCompare(b, "ko");
+    });
+  }
   function contextNav(doc, label, href) {
     var nav = create(doc, "nav", "sd-context"); nav.setAttribute("aria-label", "현재 위치");
     var home = create(doc, "a", "", "Home"); home.href = "/"; nav.appendChild(home);
@@ -283,11 +296,8 @@
     form.appendChild(label); form.appendChild(input); form.appendChild(sortLabel); form.appendChild(sort);
     archive.appendChild(form);
     var filters = create(doc, "div", "sd-filters"); filters.setAttribute("role", "group"); filters.setAttribute("aria-label", "글 주제");
-    var categories = Array.from(new Set(posts.map(topic)));
-    categories.sort(function (a, b) {
-      var keys = Object.keys(LABELS), ai = keys.indexOf(a), bi = keys.indexOf(b);
-      return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi) || a.localeCompare(b, "ko");
-    });
+    // Include newly created native categories before their first public post is catalogued.
+    var categories = categoryNames(posts, Array.from(doc.querySelectorAll(".header_category .category_list > li > a")).map(function (a) { return a.href; }));
     var selected = "", limit = 6, controls = [];
     [""].concat(categories).forEach(function (cat) {
       var button = create(doc, "button", "", cat ? LABELS[cat] || cat : "전체");
@@ -305,7 +315,8 @@
     var grid = create(doc, "div", "sd-post-grid"); archive.appendChild(grid);
     var more = create(doc, "button", "sd-more", "글 더 보기"); more.type = "button"; archive.appendChild(more);
     var empty = create(doc, "div", "sd-empty");
-    empty.appendChild(create(doc, "p", "", "일치하는 글이 없습니다. 다른 키워드나 주제를 선택해 주세요."));
+    var emptyMessage = create(doc, "p"); empty.appendChild(emptyMessage);
+    var topicArchive = create(doc, "a", "sd-subtle-link", "카테고리에서 확인 ↗"); empty.appendChild(topicArchive);
     var reset = create(doc, "button", "sd-more", "검색 초기화"); reset.type = "button"; empty.appendChild(reset); archive.appendChild(empty);
     function update() {
       var results = selectPosts(posts, selected, input.value, sort.value), visible = results.slice(0, limit);
@@ -321,6 +332,9 @@
       });
       status.textContent = (selected ? LABELS[selected] || selected : "전체") + " · " + results.length + "편" + (results.length ? " / " + visible.length + "편 표시" : "");
       more.hidden = results.length <= limit; empty.hidden = results.length !== 0;
+      emptyMessage.textContent = selected && !text(input.value) ? "이 주제의 공개 글은 아직 목록에 없습니다." : "일치하는 글이 없습니다. 다른 키워드나 주제를 선택해 주세요.";
+      topicArchive.hidden = !selected;
+      if (selected) topicArchive.href = categoryUrl("/category/" + encodeURIComponent(selected));
     }
     var searchTimer;
     input.addEventListener("input", function () { clearTimeout(searchTimer); searchTimer = setTimeout(function () { limit = 6; update(); }, 120); });
@@ -420,5 +434,5 @@
     var current = posts.find(function (p) { return canonical && p.url === canonical.href; });
     if (current) { articleLayout(doc, current); readingTools(doc, current); }
   }
-  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, featuredPosts: featuredPosts, latestPosts: latestPosts, slideIndex: slideIndex, buildLatest: buildLatest, topic: topic, categoryUrl: categoryUrl, progressRatio: progressRatio, syncHeaderHeight: syncHeaderHeight };
+  return { start: start, publicPosts: publicPosts, selectPosts: selectPosts, featuredPosts: featuredPosts, latestPosts: latestPosts, slideIndex: slideIndex, buildLatest: buildLatest, topic: topic, categoryUrl: categoryUrl, categoryNames: categoryNames, progressRatio: progressRatio, syncHeaderHeight: syncHeaderHeight };
 });
